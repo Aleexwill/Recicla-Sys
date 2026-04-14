@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Resumen de Compra - Sistema de Reciclaje</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1dc962",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                    },
+                    fontFamily: {
+                        "display": ["Work Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<header class="w-full px-4 sm:px-8 lg:px-16 xl:px-24 py-3 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-10">
+<div class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 pb-3">
+<div class="flex items-center gap-4 text-slate-800 dark:text-white">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z" fill="currentColor"></path>
+<path clip-rule="evenodd" d="M39.998 35.764C39.9944 35.7463 39.9875 35.7155 39.9748 35.6706C39.9436 35.5601 39.8949 35.4259 39.8346 35.2825C39.8168 35.2403 39.7989 35.1993 39.7813 35.1602C38.5103 34.2887 35.9788 33.0607 33.7095 32.5189C30.9875 31.8691 27.6413 31.4783 24 31.4783C20.3587 31.4783 17.0125 31.8691 14.2905 32.5189C12.0012 33.0654 9.44505 34.3104 8.18538 35.1832C8.17384 35.2075 8.16216 35.233 8.15052 35.2592C8.09919 35.3751 8.05721 35.4886 8.02977 35.589C8.00356 35.6848 8.00039 35.7333 8.00004 35.7388C8.00004 35.739 8 35.7393 8.00004 35.7388C8.00004 35.7641 8.0104 36.0767 8.68485 36.6314C9.34546 37.1746 10.4222 37.7531 11.9291 38.2772C14.9242 39.319 19.1919 40 24 40C28.8081 40 33.0758 39.319 36.0709 38.2772C37.5778 37.7531 38.6545 37.1746 39.3151 36.6314C39.9006 36.1499 39.9857 35.8511 39.998 35.764ZM4.95178 32.7688L21.4543 6.30267C22.6288 4.4191 25.3712 4.41909 26.5457 6.30267L43.0534 32.777C43.0709 32.8052 43.0878 32.8338 43.104 32.8629L41.3563 33.8352C43.104 32.8629 43.1038 32.8626 43.104 32.8629L43.1051 32.865L43.1065 32.8675L43.1101 32.8739L43.1199 32.8918C43.1276 32.906 43.1377 32.9246 43.1497 32.9473C43.1738 32.9925 43.2062 33.0545 43.244 33.1299C43.319 33.2792 43.4196 33.489 43.5217 33.7317C43.6901 34.1321 44 34.9311 44 35.7391C44 37.4427 43.003 38.7775 41.8558 39.7209C40.6947 40.6757 39.1354 41.4464 37.385 42.0552C33.8654 43.2794 29.133 44 24 44C18.867 44 14.1346 43.2794 10.615 42.0552C8.86463 41.4464 7.30529 40.6757 6.14419 39.7209C4.99695 38.7775 3.99999 37.4427 3.99999 35.7391C3.99999 34.8725 4.29264 34.0922 4.49321 33.6393C4.60375 33.3898 4.71348 33.1804 4.79687 33.0311C4.83898 32.9556 4.87547 32.8935 4.9035 32.8471C4.91754 32.8238 4.92954 32.8043 4.93916 32.7889L4.94662 32.777L4.95178 32.7688ZM35.9868 29.004L24 9.77997L12.0131 29.004C12.4661 28.8609 12.9179 28.7342 13.3617 28.6282C16.4281 27.8961 20.0901 27.4783 24 27.4783C27.9099 27.4783 31.5719 27.8961 34.6383 28.6282C35.082 28.7342 35.5339 28.8609 35.9868 29.004Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-slate-800 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Sistema de Reciclaje</h2>
+</div>
+<div class="flex flex-1 justify-end gap-2 sm:gap-4">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-primary/20 text-slate-800 dark:bg-primary/30 dark:text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-primary/20 text-slate-800 dark:bg-primary/30 dark:text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Avatar de usuario" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAyJZWovxWrhgv8_qvdwlkF_yMl1X6F3flGKQ9ZJqmqaH-w0dNLyyQNFSb_yg6V1CVPbNSpzuG9gLApATk3RxpKQarQD26K9lldzdnS5bmKEjDk6evuvT8En9BoP-7KFkyzN1_QQYmy4lS6BZCyiHvhdKqutX37lGy2qv-FRojTxm1AQgtA9R-cJKpTU5EmuSO2XNzPakvcrOoAV5r6m0PfDrbV1vfrDz0EeXM1d90pbNcoyPT6_3qv2CmRJ5Gwj9M6rX2DU6__pw");'></div>
+</div>
+</div>
+</header>
+<main class="layout-container flex h-full grow flex-col">
+<div class="px-4 sm:px-8 lg:px-16 xl:px-24 flex flex-1 justify-center py-5 sm:py-10">
+<div class="layout-content-container flex flex-col w-full max-w-4xl flex-1 bg-white dark:bg-black/20 rounded-xl shadow-lg shadow-primary/10 dark:shadow-black/50 overflow-hidden">
+<div class="flex flex-col p-6 sm:p-8">
+<p class="text-slate-900 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">Resumen de Compra</p>
+<p class="text-slate-600 dark:text-slate-300 text-base font-normal leading-normal pt-2">Proveedor: Juan Pérez</p>
+</div>
+<div class="px-6 sm:px-8 py-3 @container">
+<div class="overflow-hidden rounded-lg border border-primary/20 bg-background-light dark:bg-background-dark/50">
+<div class="overflow-x-auto">
+<table class="w-full min-w-[600px] text-left">
+<thead>
+<tr class="bg-primary/10 dark:bg-primary/20">
+<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal">Material</th>
+<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Peso (kg)</th>
+<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Desc. Suciedad (%)</th>
+<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Subtotal</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/20">
+<tr>
+<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">PET Botellas</td>
+<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">150.5</td>
+<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">5%</td>
+<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal text-right">$ 1,250.00</td>
+</tr>
+<tr>
+<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">Cartón Corrugado</td>
+<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">220.0</td>
+<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">10%</td>
+<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal text-right">$ 990.00</td>
+</tr>
+<tr>
+<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">Aluminio Latas</td>
+<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">75.8</td>
+<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">2%</td>
+<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal text-right">$ 2,130.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="px-6 sm:px-8 mt-4">
+<div class="flex justify-end gap-x-6 py-4 border-t-2 border-dashed border-primary/20">
+<p class="text-slate-700 dark:text-slate-200 text-lg font-bold">Total General</p>
+<p class="text-slate-900 dark:text-white text-lg font-black text-right min-w-[120px]">$ 4,370.00</p>
+</div>
+</div>
+<div class="p-6 sm:p-8 mt-auto flex flex-col sm:flex-row justify-end gap-3 border-t border-primary/20 bg-primary/5 dark:bg-black/20">
+<a href="Registro_nueva_compra.html"><button class="flex items-center justify-center gap-2 h-11 px-6 rounded-lg text-sm font-bold border border-primary/50 text-slate-700 dark:text-slate-200 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-base">edit</span>
+                            Editar Compra
+                        </button></a>
+<button class="flex items-center justify-center gap-2 h-11 px-6 rounded-lg text-sm font-bold bg-primary text-white hover:bg-opacity-90 transition-colors" onclick="window.location.href='Reciclaje_tablero_principal.html'">
+<span class="material-symbols-outlined text-base">check_circle</span>
+                            Confirmar Compra
+                        </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

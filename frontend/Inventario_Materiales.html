@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RecycleSys - Inventario</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#1dc962",
+              "background-light": "#f8fbfa",
+              "background-dark": "#112117",
+            },
+            fontFamily: {
+              "display": ["Work Sans", "Noto Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+      }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 dark:border-primary/10 px-6 md:px-10 lg:px-20 py-3 bg-background-light dark:bg-background-dark">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-6">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.8261 17.4264C16.7203 18.1174 20.2244 18.5217 24 18.5217C27.7756 18.5217 31.2797 18.1174 34.1739 17.4264C36.9144 16.7722 39.9967 15.2331 41.3563 14.1648L24.8486 40.6391C24.4571 41.267 23.5429 41.267 23.1514 40.6391L6.64374 14.1648C8.00331 15.2331 11.0856 16.7722 13.8261 17.4264Z" fill="currentColor"></path>
+<path clip-rule="evenodd" d="M39.998 12.236C39.9944 12.2537 39.9875 12.2845 39.9748 12.3294C39.9436 12.4399 39.8949 12.5741 39.8346 12.7175C39.8168 12.7597 39.7989 12.8007 39.7813 12.8398C38.5103 13.7113 35.9788 14.9393 33.7095 15.4811C30.9875 16.131 27.6413 16.5217 24 16.5217C20.3587 16.5217 17.0125 16.131 14.2905 15.4811C12.0012 14.9346 9.44505 13.6897 8.18538 12.8168C8.17384 12.7925 8.16216 12.767 8.15052 12.7408C8.09919 12.6249 8.05721 12.5114 8.02977 12.411C8.00356 12.3152 8.00039 12.2667 8.00004 12.2612C8.00004 12.261 8 12.2607 8.00004 12.2612C8.00004 12.2359 8.0104 11.9233 8.68485 11.3686C9.34546 10.8254 10.4222 10.2469 11.9291 9.72276C14.9242 8.68098 19.1919 8 24 8C28.8081 8 33.0758 8.68098 36.0709 9.72276C37.5778 10.2469 38.6545 10.8254 39.3151 11.3686C39.9006 11.8501 39.9857 12.1489 39.998 12.236ZM4.95178 15.2312L21.4543 41.6973C22.6288 43.5809 25.3712 43.5809 26.5457 41.6973L43.0534 15.223C43.0709 15.1948 43.0878 15.1662 43.104 15.1371L41.3563 14.1648C43.104 15.1371 43.1038 15.1374 43.104 15.1371L43.1051 15.135L43.1065 15.1325L43.1101 15.1261L43.1199 15.1082C43.1276 15.094 43.1377 15.0754 43.1497 15.0527C43.1738 15.0075 43.2062 14.9455 43.244 14.8701C43.319 14.7208 43.4196 14.511 43.5217 14.2683C43.6901 13.8679 44 13.0689 44 12.2609C44 10.5573 43.003 9.22254 41.8558 8.2791C40.6947 7.32427 39.1354 6.55361 37.385 5.94477C33.8654 4.72057 29.133 4 24 4C18.867 4 14.1346 4.72057 10.615 5.94478C8.86463 6.55361 7.30529 7.32428 6.14419 8.27911C4.99695 9.22255 3.99999 10.5573 3.99999 12.2609C3.99999 13.1275 4.29264 13.9078 4.49321 14.3607C4.60375 14.6102 4.71348 14.8196 4.79687 14.9689C4.83898 15.0444 4.87547 15.1065 4.9035 15.1529C4.91754 15.1762 4.92954 15.1957 4.93916 15.2111L4.94662 15.223L4.95178 15.2312ZM35.9868 18.996L24 38.22L12.0131 18.996C12.4661 19.1391 12.9179 19.2658 13.3617 19.3718C16.4281 20.1039 20.0901 20.5217 24 20.5217C27.9099 20.5217 31.5719 20.1039 34.6383 19.3718C35.082 19.2658 35.5339 19.1391 35.9868 18.996Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-slate-900 dark:text-slate-200 text-lg font-bold leading-tight tracking-[-0.015em]">RecycleSys</h2>
+</div>
+<div class="hidden md:flex flex-1 justify-center gap-8">
+<div class="flex items-center gap-9">
+<a href="Reciclaje_tablero_principal.html" class="text-slate-800 dark:text-slate-300 text-sm font-medium leading-normal" href="#">Dashboard</a>
+<a class="text-primary dark:text-primary text-sm font-bold leading-normal border-b-2 border-primary pb-1" href="#">Inventario</a>
+<a class="text-slate-800 dark:text-slate-300 text-sm font-medium leading-normal" href="Gestion_Ventas.html">Ventas</a>
+<a class="text-slate-800 dark:text-slate-300 text-sm font-medium leading-normal" href="Gestion_Compras.html">Compras</a>
+<a class="text-slate-800 dark:text-slate-300 text-sm font-medium leading-normal" href="#">Reportes</a>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 w-10 bg-primary/20 dark:bg-primary/10 text-slate-800 dark:text-slate-300 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0">
+<span class="material-symbols-outlined text-lg">notifications</span>
+</button>
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 w-10 bg-primary/20 dark:bg-primary/10 text-slate-800 dark:text-slate-300 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0">
+<span class="material-symbols-outlined text-lg">help</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Avatar de usuario" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCOKAUmjk29Adk37CFCnfUfp9glQQQm8WM51ppY1wXSY0gNJVZUu-0A6msY-TEXTsU0DcDkMUPUSzS6nyo4oeqqbh_wPBdzYr039css4dPsnXZEAVxamSIPieJBG8E6j-q_DQSiEqlUoHtur9bZgIbwnD1Ta_ERh41O3sQYuyh8KCfCzSluHybmIMsyjq6g6m1Kq7vIq3CV-SDUQMQUmqdbkEBip3EjQaLRN0x1BZVB-208bm6677TulU4u6-yVSgtzX5-oA4xbKQ");'></div>
+</div>
+</header>
+<main class="px-6 md:px-10 lg:px-20 flex flex-1 justify-center py-8">
+<div class="layout-content-container flex flex-col w-full max-w-7xl flex-1">
+<div class="flex flex-wrap justify-between gap-4 p-4 items-center">
+<div class="flex min-w-72 flex-col gap-2">
+<p class="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Inventario de Materiales Reciclados</p>
+<p class="text-primary dark:text-primary/80 text-base font-normal leading-normal">Gestiona, añade y actualiza el inventario de materiales.</p>
+</div>
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-primary text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-4 hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">add</span>
+<span class="truncate">Añadir Nuevo Producto</span>
+</button>
+</div>
+<div class="flex flex-col md:flex-row justify-between gap-4 p-4">
+<div class="flex-1">
+<label class="flex flex-col min-w-40 h-12 w-full">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-500 dark:text-slate-400 flex border-none bg-primary/10 dark:bg-primary/5 items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border-none bg-primary/10 dark:bg-primary/5 h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Buscar por nombre de material..." value=""/>
+</div>
+</label>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex h-12 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/10 dark:bg-primary/5 px-4 text-slate-800 dark:text-slate-300 hover:bg-primary/20 dark:hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-lg">filter_list</span>
+<p class="text-sm font-medium leading-normal">Filtros</p>
+</button>
+<button class="flex h-12 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/10 dark:bg-primary/5 px-4 text-slate-800 dark:text-slate-300 hover:bg-primary/20 dark:hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-lg">swap_vert</span>
+<p class="text-sm font-medium leading-normal">Ordenar</p>
+</button>
+<button class="flex h-12 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/10 dark:bg-primary/5 px-4 text-slate-800 dark:text-slate-300 hover:bg-primary/20 dark:hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-lg">download</span>
+<p class="text-sm font-medium leading-normal">Exportar</p>
+</button>
+</div>
+</div>
+<div class="px-4 py-2">
+<div class="flex gap-3 overflow-x-auto pb-2">
+<div class="flex h-8 items-center justify-center gap-x-2 rounded-full bg-primary/20 dark:bg-primary/10 pl-3 pr-2 text-slate-800 dark:text-slate-300">
+<p class="text-sm font-medium leading-normal">Categoría: Plástico</p>
+<button class="p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10"><span class="material-symbols-outlined text-base">close</span></button>
+</div>
+<div class="flex h-8 items-center justify-center gap-x-2 rounded-full bg-primary/20 dark:bg-primary/10 pl-3 pr-2 text-slate-800 dark:text-slate-300">
+<p class="text-sm font-medium leading-normal">Stock: &gt; 100kg</p>
+<button class="p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10"><span class="material-symbols-outlined text-base">close</span></button>
+</div>
+<button class="text-sm font-medium leading-normal text-primary dark:text-primary/80 hover:underline">Limpiar filtros</button>
+</div>
+</div>
+<div class="p-4">
+<div class="overflow-x-auto bg-white dark:bg-background-dark rounded-lg border border-primary/20 dark:border-primary/10">
+<table class="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+<thead class="bg-primary/5 dark:bg-primary/10 text-xs uppercase text-slate-700 dark:text-slate-300">
+<tr>
+<th class="p-4 w-12" scope="col"><input class="form-checkbox rounded border-slate-400 text-primary focus:ring-primary/50" type="checkbox"/></th>
+<th class="px-6 py-3 font-semibold" scope="col">Nombre del Material</th>
+<th class="px-6 py-3 font-semibold" scope="col">Inventario</th>
+<th class="px-6 py-3 font-semibold" scope="col">Unidad</th>
+<th class="px-6 py-3 font-semibold" scope="col">Precio Sugerido</th>
+<th class="px-6 py-3 font-semibold text-center" scope="col">Acciones</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-primary/20 dark:border-primary/10 hover:bg-primary/5 dark:hover:bg-primary/5">
+<td class="p-4 w-12"><input class="form-checkbox rounded border-slate-400 text-primary focus:ring-primary/50" type="checkbox"/></td>
+<td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">Plástico PET (Botellas)</td>
+<td class="px-6 py-4">5,250</td>
+<td class="px-6 py-4">kg</td>
+<td class="px-6 py-4">$0.45 / kg</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center gap-2">
+<button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 rounded-full hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="border-b border-primary/20 dark:border-primary/10 hover:bg-primary/5 dark:hover:bg-primary/5">
+<td class="p-4 w-12"><input class="form-checkbox rounded border-slate-400 text-primary focus:ring-primary/50" type="checkbox"/></td>
+<td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">Cartón Corrugado</td>
+<td class="px-6 py-4">12,800</td>
+<td class="px-6 py-4">kg</td>
+<td class="px-6 py-4">$0.15 / kg</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center gap-2">
+<button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 rounded-full hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="border-b border-primary/20 dark:border-primary/10 hover:bg-primary/5 dark:hover:bg-primary/5">
+<td class="p-4 w-12"><input class="form-checkbox rounded border-slate-400 text-primary focus:ring-primary/50" type="checkbox"/></td>
+<td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">Aluminio (Latas)</td>
+<td class="px-6 py-4">1,500</td>
+<td class="px-6 py-4">kg</td>
+<td class="px-6 py-4">$1.20 / kg</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center gap-2">
+<button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 rounded-full hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="border-b border-primary/20 dark:border-primary/10 hover:bg-primary/5 dark:hover:bg-primary/5">
+<td class="p-4 w-12"><input class="form-checkbox rounded border-slate-400 text-primary focus:ring-primary/50" type="checkbox"/></td>
+<td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">Vidrio (Botellas)</td>
+<td class="px-6 py-4">8,450</td>
+<td class="px-6 py-4">kg</td>
+<td class="px-6 py-4">$0.05 / kg</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center gap-2">
+<button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 rounded-full hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 dark:hover:bg-primary/5">
+<td class="p-4 w-12"><input class="form-checkbox rounded border-slate-400 text-primary focus:ring-primary/50" type="checkbox"/></td>
+<td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">Papel de Oficina</td>
+<td class="px-6 py-4">20.5</td>
+<td class="px-6 py-4">tonelada</td>
+<td class="px-6 py-4">$80.00 / tonelada</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center gap-2">
+<button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 rounded-full hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 text-sm text-slate-600 dark:text-slate-400">
+<span>Mostrando 1-5 de 243 items</span>
+<div class="inline-flex items-center -space-x-px rounded-md text-sm">
+<button class="flex items-center justify-center px-3 h-8 leading-tight bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/10 rounded-l-lg hover:bg-primary/10 dark:hover:bg-primary/10">Anterior</button>
+<button class="flex items-center justify-center px-3 h-8 leading-tight bg-primary text-white border border-primary">1</button>
+<button class="flex items-center justify-center px-3 h-8 leading-tight bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/10 hover:bg-primary/10 dark:hover:bg-primary/10">2</button>
+<button class="flex items-center justify-center px-3 h-8 leading-tight bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/10 hover:bg-primary/10 dark:hover:bg-primary/10">3</button>
+<span class="flex items-center justify-center px-3 h-8 leading-tight bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/10">...</span>
+<button class="flex items-center justify-center px-3 h-8 leading-tight bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/10 hover:bg-primary/10 dark:hover:bg-primary/10">10</button>
+<button class="flex items-center justify-center px-3 h-8 leading-tight bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/10 rounded-r-lg hover:bg-primary/10 dark:hover:bg-primary/10">Siguiente</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

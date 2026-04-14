@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Informe de Ventas - ReciclaSys</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#005A9C",
+              "background-light": "#F4F7FA",
+              "background-dark": "#0A121A",
+              "card-light": "#FFFFFF",
+              "card-dark": "#111827",
+              "text-light": "#333333",
+              "text-dark": "#E5E7EB",
+              "text-muted-light": "#6B7280",
+              "text-muted-dark": "#9CA3AF",
+              "border-light": "#E5E7EB",
+              "border-dark": "#374151"
+            },
+            fontFamily: {
+              "display": ["Work Sans", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.5rem",
+              "lg": "0.75rem",
+              "xl": "1rem",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+      }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+<div class="relative flex min-h-screen w-full">
+<!-- SideNavBar -->
+<aside class="sticky top-0 h-screen w-64 flex-shrink-0 bg-card-light dark:bg-card-dark border-r border-border-light dark:border-border-dark hidden lg:flex flex-col">
+<div class="flex h-full flex-col justify-between p-4">
+<div class="flex flex-col gap-4">
+<div class="flex gap-3 items-center px-2 py-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="ReciclaSys company logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBULVjalT-A7VKSNuVN4CYnuk87P2ZTrFOm-2OoZNmyI2yavsaclrtDrOdhYu4xjUPlyznLFsIuRf8BZHmpBsZWfF42yWlIctDwUlhByYRr2q6V8XYioFx3kpBpAbDZ1NX5elrWglo83WiJBY691wsDhSoDtLxmlZGVm2xfg8D5wlvU7M-8i6PKbTPSWLoF229b45i0ukYf5ZSrmbWqIwm1SDXTCbGIuacXK33UfwvuYjgqcyF2awNCYr364hPgh5G94MwzDAa2Ew");'></div>
+<div class="flex flex-col">
+<h1 class="text-base font-bold leading-normal text-text-light dark:text-text-dark">ReciclaSys</h1>
+<p class="text-sm font-normal leading-normal text-text-muted-light dark:text-text-muted-dark">Gestión de Materiales</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2 mt-4">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10" href="Reciclaje_tablero_principal.html">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10" href="Gestion_Ventas.html">
+<span class="material-symbols-outlined">storefront</span>
+<p class="text-sm font-medium leading-normal">Ventas</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10" href="Gestion_Compras.html">
+<span class="material-symbols-outlined">shopping_cart</span>
+<p class="text-sm font-medium leading-normal">Compras</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assessment</span>
+<p class="text-sm font-bold leading-normal">Informes</p>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10" href="Gestion_configuracion.html">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-sm font-medium leading-normal">Ajustes</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<p class="text-sm font-medium leading-normal">Ayuda</p>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-6 lg:p-10">
+<div class="mx-auto max-w-7xl">
+<!-- PageHeading -->
+<div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+<div class="flex flex-col">
+<h1 class="text-3xl lg:text-4xl font-black leading-tight tracking-tight text-text-light dark:text-text-dark">Informe de Ventas</h1>
+<p class="text-base font-normal leading-normal text-text-muted-light dark:text-text-muted-dark">Genera informes detallados por período para analizar el rendimiento.</p>
+</div>
+<button class="flex items-center justify-center gap-2 min-w-[84px] cursor-pointer overflow-hidden rounded-lg h-11 px-5 bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark text-sm font-bold leading-normal tracking-[0.015em] border border-border-light dark:border-border-dark shadow-sm hover:bg-background-light dark:hover:bg-gray-800">
+<span class="material-symbols-outlined">download</span>
+<span class="truncate">Exportar</span>
+</button>
+</div>
+<!-- Controls Section -->
+<div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm mb-8">
+<h3 class="text-lg font-bold leading-tight tracking-[-0.015em] mb-4">Seleccionar Período</h3>
+<div class="flex flex-col sm:flex-row items-end gap-4">
+<label class="flex flex-col w-full sm:w-auto flex-1">
+<p class="text-sm font-medium leading-normal pb-2">Fecha de Inicio</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:border-primary h-12 px-3 text-base font-normal leading-normal" type="date" value="2023-10-01"/>
+</label>
+<label class="flex flex-col w-full sm:w-auto flex-1">
+<p class="text-sm font-medium leading-normal pb-2">Fecha de Fin</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:border-primary h-12 px-3 text-base font-normal leading-normal" type="date" value="2023-10-31"/>
+</label>
+<button class="flex min-w-[84px] w-full sm:w-auto cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90">
+<span class="truncate">Generar Informe</span>
+</button>
+</div>
+</div>
+<!-- Summary KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+<div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+<p class="text-sm font-medium text-text-muted-light dark:text-text-muted-dark mb-1">Ingresos Totales</p>
+<p class="text-3xl font-bold text-text-light dark:text-text-dark">$15,450.75</p>
+</div>
+<div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+<p class="text-sm font-medium text-text-muted-light dark:text-text-muted-dark mb-1">Volumen Total Vendido</p>
+<p class="text-3xl font-bold text-text-light dark:text-text-dark">8,250 kg</p>
+</div>
+<div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+<p class="text-sm font-medium text-text-muted-light dark:text-text-muted-dark mb-1">Material Más Vendido</p>
+<p class="text-3xl font-bold text-text-light dark:text-text-dark">PET (Plástico)</p>
+</div>
+</div>
+<!-- Visualization Section -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+<div class="xl:col-span-2 p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+<h4 class="text-lg font-bold mb-4">Tendencias de Venta</h4>
+<div class="w-full h-64 flex items-center justify-center bg-background-light dark:bg-background-dark rounded-lg">
+<img class="w-full h-full object-contain" data-alt="A line chart showing sales trends over the selected period, with dates on the x-axis and revenue on the y-axis." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEVdvpS5iYFgBHMmfxtrZjP3eRB5M0GnuLAdPBKgUY2fewNI3CpJDEjfNqpOp9a80klsGwuoXgbmfmVccm7jRPmMEQDLXxlRPhrnJJ9MbFcC_fTWxFOY623Ffw3_dgApNuWFdKYJDPYAaRklffNtQFS7lu0xwU4apkQRy15_FNpq9N5NNT3e4kCzZ4bCKf1Yux-wyZfWZP0o2FSwBQcDTVe9r7sEGvx2Z-JNk6jfQWq0HxZxdSIjbZU9Hlk3L0-w5v9zbx3PgMoA"/>
+</div>
+</div>
+<div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+<h4 class="text-lg font-bold mb-4">Ventas por Material</h4>
+<div class="w-full h-64 flex items-center justify-center bg-background-light dark:bg-background-dark rounded-lg">
+<img class="w-full h-full object-contain" data-alt="A donut chart showing the breakdown of sales by material type, with segments for PET, Cardboard, and Aluminum." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKfdHhFh82928NKbflGPJPG3LUDxEB6dTYtoJ-sxBcjqavr0E_AjQRJ2c69wMibCa22UdFqn0Z29soMEx_nub1F_v_fxspFuUR_dboBXvP4OBixtiuaQG5fuCew4Y5DFsFjXEFrR_Rg6jpfz9dlQrzsYE9XSj9RMEOldV4VSeYyJwgYho_nsJPa9kEnEoTS9LqG119_BOlpSx1bRy3xrAB9h2gE8Gu31auvuCSmEJb2iAsu1QAs99O8ZEbEV9lkmDQ24QqIcCifg"/>
+</div>
+</div>
+</div>
+<!-- Detailed Report Table -->
+<div class="bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden">
+<div class="p-6">
+<h3 class="text-lg font-bold">Detalle de Ventas</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm text-left">
+<thead class="bg-background-light dark:bg-background-dark text-xs uppercase text-text-muted-light dark:text-text-muted-dark">
+<tr>
+<th class="px-6 py-3 font-semibold" scope="col">Fecha</th>
+<th class="px-6 py-3 font-semibold" scope="col">Cliente</th>
+<th class="px-6 py-3 font-semibold" scope="col">Material</th>
+<th class="px-6 py-3 font-semibold text-right" scope="col">Cantidad (kg)</th>
+<th class="px-6 py-3 font-semibold text-right" scope="col">Ingreso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-border-light dark:border-border-dark">
+<td class="px-6 py-4">2023-10-28</td>
+<td class="px-6 py-4 font-medium">EcoIndustrias S.A.</td>
+<td class="px-6 py-4">PET</td>
+<td class="px-6 py-4 text-right">1,200</td>
+<td class="px-6 py-4 text-right font-medium">$2,400.00</td>
+</tr>
+<tr class="border-b border-border-light dark:border-border-dark">
+<td class="px-6 py-4">2023-10-27</td>
+<td class="px-6 py-4 font-medium">Reciclajes del Norte</td>
+<td class="px-6 py-4">Cartón</td>
+<td class="px-6 py-4 text-right">2,500</td>
+<td class="px-6 py-4 text-right font-medium">$1,750.50</td>
+</tr>
+<tr class="border-b border-border-light dark:border-border-dark">
+<td class="px-6 py-4">2023-10-27</td>
+<td class="px-6 py-4 font-medium">Aluminios Modernos</td>
+<td class="px-6 py-4">Aluminio</td>
+<td class="px-6 py-4 text-right">550</td>
+<td class="px-6 py-4 text-right font-medium">$3,300.25</td>
+</tr>
+<tr class="border-b border-border-light dark:border-border-dark">
+<td class="px-6 py-4">2023-10-25</td>
+<td class="px-6 py-4 font-medium">EcoIndustrias S.A.</td>
+<td class="px-6 py-4">PET</td>
+<td class="px-6 py-4 text-right">950</td>
+<td class="px-6 py-4 text-right font-medium">$1,900.00</td>
+</tr>
+<tr>
+<td class="px-6 py-4">2023-10-24</td>
+<td class="px-6 py-4 font-medium">Reciclajes del Norte</td>
+<td class="px-6 py-4">Cartón</td>
+<td class="px-6 py-4 text-right">3,050</td>
+<td class="px-6 py-4 text-right font-medium">$2,135.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

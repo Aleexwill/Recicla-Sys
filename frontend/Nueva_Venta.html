@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Registrar Nueva Venta - RecycleSys</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#2E7D32", // Verde ecológico y profesional
+            "primary-light": "rgba(46, 125, 50, 0.1)", // Verde claro para fondos
+            "background-light": "#F7F9FC", // Gris muy claro
+            "background-dark": "#112117",
+            "text-light": "#263238", // Gris oscuro para texto
+            "text-dark": "#E0E0E0",
+            "border-light": "#B0BEC5", // Gris medio para bordes
+            "border-dark": "#455A64",
+            "card-light": "#FFFFFF",
+            "card-dark": "#1E2B23",
+            "danger": "#E57373", // Rojo suave para eliminar/error
+            "info": "#42A5F5" // Azul informativo
+          },
+          fontFamily: {
+            "display": ["Work Sans", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem", // Aumentado para un look más moderno
+            "lg": "0.75rem",
+            "xl": "1rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<div class="flex min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="w-64 flex-shrink-0 bg-card-light dark:bg-card-dark p-4 flex flex-col justify-between border-r border-border-light/20 dark:border-border-dark/20">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-primary rounded-lg p-2 flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-size: 24px;">recycling</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-text-light dark:text-text-dark text-base font-bold leading-normal">RecycleSys</h1>
+<p class="text-primary text-sm font-normal leading-normal">Gestión de Reciclados</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 text-text-light dark:text-text-dark hover:bg-primary-light dark:hover:bg-primary/20 rounded-lg transition-colors" href="Reciclaje_tablero_principal.html">
+<span class="material-symbols-outlined text-text-light/80 dark:text-text-dark/80" style="font-size: 24px;">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary-light dark:bg-primary/20" href="#">
+<span class="material-symbols-outlined text-primary" style="font-size: 24px;">north_east</span>
+<p class="text-primary text-sm font-bold leading-normal">Ventas</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-text-light dark:text-text-dark hover:bg-primary-light dark:hover:bg-primary/20 rounded-lg transition-colors" href="Gestion_Compras.html">
+<span class="material-symbols-outlined text-text-light/80 dark:text-text-dark/80" style="font-size: 24px;">south_west</span>
+<p class="text-sm font-medium leading-normal">Compras</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-text-light dark:text-text-dark hover:bg-primary-light dark:hover:bg-primary/20 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-text-light/80 dark:text-text-dark/80" style="font-size: 24px;">group</span>
+<p class="text-sm font-medium leading-normal">Clientes</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-text-light dark:text-text-dark hover:bg-primary-light dark:hover:bg-primary/20 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-text-light/80 dark:text-text-dark/80" style="font-size: 24px;">leaderboard</span>
+<p class="text-sm font-medium leading-normal">Reportes</p>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 text-text-light dark:text-text-dark hover:bg-primary-light dark:hover:bg-primary/20 rounded-lg transition-colors" href="Gestion_configuracion.html">
+<span class="material-symbols-outlined text-text-light/80 dark:text-text-dark/80" style="font-size: 24px;">settings</span>
+<p class="text-sm font-medium leading-normal">Configuración</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-text-light dark:text-text-dark hover:bg-primary-light dark:hover:bg-primary/20 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-text-light/80 dark:text-text-dark/80" style="font-size: 24px;">help</span>
+<p class="text-sm font-medium leading-normal">Ayuda</p>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-6 lg:p-10">
+<div class="max-w-7xl mx-auto">
+<!-- PageHeading Component -->
+<header class="flex flex-wrap justify-between items-center gap-4 mb-8">
+<div class="flex flex-col gap-1">
+<h1 class="text-text-light dark:text-text-dark text-3xl font-bold leading-tight tracking-tight">Registrar Nueva Venta</h1>
+<p class="text-text-light/70 dark:text-text-dark/70 text-base font-normal leading-normal">Completa los detalles para crear una nueva transacción de venta.</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center justify-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark text-text-light dark:text-text-dark hover:bg-background-light/80 dark:hover:bg-background-dark/80">
+              Guardar como Borrador
+            </button>
+<button class="flex items-center justify-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark text-text-light dark:text-text-dark hover:bg-background-light/80 dark:hover:bg-background-dark/80">
+<span class="material-symbols-outlined" style="font-size: 20px;">local_shipping</span>
+              Iniciar Tránsito
+            </button>
+<button class="flex items-center justify-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary/90">
+<span class="material-symbols-outlined" style="font-size: 20px;">check_circle</span>
+              Confirmar Venta
+            </button>
+</div>
+</header>
+<!-- Form Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 flex flex-col gap-6">
+<!-- Sale Data Card -->
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-border-light/20 dark:border-border-dark/20">
+<h2 class="text-text-light dark:text-text-dark text-xl font-bold leading-tight tracking-tight mb-5">Datos de la Venta</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+<div class="flex flex-col min-w-40 flex-1">
+<p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal pb-2">Buscar Cliente</p>
+<div class="flex items-center gap-2">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-light/50 dark:text-text-dark/50" style="font-size: 20px;">search</span>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-12 placeholder:text-text-light/50 dark:placeholder:text-text-dark/50 pl-10 pr-4 py-3 text-base font-normal leading-normal" placeholder="Nombre o ID del cliente..." value=""/>
+</div>
+<button class="flex-shrink-0 flex items-center justify-center size-12 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal pb-2">Fecha de Venta</p>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-light/50 dark:text-text-dark/50" style="font-size: 20px;">calendar_today</span>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-12 placeholder:text-text-light/50 dark:placeholder:text-text-dark/50 pl-10 pr-4 py-3 text-base font-normal leading-normal" type="date" value="2023-10-27"/>
+</div>
+</label>
+<div class="md:col-span-2">
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal pb-2">Referencia / N° de Orden (Opcional)</p>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-12 placeholder:text-text-light/50 dark:placeholder:text-text-dark/50 px-4 py-3 text-base font-normal leading-normal" placeholder="Ej. ORD-00123" value=""/>
+</label>
+</div>
+</div>
+</div>
+<!-- Materials Card -->
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-border-light/20 dark:border-border-dark/20">
+<h2 class="text-text-light dark:text-text-dark text-xl font-bold leading-tight tracking-tight mb-5">Detalle de Materiales</h2>
+<!-- Add Item Form -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end mb-6 p-4 bg-background-light dark:bg-background-dark rounded-lg border border-border-light/20 dark:border-border-dark/20">
+<label class="flex flex-col flex-1 col-span-12 md:col-span-4">
+<p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Material</p>
+<select class="form-select flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark h-12 px-3 text-base font-normal">
+<option>Seleccionar...</option>
+<option>PET (Plástico)</option>
+<option>Cartón</option>
+<option>Aluminio</option>
+<option>Vidrio</option>
+</select>
+</label>
+<label class="flex flex-col flex-1 col-span-6 md:col-span-2">
+<p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Cantidad (Kg)</p>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark h-12 px-3 text-base font-normal" placeholder="0.00" type="number"/>
+</label>
+<label class="flex flex-col flex-1 col-span-6 md:col-span-3">
+<p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Precio Unitario ($)</p>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark h-12 px-3 text-base font-normal" placeholder="0.00" type="number"/>
+</label>
+<div class="col-span-12 md:col-span-3">
+<button class="w-full flex items-center justify-center gap-2 h-12 px-4 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary/90">
+<span class="material-symbols-outlined" style="font-size: 20px;">add</span>
+                      Añadir a la Venta
+                    </button>
+</div>
+</div>
+<!-- Items Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-sm text-left">
+<thead class="text-xs text-text-light/60 dark:text-text-dark/60 uppercase bg-background-light dark:bg-background-dark">
+<tr>
+<th class="px-6 py-3 rounded-l-lg" scope="col">Material</th>
+<th class="px-6 py-3 text-right" scope="col">Cantidad (Kg)</th>
+<th class="px-6 py-3 text-right" scope="col">Precio Unitario</th>
+<th class="px-6 py-3 text-right" scope="col">Subtotal</th>
+<th class="px-6 py-3 text-center rounded-r-lg" scope="col"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="bg-card-light dark:bg-card-dark border-b border-border-light/20 dark:border-border-dark/20">
+<td class="px-6 py-4 font-medium whitespace-nowrap">PET (Plástico)</td>
+<td class="px-6 py-4 text-right">150.00</td>
+<td class="px-6 py-4 text-right">$0.25</td>
+<td class="px-6 py-4 text-right font-semibold">$37.50</td>
+<td class="px-6 py-4 text-center">
+<button class="text-danger/70 hover:text-danger"><span class="material-symbols-outlined" style="font-size: 20px;">delete</span></button>
+</td>
+</tr>
+<tr class="bg-card-light dark:bg-card-dark border-b border-border-light/20 dark:border-border-dark/20">
+<td class="px-6 py-4 font-medium whitespace-nowrap">Aluminio</td>
+<td class="px-6 py-4 text-right">75.50</td>
+<td class="px-6 py-4 text-right">$1.20</td>
+<td class="px-6 py-4 text-right font-semibold">$90.60</td>
+<td class="px-6 py-4 text-center">
+<button class="text-danger/70 hover:text-danger"><span class="material-symbols-outlined" style="font-size: 20px;">delete</span></button>
+</td>
+</tr>
+<tr class="bg-card-light dark:bg-card-dark">
+<td class="px-6 py-4 font-medium whitespace-nowrap">Cartón</td>
+<td class="px-6 py-4 text-right">320.00</td>
+<td class="px-6 py-4 text-right">$0.08</td>
+<td class="px-6 py-4 text-right font-semibold">$25.60</td>
+<td class="px-6 py-4 text-center">
+<button class="text-danger/70 hover:text-danger"><span class="material-symbols-outlined" style="font-size: 20px;">delete</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Summary Column -->
+<div class="lg:col-span-1 flex flex-col gap-6">
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-border-light/20 dark:border-border-dark/20 sticky top-10">
+<h2 class="text-text-light dark:text-text-dark text-xl font-bold leading-tight tracking-tight mb-5">Resumen de la Venta</h2>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-base">
+<span class="text-text-light/70 dark:text-text-dark/70">Subtotal</span>
+<span class="font-medium">$153.70</span>
+</div>
+<div class="flex justify-between items-center text-base">
+<span class="text-text-light/70 dark:text-text-dark/70">Descuento</span>
+<input class="form-input w-24 h-9 text-right rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-base font-medium" placeholder="$0.00" type="text" value="-$10.00"/>
+</div>
+<div class="border-t border-dashed border-border-light dark:border-border-dark my-4"></div>
+<div class="flex justify-between items-center text-2xl font-bold">
+<span class="text-primary">Total General</span>
+<span class="text-primary">$143.70</span>
+</div>
+</div>
+<div class="mt-6">
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal pb-2">Notas (Opcional)</p>
+<textarea class="form-textarea flex w-full min-w-0 flex-1 resize-y overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-28 placeholder:text-text-light/50 dark:placeholder:text-text-dark/50 p-3 text-base font-normal leading-normal" placeholder="Añadir observaciones sobre la venta..."></textarea>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

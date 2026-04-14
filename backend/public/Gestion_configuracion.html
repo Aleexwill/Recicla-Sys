@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Configuraciones Generales - Sistema Recicla</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#27AE60",
+                        "background-light": "#F8F9FA",
+                        "background-dark": "#112117",
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#1A2E23",
+                        "text-light": "#343A40",
+                        "text-dark": "#E8E8E8",
+                        "text-subtle-light": "#ADB5BD",
+                        "text-subtle-dark": "#A0A0A0",
+                        "border-light": "#E9ECEF",
+                        "border-dark": "#34453C"
+                    },
+                    fontFamily: {
+                        "display": ["Work Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings:
+            'FILL' 1,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<div class="relative flex min-h-screen w-full flex-col">
+<div class="flex h-full grow flex-row">
+<aside class="flex w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
+<div class="flex h-full flex-col justify-between">
+<div class="flex flex-col gap-6">
+<div class="flex items-center gap-3 px-2">
+<img class="h-10 w-10 rounded-full" data-alt="Green recycling symbol logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCesfDS6jENPBNrig4zZoF9DauKv2RutapuYVuTW7WXTCMjELWjbANZTdNApSr2zcFxOqtdQsbJloG2tKQofC34oM4MjUteCzprqW2dSzIp-NpNsjsXBZLfa4sR8H-XziMHAPqwRzF7rJIbC2ho-eVlGb8CVL1qhe0YGybU4nQRXLrAyEl9ZfQnkxglKeI6L2kMeCMr3x7RL4uvStvRMlY1H6Hr9K8MBENhakLYvgMKx-X4nDx3XZo68FgJlxpdiXRFHDJhOBBFA"/>
+<div class="flex flex-col">
+<h1 class="text-base font-bold text-text-light dark:text-text-dark">Sistema Recicla</h1>
+<p class="text-sm font-normal text-primary">Administración</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a href="Reciclaje_tablero_principal.html" class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-light dark:text-text-dark transition-colors hover:bg-primary/10" href="#">
+<span class="material-symbols-outlined text-text-light dark:text-text-dark">dashboard</span>
+<p class="text-sm font-medium">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-light dark:text-text-dark transition-colors hover:bg-primary/10" href="#">
+<span class="material-symbols-outlined text-text-light dark:text-text-dark">receipt_long</span>
+<p class="text-sm font-medium">Transacciones</p>
+</a>
+<a href="Inventario_Materiales.html"  class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-light dark:text-text-dark transition-colors hover:bg-primary/10" href="#">
+<span class="material-symbols-outlined text-text-light dark:text-text-dark">inventory_2</span>
+<p class="text-sm font-medium">Inventario</p>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-light dark:text-text-dark transition-colors hover:bg-primary/10" href="#">
+<span class="material-symbols-outlined text-text-light dark:text-text-dark">group</span>
+<p class="text-sm font-medium">Clientes</p>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 rounded-lg bg-primary/20 px-3 py-2 text-primary transition-colors" href="#">
+<span class="material-symbols-outlined fill text-primary">settings</span>
+<p class="text-sm font-medium">Configuraciones</p>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-subtle-light dark:text-text-subtle-dark transition-colors hover:bg-red-500/10 hover:text-red-500" href="Login.html">
+<span class="material-symbols-outlined">logout</span>
+<p class="text-sm font-medium">Cerrar Sesión</p>
+</a>
+</div>
+</div>
+</aside>
+<main class="flex-1 overflow-y-auto p-6 lg:p-10">
+<div class="mx-auto max-w-5xl">
+<header class="mb-8 flex flex-col gap-2">
+<h1 class="text-3xl font-bold tracking-tight text-text-light dark:text-text-dark">Configuración del Sistema</h1>
+<p class="text-base text-text-subtle-light dark:text-text-subtle-dark">Selecciona una categoría para gestionar sus ajustes.</p>
+</header>
+<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+<a class="group flex flex-col gap-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-6 shadow-sm transition-all hover:border-primary/50 hover:shadow-lg dark:hover:border-primary/50" href="#">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+<span class="material-symbols-outlined !text-3xl">bar_chart</span>
+</div>
+<div class="flex flex-col">
+<h2 class="text-lg font-bold text-text-light dark:text-text-dark">Reportes</h2>
+<p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Ajustar parámetros de informes</p>
+</div>
+</a>
+<a class="group flex flex-col gap-4 rounded-xl border-2 border-primary bg-primary/5 dark:bg-primary/10 p-6 shadow-lg transition-all hover:shadow-xl" href="Gestion_usuarios.html">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined !text-3xl">group</span>
+</div>
+<div class="flex flex-col">
+<h2 class="text-lg font-bold text-primary">Usuarios</h2>
+<p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Gestionar cuentas y perfiles</p>
+</div>
+</a>
+<a class="group flex flex-col gap-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-6 shadow-sm transition-all hover:border-primary/50 hover:shadow-lg dark:hover:border-primary/50" href="#">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+<span class="material-symbols-outlined !text-3xl">inventory_2</span>
+</div>
+<div class="flex flex-col">
+<h2 class="text-lg font-bold text-text-light dark:text-text-dark">Productos</h2>
+<p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Configurar opciones de materiales</p>
+</div>
+</a>
+<a class="group flex flex-col gap-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-6 shadow-sm transition-all hover:border-primary/50 hover:shadow-lg dark:hover:border-primary/50" href="#">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+<span class="material-symbols-outlined !text-3xl">verified_user</span>
+</div>
+<div class="flex flex-col">
+<h2 class="text-lg font-bold text-text-light dark:text-text-dark">Roles</h2>
+<p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Definir y asignar permisos</p>
+</div>
+</a>
+</div>
+<div class="mt-12">
+<header class="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-border-light dark:border-border-dark pb-4">
+<div class="flex flex-col gap-1">
+<h3 class="text-2xl font-bold tracking-tight text-text-light dark:text-text-dark">Configuración de Usuarios</h3>
+<p class="text-base text-text-subtle-light dark:text-text-subtle-dark">Gestiona ajustes de cuentas y perfiles de los usuarios del sistema.</p>
+</div>
+<div class="flex gap-2">
+<a href="Configuracion_usuario.html"><button class="flex h-10 items-center justify-center rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-4 text-sm font-medium text-text-light dark:text-text-dark shadow-sm transition-colors hover:bg-gray-100 dark:hover:bg-white/5">Ir a Configuración</button></a>
+<button class="flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">Guardar Cambios</button>
+</div>
+</header>
+<div class="flex flex-col gap-8">
+<section class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
+<h4 class="border-b border-border-light dark:border-border-dark px-6 py-4 text-lg font-bold text-text-light dark:text-text-dark">Políticas de Contraseña</h4>
+<div class="divide-y divide-border-light dark:divide-border-dark p-2">
+<div class="flex min-h-[72px] items-center justify-between gap-4 px-4 py-3">
+<div class="flex items-center gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined">pin</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="font-medium text-text-light dark:text-text-dark">Largo mínimo de contraseña</p>
+<p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Establece el número mínimo de caracteres requeridos.</p>
+</div>
+</div>
+<div class="shrink-0">
+<div class="flex items-center gap-2 text-text-light dark:text-text-dark">
+<button class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200/50 dark:bg-white/10 text-xl font-light cursor-pointer hover:bg-gray-200 dark:hover:bg-white/20">-</button>
+<input class="w-8 border-none bg-transparent p-0 text-center font-medium focus:outline-none focus:ring-0 [appearance:textfield] [&amp;::-webkit-inner-spin-button]:appearance-none [&amp;::-webkit-outer-spin-button]:appearance-none" type="number" value="8"/>
+<button class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200/50 dark:bg-white/10 text-xl font-light cursor-pointer hover:bg-gray-200 dark:hover:bg-white/20">+</button>
+</div>
+</div>
+</div>
+<div class="flex min-h-[72px] items-center justify-between gap-4 px-4 py-3">
+<div class="flex items-center gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined">key</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="font-medium text-text-light dark:text-text-dark">Requerir caracteres especiales</p>
+<p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Forzar el uso de símbolos como @, #, $.</p>
+</div>
+</div>
+<div class="shrink-0">
+<button aria-checked="false" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:bg-gray-700" role="switch" type="button">
+<span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<section class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
+<h4 class="border-b border-border-light dark:border-border-dark px-6 py-4 text-lg font-bold text-text-light dark:text-text-dark">Preferencias de Cuenta</h4>
+<div class="divide-y divide-border-light dark:divide-border-dark p-2">
+<div class="flex min-h-[72px] items-center justify-between gap-4 px-4 py-3">
+<div class="flex items-center gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined">language</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="font-medium text-text-light dark:text-text-dark">Idioma por defecto</p>
+<p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Selecciona el idioma predeterminado para la interfaz.</p>
+</div>
+</div>
+<div class="shrink-0">
+<select class="rounded-lg border-border-light bg-background-light dark:border-border-dark dark:bg-surface-dark text-sm focus:border-primary focus:ring-primary">
+<option>Español</option>
+<option>English</option>
+<option>Português</option>
+</select>
+</div>
+</div>
+<div class="flex min-h-[72px] items-center justify-between gap-4 px-4 py-3">
+<div class="flex items-center gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined">notifications_active</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="font-medium text-text-light dark:text-text-dark">Activar notificaciones por email</p>
+<p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Enviar alertas importantes a los correos de los usuarios.</p>
+</div>
+</div>
+<div class="shrink-0">
+<button aria-checked="true" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" role="switch" type="button">
+<span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-5"></span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

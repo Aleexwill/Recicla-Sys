@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Módulo de Ventas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1dc962",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                        "text-light": "#0e1b13",
+                        "text-dark": "#e8f3ec",
+                        "card-light": "#ffffff",
+                        "card-dark": "#1a2e22"
+                    },
+                    fontFamily: {
+                        "display": ["Work Sans", "Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center p-4">
+<div class="w-full max-w-lg rounded-xl border border-primary/20 bg-card-light p-8 shadow-sm dark:bg-card-dark dark:border-primary/30">
+<div class="flex flex-col items-center text-center">
+<div class="mb-8">
+<h1 class="text-4xl font-black leading-tight tracking-[-0.033em] text-text-light dark:text-text-dark">Módulo de Ventas</h1>
+<p class="mt-2 text-base font-normal leading-normal text-primary">Seleccione una opción para comenzar</p>
+</div>
+<div class="flex w-full flex-col items-stretch gap-4">
+<a href="Nueva_Venta.html"><button class="group flex min-w-[84px] cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-lg bg-primary px-5 py-4 text-left shadow-sm transition-transform duration-200 ease-in-out hover:scale-[1.02] w-full">
+<span class="material-symbols-outlined text-3xl text-text-light">add_shopping_cart</span>
+<div class="flex flex-1 flex-col">
+<span class="truncate text-base font-bold leading-normal tracking-[0.015em] text-text-light">Nueva Venta</span>
+<span class="truncate text-sm font-normal text-text-light/80">Registrar una nueva transacción de venta.</span>
+</div>
+</button>
+<a href="Listado_Ventas.html"><button class="group flex min-w-[84px] cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-lg border border-primary/20 bg-primary/10 px-5 py-4 text-left transition-transform duration-200 ease-in-out hover:scale-[1.02] hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:hover:bg-primary/30 w-full">
+<span class="material-symbols-outlined text-3xl text-text-light dark:text-text-dark">receipt_long</span>
+<div class="flex flex-1 flex-col">
+<span class="truncate text-base font-bold leading-normal tracking-[0.015em] text-text-light dark:text-text-dark">Listado de Ventas</span>
+<span class="truncate text-sm font-normal text-text-light/80 dark:text-text-dark/80">Consultar el historial completo de ventas.</span>
+</div>
+</button>
+<a href="Resumen_ventas.html"><button class="group flex min-w-[84px] cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-lg border border-primary/20 bg-primary/10 px-5 py-4 text-left transition-transform duration-200 ease-in-out hover:scale-[1.02] hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:hover:bg-primary/30 w-full">
+<span class="material-symbols-outlined text-3xl text-text-light dark:text-text-dark">summarize</span>
+<div class="flex flex-1 flex-col">
+<span class="truncate text-base font-bold leading-normal tracking-[0.015em] text-text-light dark:text-text-dark">Resumen de Ventas por Día</span>
+<span class="truncate text-sm font-normal text-text-light/80 dark:text-text-dark/80">Ver el reporte y cierre de caja del día.</span>
+</div>
+</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

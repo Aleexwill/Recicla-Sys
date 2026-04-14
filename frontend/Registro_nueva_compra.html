@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Registrar Nueva Compra</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1dc962",
+            "background-light": "#f6f8f7",
+            "background-dark": "#112117",
+          },
+          fontFamily: {
+            "display": ["Work Sans", "Noto Sans", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#0e1b13] dark:text-gray-200">
+<div class="relative flex min-h-screen w-full flex-col group/design-root" style='font-family: "Work Sans", "Noto Sans", sans-serif;'>
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-4 sm:px-8 md:px-12 lg:px-20 xl:px-40 flex flex-1 justify-center py-10">
+<div class="layout-content-container flex flex-col w-full max-w-7xl flex-1">
+<div class="flex flex-wrap justify-between gap-3 p-4">
+<div class="flex min-w-72 flex-col gap-3">
+<p class="text-[#0e1b13] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Registrar Nueva Compra</p>
+<p class="text-[#50956c] dark:text-primary/70 text-base font-normal leading-normal">Añade materiales a la compra actual usando el formulario.</p>
+</div>
+</div>
+<div class="flex flex-col lg:flex-row gap-8 mt-8 p-4">
+<!-- Left Side: Form -->
+<div class="w-full lg:w-2/5 flex flex-col gap-6">
+<div class="p-6 rounded-xl bg-white dark:bg-background-dark/50 border border-[#d1e6d9] dark:border-gray-700">
+<h2 class="text-[#0e1b13] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-5">Añadir Material</h2>
+<div class="flex flex-col gap-4">
+<label class="flex flex-col w-full">
+<p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Material</p>
+<select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal appearance-none bg-[url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724px%27 height=%2724px%27 fill=%27rgb(80,149,108)%27 viewBox=%270 0 256 256%27%3e%3cpath d=%27M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z%27%3e%3c/path%3e%3c/svg%3e')] bg-no-repeat bg-right-4">
+<option>Busca o selecciona un material</option>
+<option value="pet">PET Cristal</option>
+<option value="carton">Cartón</option>
+<option value="aluminio">Aluminio</option>
+</select>
+</label>
+<div class="flex flex-col sm:flex-row gap-4">
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Peso (kg)</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" placeholder="Ej: 25.5" step="0.1" type="number"/>
+</label>
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Descuento por suciedad (%)</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" placeholder="Ej: 10" step="1" type="number"/>
+</label>
+</div>
+</div>
+<div class="flex pt-6 justify-start">
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-[#0e1b13] gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined">add</span>
+<span class="truncate">Añadir Material</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Right Side: List -->
+<div class="w-full lg:w-3/5 flex flex-col">
+<div class="p-6 rounded-xl bg-white dark:bg-background-dark/50 border border-[#d1e6d9] dark:border-gray-700 h-full">
+<h2 class="text-[#0e1b13] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-5">Materiales en esta compra</h2>
+<div class="hidden sm:grid grid-cols-[3fr_1fr_1fr_auto] gap-4 pb-3 border-b border-[#d1e6d9] dark:border-gray-700">
+<p class="text-[#50956c] dark:text-primary/70 text-sm font-semibold">Material</p>
+<p class="text-[#50956c] dark:text-primary/70 text-sm font-semibold text-right">Peso</p>
+<p class="text-[#50956c] dark:text-primary/70 text-sm font-semibold text-right">Descuento</p>
+<p class="text-[#50956c] dark:text-primary/70 text-sm font-semibold text-right"></p>
+</div>
+<div class="flex flex-col gap-2 mt-4">
+<!-- Example Item -->
+<div class="grid grid-cols-2 sm:grid-cols-[3fr_1fr_1fr_auto] gap-x-4 gap-y-2 items-center p-3 rounded-lg hover:bg-background-light dark:hover:bg-gray-800 transition-colors">
+<p class="col-span-2 sm:col-span-1 text-[#0e1b13] dark:text-white font-medium">PET Cristal</p>
+<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">25.5 kg</p>
+<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">10%</p>
+<button class="flex justify-self-end text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-[3fr_1fr_1fr_auto] gap-x-4 gap-y-2 items-center p-3 rounded-lg hover:bg-background-light dark:hover:bg-gray-800 transition-colors">
+<p class="col-span-2 sm:col-span-1 text-[#0e1b13] dark:text-white font-medium">Cartón</p>
+<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">150.2 kg</p>
+<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">5%</p>
+<button class="flex justify-self-end text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<!-- Empty State -->
+<!-- <div class="flex items-center justify-center text-center h-48">
+                    <p class="text-[#50956c]">Aún no has añadido materiales. Usa el formulario para empezar.</p>
+                  </div> -->
+</div>
+</div>
+</div>
+</div>
+<!-- Actions Section -->
+ <a href="Reciclaje_tablero_principal.html">
+<div class="flex flex-col sm:flex-row justify-end gap-4 mt-8 p-4 border-t border-[#d1e6d9] dark:border-gray-700">
+<button class="flex min-w-[84px] max-w-sm cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-transparent text-[#50956c] dark:text-primary/70 border border-[#d1e6d9] dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-base font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Cancelar Compra</span>
+</button>
+</a>
+<button class="flex min-w-[84px] max-w-sm cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-[#0e1b13] hover:bg-primary/90 transition-colors text-base font-bold leading-normal tracking-[0.015em] gap-2">
+<span class="truncate">Siguiente</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>
