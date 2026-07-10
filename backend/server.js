@@ -43,9 +43,16 @@ app.use((req, res) => {
 // =============================================
 // INICIAR SERVIDOR
 // =============================================
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`\n🌿 ReciclaS Backend corriendo en http://localhost:${PORT}`);
-  console.log(`📋 API disponible en http://localhost:${PORT}/api`);
-  console.log(`🔑 Login en http://localhost:${PORT}/Login.html\n`);
-});
+// Solo escuchamos un puerto cuando el archivo se ejecuta directamente
+// (node server.js / npm start). En Vercel, este módulo se importa desde
+// api/index.js y es la plataforma la que maneja las requests.
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`\n🌿 ReciclaS Backend corriendo en http://localhost:${PORT}`);
+    console.log(`📋 API disponible en http://localhost:${PORT}/api`);
+    console.log(`🔑 Login en http://localhost:${PORT}/Login.html\n`);
+  });
+}
+
+module.exports = app;
