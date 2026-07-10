@@ -55,6 +55,9 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
 <div class="relative flex min-h-screen w-full flex-row">
 <!-- SideNavBar -->
 <aside class="flex h-screen min-h-screen w-64 flex-col justify-between border-r border-border-light bg-surface-light p-4 dark:border-border-dark dark:bg-surface-dark sticky top-0">
@@ -67,19 +70,19 @@
 </div>
 </div>
 <nav class="flex flex-col gap-2">
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light-secondary dark:text-text-dark-secondary hover:bg-primary/10" href="#">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light-secondary dark:text-text-dark-secondary hover:bg-primary/10" href="Reciclaje_tablero_principal.html">
 <span class="material-symbols-outlined text-2xl">grid_view</span>
 <p class="text-sm font-medium leading-normal">Dashboard</p>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light-secondary dark:text-text-dark-secondary hover:bg-primary/10" href="#">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light-secondary dark:text-text-dark-secondary hover:bg-primary/10" href="Gestion_Compras.html">
 <span class="material-symbols-outlined text-2xl">shopping_cart</span>
 <p class="text-sm font-medium leading-normal">Compras</p>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-text-light-primary dark:text-text-dark-primary" href="#">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-text-light-primary dark:text-text-dark-primary" href="Gestion_Ventas.html">
 <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">trending_up</span>
 <p class="text-sm font-medium leading-normal">Ventas</p>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light-secondary dark:text-text-dark-secondary hover:bg-primary/10" href="#">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light-secondary dark:text-text-dark-secondary hover:bg-primary/10" href="Inventario_Materiales.html">
 <span class="material-symbols-outlined text-2xl">warehouse</span>
 <p class="text-sm font-medium leading-normal">Inventario</p>
 </a>
@@ -90,9 +93,9 @@
 </nav>
 </div>
 <div class="flex flex-col gap-2">
-<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+<a href="Nueva_Venta.html"><button class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
 <span class="truncate">Nueva Venta</span>
-</button>
+</button></a>
 <div class="flex flex-col gap-1 border-t border-border-light dark:border-border-dark pt-2">
 <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light-secondary dark:text-text-dark-secondary hover:bg-primary/10" href="#">
 <span class="material-symbols-outlined text-2xl">settings</span>
@@ -114,10 +117,10 @@
 <h1 class="text-text-light-primary dark:text-text-dark-primary text-3xl font-bold leading-tight tracking-tight">Gestión de Ventas</h1>
 <p class="text-text-light-secondary dark:text-text-dark-secondary text-base font-normal leading-normal">Visualiza y gestiona todas las transacciones de venta.</p>
 </div>
-<button class="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+<a href="Nueva_Venta.html"><button class="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
 <span class="material-symbols-outlined text-xl">add</span>
 <span class="truncate">Nueva Venta</span>
-</button>
+</button></a>
 </header>
 <!-- Search & Filter Panel -->
 <div class="flex flex-col gap-4 rounded-lg border border-border-light bg-surface-light p-4 dark:border-border-dark dark:bg-surface-dark">
@@ -127,29 +130,18 @@
 <div class="text-text-light-secondary dark:text-text-dark-secondary flex items-center justify-center pl-4">
 <span class="material-symbols-outlined text-2xl">search</span>
 </div>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary px-4 pl-2 text-base font-normal leading-normal" placeholder="Buscar por ID, cliente o material..." value=""/>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary px-4 pl-2 text-base font-normal leading-normal" id="search-input" placeholder="Buscar por cliente o vendedor..." value=""/>
 </div>
 </label>
 <!-- Chips -->
 <div class="flex flex-wrap items-center gap-3">
-<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-background-light dark:bg-background-dark px-3 text-text-light-primary dark:text-text-dark-primary hover:bg-primary/10 transition-colors">
-<span class="material-symbols-outlined text-xl">calendar_month</span>
-<p class="text-sm font-medium leading-normal">Rango de Fechas</p>
-<span class="material-symbols-outlined text-xl">arrow_drop_down</span>
-</button>
-<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-background-light dark:bg-background-dark px-3 text-text-light-primary dark:text-text-dark-primary hover:bg-primary/10 transition-colors">
-<span class="material-symbols-outlined text-xl">sell</span>
-<p class="text-sm font-medium leading-normal">Estado: Todos</p>
-<span class="material-symbols-outlined text-xl">arrow_drop_down</span>
-</button>
-<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-background-light dark:bg-background-dark px-3 text-text-light-primary dark:text-text-dark-primary hover:bg-primary/10 transition-colors">
-<span class="material-symbols-outlined text-xl">inventory_2</span>
-<p class="text-sm font-medium leading-normal">Material: Todos</p>
-<span class="material-symbols-outlined text-xl">arrow_drop_down</span>
-</button>
-<div class="flex-grow"></div>
-<button class="h-9 shrink-0 rounded-full px-4 text-sm font-medium leading-normal text-text-light-secondary dark:text-text-dark-secondary hover:bg-primary/10 transition-colors">Limpiar</button>
-<button class="flex h-9 shrink-0 items-center justify-center rounded-full bg-primary/20 px-4 text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary hover:bg-primary/30 transition-colors">Aplicar Filtros</button>
+<select class="h-9 shrink-0 rounded-full bg-background-light dark:bg-background-dark px-3 text-sm font-medium text-text-light-primary dark:text-text-dark-primary border-none focus:ring-2 focus:ring-primary/50" id="estado-filter">
+<option value="">Estado: Todos</option>
+<option value="pendiente">Pendiente</option>
+<option value="en_transito">En Tránsito</option>
+<option value="completada">Completada</option>
+<option value="cancelada">Cancelada</option>
+</select>
 </div>
 </div>
 <!-- Table -->
@@ -160,77 +152,26 @@
 <tr>
 <th class="px-4 py-3 text-left text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">ID Venta</th>
 <th class="px-4 py-3 text-left text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">Cliente</th>
-<th class="px-4 py-3 text-left text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">Material</th>
+<th class="px-4 py-3 text-left text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">Vendedor</th>
 <th class="px-4 py-3 text-left text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">Fecha</th>
 <th class="px-4 py-3 text-left text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">Monto Total</th>
 <th class="px-4 py-3 text-left text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">Estado</th>
 <th class="px-4 py-3 text-left text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">Acciones</th>
 </tr>
 </thead>
-<tbody>
-<tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">
-<td class="h-[72px] px-4 py-2 text-sm font-medium text-primary">VEN-00124</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-primary dark:text-text-dark-primary">Industrias Plastic S.A.</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">PET Grado A</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">2023-10-26</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">$1,250.00</td>
-<td class="h-[72px] px-4 py-2">
-<div class="flex items-center justify-start"><span class="flex items-center gap-2 rounded-full bg-success/10 px-3 py-1 text-sm font-medium text-success"><div class="h-2 w-2 rounded-full bg-success"></div>Vendida</span></div>
-</td>
-<td class="h-[72px] px-4 py-2">
-<a href="Detalle_venta.html"><button class="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"><span class="material-symbols-outlined">more_horiz</span></button></a>
-</td>
-</tr>
-<tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">
-<td class="h-[72px] px-4 py-2 text-sm font-medium text-primary">VEN-00123</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-primary dark:text-text-dark-primary">Aceros del Norte</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">Aluminio Prensado</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">2023-10-25</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">$3,400.00</td>
-<td class="h-[72px] px-4 py-2">
-<div class="flex items-center justify-start"><span class="flex items-center gap-2 rounded-full bg-warning/10 px-3 py-1 text-sm font-medium text-yellow-600 dark:text-warning"><div class="h-2 w-2 rounded-full bg-warning"></div>En Tránsito</span></div>
-</td>
-<td class="h-[72px] px-4 py-2">
-<a href="Detalle_venta.html"><button class="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"><span class="material-symbols-outlined">more_horiz</span></button></a>
-</td>
-</tr>
-<tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">
-<td class="h-[72px] px-4 py-2 text-sm font-medium text-primary">VEN-00122</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-primary dark:text-text-dark-primary">Reciclajes Globales</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">Cartón Corrugado</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">2023-10-24</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">$850.50</td>
-<td class="h-[72px] px-4 py-2">
-<div class="flex items-center justify-start"><span class="flex items-center gap-2 rounded-full bg-danger/10 px-3 py-1 text-sm font-medium text-danger"><div class="h-2 w-2 rounded-full bg-danger"></div>Retornada</span></div>
-</td>
-<td class="h-[72px] px-4 py-2">
-<a href="Detalle_venta.html"><button class="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"><span class="material-symbols-outlined">more_horiz</span></button></a>
-</td>
-</tr>
-<tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">
-<td class="h-[72px] px-4 py-2 text-sm font-medium text-primary">VEN-00121</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-primary dark:text-text-dark-primary">Industrias Plastic S.A.</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">PET Grado B</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">2023-10-22</td>
-<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">$980.00</td>
-<td class="h-[72px] px-4 py-2">
-<div class="flex items-center justify-start"><span class="flex items-center gap-2 rounded-full bg-neutral/10 px-3 py-1 text-sm font-medium text-neutral"><div class="h-2 w-2 rounded-full bg-neutral"></div>Cancelada</span></div>
-</td>
-<td class="h-[72px] px-4 py-2">
-<a href="Detalle_venta.html"><button class="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"><span class="material-symbols-outlined">more_horiz</span></button></a>
-</td>
-</tr>
+<tbody id="ventas-tbody">
+<tr><td class="h-[72px] px-4 py-2 text-text-light-secondary dark:text-text-dark-secondary" colspan="7">Cargando…</td></tr>
 </tbody>
 </table>
 </div>
 <!-- Pagination -->
 <div class="flex items-center justify-between border-t border-border-light p-4 dark:border-border-dark">
-<span class="text-sm text-text-light-secondary dark:text-text-dark-secondary">Mostrando 1-4 de 25 ventas</span>
+<span class="text-sm text-text-light-secondary dark:text-text-dark-secondary" id="pagination-label">Mostrando 0 ventas</span>
 <div class="flex items-center gap-2">
 <button class="flex h-8 w-8 items-center justify-center rounded-lg border border-border-light bg-surface-light text-text-light-secondary hover:bg-primary/10 dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-secondary dark:hover:bg-primary/20" disabled="">
 <span class="material-symbols-outlined text-xl">chevron_left</span>
 </button>
-<button class="flex h-8 w-8 items-center justify-center rounded-lg border border-border-light bg-surface-light text-text-light-secondary hover:bg-primary/10 dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-secondary dark:hover:bg-primary/20">
+<button class="flex h-8 w-8 items-center justify-center rounded-lg border border-border-light bg-surface-light text-text-light-secondary hover:bg-primary/10 dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-secondary dark:hover:bg-primary/20" disabled="">
 <span class="material-symbols-outlined text-xl">chevron_right</span>
 </button>
 </div>
@@ -252,5 +193,66 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var tbody = document.getElementById('ventas-tbody');
+  var searchInput = document.getElementById('search-input');
+  var estadoFilter = document.getElementById('estado-filter');
+  var paginationLabel = document.getElementById('pagination-label');
+  var allVentas = [];
+
+  var ESTADO_INFO = {
+    pendiente: { cls: 'bg-neutral/10 text-neutral', dot: 'bg-neutral', label: 'Pendiente' },
+    en_transito: { cls: 'bg-warning/10 text-yellow-600 dark:text-warning', dot: 'bg-warning', label: 'En Tránsito' },
+    completada: { cls: 'bg-success/10 text-success', dot: 'bg-success', label: 'Completada' },
+    cancelada: { cls: 'bg-danger/10 text-danger', dot: 'bg-danger', label: 'Cancelada' },
+  };
+
+  function badge(estado) {
+    var info = ESTADO_INFO[estado] || { cls: 'bg-neutral/10 text-neutral', dot: 'bg-neutral', label: estado || '—' };
+    return '<div class="flex items-center justify-start"><span class="flex items-center gap-2 rounded-full ' + info.cls + ' px-3 py-1 text-sm font-medium"><div class="h-2 w-2 rounded-full ' + info.dot + '"></div>' + info.label + '</span></div>';
+  }
+
+  function render() {
+    var q = searchInput.value.trim().toLowerCase();
+    var filtered = allVentas.filter(function (v) {
+      if (q && !((v.cliente_nombre || '').toLowerCase().includes(q) || (v.vendedor || '').toLowerCase().includes(q))) return false;
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td class="h-[72px] px-4 py-2 text-text-light-secondary dark:text-text-dark-secondary" colspan="7">No se encontraron ventas.</td></tr>';
+    } else {
+      tbody.innerHTML = filtered.map(function (v) {
+        return '<tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">' +
+          '<td class="h-[72px] px-4 py-2 text-sm font-medium text-primary">VEN-' + String(v.id).padStart(5, '0') + '</td>' +
+          '<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-primary dark:text-text-dark-primary">' + api.escapeHtml(v.cliente_nombre || '—') + '</td>' +
+          '<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">' + api.escapeHtml(v.vendedor || '—') + '</td>' +
+          '<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">' + api.fmtDate(v.fecha) + '</td>' +
+          '<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">' + api.money(v.total) + '</td>' +
+          '<td class="h-[72px] px-4 py-2">' + badge(v.estado) + '</td>' +
+          '<td class="h-[72px] px-4 py-2"><a href="Detalle_venta.html?id=' + v.id + '"><button class="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"><span class="material-symbols-outlined">more_horiz</span></button></a></td>' +
+          '</tr>';
+      }).join('');
+    }
+    paginationLabel.textContent = 'Mostrando ' + filtered.length + ' de ' + allVentas.length + ' ventas';
+  }
+
+  function load() {
+    var qs = estadoFilter.value ? '?estado=' + encodeURIComponent(estadoFilter.value) : '';
+    api.apiFetch('/ventas' + qs).then(function (data) {
+      allVentas = data;
+      render();
+    }).catch(function (err) {
+      tbody.innerHTML = '<tr><td class="h-[72px] px-4 py-2 text-red-500" colspan="7">' + api.escapeHtml(err.message || 'Error al cargar ventas.') + '</td></tr>';
+    });
+  }
+
+  searchInput.addEventListener('input', render);
+  estadoFilter.addEventListener('change', load);
+  load();
+})();
 </script>
 </body></html>

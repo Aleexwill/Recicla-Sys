@@ -42,6 +42,9 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
 <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
 <div class="flex min-h-screen">
 <!-- SideNavBar -->
@@ -86,10 +89,10 @@
 <div class="flex gap-3">
 <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Avatar de Usuario Admin" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCjyilFdxr-8K3pPDtSjgece6HvvRpur6Y2sUEtGbTZ-Ids5SbgIi9Va7Wv3kTnfrj4eCPCWDQk2s-_GaU7xGh6JkA5uK6Z69_KmC1YJTvq-hQtRuYEf50cd-5OqomWpSOOgKcp1Iiw7b3QJzZDPovstBJwWor0f5ixN9IF_3fSHYvdlPdCtU1ApDXOK1znkn35AkRVXEXxRDBBaVzyELhsDcosxgW330wgCN_VCs3hqKWxehbm0zMi2WqKIZ56N6F06XrpEYiIyg");'></div>
 <div class="flex flex-col">
-<h1 class="text-gray-800 dark:text-white text-base font-medium leading-normal">Usuario Admin</h1>
-<p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a9c8cdc4c0c7e9dbcccac0cac5c8cdc6dbc887cac6c4">[email&#160;protected]</a></p>
+<h1 class="text-gray-800 dark:text-white text-base font-medium leading-normal" data-user-name>Usuario</h1>
+<p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal" data-user-email></p>
 
-<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-subtle-light dark:text-text-subtle-dark transition-colors hover:bg-red-500/10 hover:text-red-500" href="Login.html">
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-subtle-light dark:text-text-subtle-dark transition-colors hover:bg-red-500/10 hover:text-red-500" data-logout href="Login.html">
 <span class="material-symbols-outlined">logout</span>
 <p class="text-sm font-medium">Cerrar Sesión</p>
 </a>
@@ -139,23 +142,23 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 <div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
 <p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal">Compras del Mes</p>
-<p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight">1,250 Kg</p>
-<p class="text-green-600 dark:text-green-400 text-sm font-medium leading-normal">+15.2%</p>
+<p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight" id="stat-compras-mes">—</p>
+<p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-compras-mes-sub"></p>
 </div>
 <div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
 <p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal">Ventas del Mes</p>
-<p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight">$15,800</p>
-<p class="text-green-600 dark:text-green-400 text-sm font-medium leading-normal">+8.5%</p>
+<p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight" id="stat-ventas-mes">—</p>
+<p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-ventas-mes-sub"></p>
 </div>
 <div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
-<p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal">Clientes Activos</p>
-<p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight">42</p>
-<p class="text-green-600 dark:text-green-400 text-sm font-medium leading-normal">+2</p>
+<p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal">Materiales con Stock Bajo</p>
+<p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight" id="stat-stock-bajo">—</p>
+<p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-stock-bajo-sub"></p>
 </div>
 <div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
 <p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal">Stock Total</p>
-<p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight">5,400 Kg</p>
-<p class="text-red-600 dark:text-red-400 text-sm font-medium leading-normal">-3.1%</p>
+<p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight" id="stat-stock-total">—</p>
+<p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-stock-total-sub"></p>
 </div>
 </div>
 <!-- Charts -->
@@ -182,57 +185,13 @@
 <tr>
 <th class="px-6 py-3" scope="col">Fecha</th>
 <th class="px-6 py-3" scope="col">Operación</th>
-<th class="px-6 py-3" scope="col">Material</th>
-<th class="px-6 py-3 text-right" scope="col">Cantidad</th>
+<th class="px-6 py-3" scope="col">Contraparte</th>
+<th class="px-6 py-3 text-right" scope="col">Monto</th>
 <th class="px-6 py-3 text-center" scope="col">Estado</th>
 </tr>
 </thead>
-<tbody>
-<tr class="border-b dark:border-white/10">
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200">24/05/2024</td>
-<td class="px-6 py-4 font-medium text-gray-800 dark:text-white">Venta</td>
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200">Plástico PET</td>
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200 text-right">250 Kg</td>
-<td class="px-6 py-4 text-center">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300">Completada</span>
-</td>
-</tr>
-<tr class="border-b dark:border-white/10">
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200">23/05/2024</td>
-<td class="px-6 py-4 font-medium text-gray-800 dark:text-white">Compra</td>
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200">Cartón</td>
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200 text-right">500 Kg</td>
-<td class="px-6 py-4 text-center">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300">Completada</span>
-</td>
-</tr>
-<tr class="border-b dark:border-white/10">
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200">22/05/2024</td>
-<td class="px-6 py-4 font-medium text-gray-800 dark:text-white">Compra</td>
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200">Aluminio</td>
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200 text-right">120 Kg</td>
-<td class="px-6 py-4 text-center">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300">Pendiente</span>
-</td>
-</tr>
-<tr class="border-b dark:border-white/10">
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200">21/05/2024</td>
-<td class="px-6 py-4 font-medium text-gray-800 dark:text-white">Venta</td>
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200">Papel Mixto</td>
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200 text-right">800 Kg</td>
-<td class="px-6 py-4 text-center">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300">Completada</span>
-</td>
-</tr>
-<tr>
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200">20/05/2024</td>
-<td class="px-6 py-4 font-medium text-gray-800 dark:text-white">Compra</td>
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200">Vidrio</td>
-<td class="px-6 py-4 text-gray-700 dark:text-gray-200 text-right">350 Kg</td>
-<td class="px-6 py-4 text-center">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300">Cancelada</span>
-</td>
-</tr>
+<tbody id="actividad-tbody">
+<tr><td class="px-6 py-4 text-gray-500 dark:text-gray-400" colspan="5">Cargando…</td></tr>
 </tbody>
 </table>
 </div>
@@ -254,5 +213,82 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+
+  var ESTADO_BADGE = {
+    pendiente: 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300',
+    confirmada: 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300',
+    completada: 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300',
+    en_transito: 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300',
+    cancelada: 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300',
+  };
+
+  function badge(estado) {
+    var cls = ESTADO_BADGE[estado] || 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300';
+    return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + cls + '">' +
+      api.escapeHtml(estado || '—') + '</span>';
+  }
+
+  function isThisMonth(iso) {
+    var d = new Date(iso);
+    var now = new Date();
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  }
+
+  Promise.all([
+    api.apiFetch('/compras'),
+    api.apiFetch('/ventas'),
+    api.apiFetch('/materiales'),
+  ]).then(function (results) {
+    var compras = results[0] || [];
+    var ventas = results[1] || [];
+    var materiales = results[2] || [];
+
+    var comprasMes = compras.filter(function (c) { return isThisMonth(c.fecha); });
+    var ventasMes = ventas.filter(function (v) { return isThisMonth(v.fecha); });
+    var totalComprasMes = comprasMes.reduce(function (sum, c) { return sum + Number(c.total || 0); }, 0);
+    var totalVentasMes = ventasMes.reduce(function (sum, v) { return sum + Number(v.total || 0); }, 0);
+    var stockTotal = materiales.reduce(function (sum, m) { return sum + Number(m.stock_actual || 0); }, 0);
+    var stockBajo = materiales.filter(function (m) { return Number(m.stock_actual) <= Number(m.stock_minimo); });
+
+    document.getElementById('stat-compras-mes').textContent = api.money(totalComprasMes);
+    document.getElementById('stat-compras-mes-sub').textContent = comprasMes.length + ' compra(s) este mes';
+    document.getElementById('stat-ventas-mes').textContent = api.money(totalVentasMes);
+    document.getElementById('stat-ventas-mes-sub').textContent = ventasMes.length + ' venta(s) este mes';
+    document.getElementById('stat-stock-bajo').textContent = String(stockBajo.length);
+    document.getElementById('stat-stock-bajo-sub').textContent = 'de ' + materiales.length + ' materiales activos';
+    document.getElementById('stat-stock-total').textContent = api.kg(stockTotal);
+    document.getElementById('stat-stock-total-sub').textContent = materiales.length + ' materiales en inventario';
+
+    var actividad = compras.map(function (c) {
+      return { fecha: c.fecha, tipo: 'Compra', contraparte: c.proveedor_nombre || '—', monto: c.total, estado: c.estado };
+    }).concat(ventas.map(function (v) {
+      return { fecha: v.fecha, tipo: 'Venta', contraparte: v.cliente_nombre || '—', monto: v.total, estado: v.estado };
+    }));
+    actividad.sort(function (a, b) { return new Date(b.fecha) - new Date(a.fecha); });
+    actividad = actividad.slice(0, 8);
+
+    var tbody = document.getElementById('actividad-tbody');
+    if (actividad.length === 0) {
+      tbody.innerHTML = '<tr><td class="px-6 py-4 text-gray-500 dark:text-gray-400" colspan="5">Todavía no hay compras ni ventas registradas.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = actividad.map(function (a) {
+      return '<tr class="border-b dark:border-white/10">' +
+        '<td class="px-6 py-4 text-gray-700 dark:text-gray-200">' + api.fmtDate(a.fecha) + '</td>' +
+        '<td class="px-6 py-4 font-medium text-gray-800 dark:text-white">' + a.tipo + '</td>' +
+        '<td class="px-6 py-4 text-gray-700 dark:text-gray-200">' + api.escapeHtml(a.contraparte) + '</td>' +
+        '<td class="px-6 py-4 text-gray-700 dark:text-gray-200 text-right">' + api.money(a.monto) + '</td>' +
+        '<td class="px-6 py-4 text-center">' + badge(a.estado) + '</td>' +
+        '</tr>';
+    }).join('');
+  }).catch(function (err) {
+    document.getElementById('actividad-tbody').innerHTML =
+      '<tr><td class="px-6 py-4 text-red-500" colspan="5">' + api.escapeHtml(err.message || 'Error al cargar los datos.') + '</td></tr>';
+  });
+})();
 </script>
 </body></html>

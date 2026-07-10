@@ -49,6 +49,9 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-text-light-primary dark:text-text-dark-primary">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
 <div class="relative flex h-auto min-h-screen w-full flex-col">
 <!-- TopNavBar -->
 <header class="sticky top-0 z-10 flex w-full items-center justify-center border-b border-border-light dark:border-border-dark bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-sm">
@@ -85,31 +88,18 @@
 <label class="flex flex-col w-full">
 <div class="relative flex w-full items-center">
 <span class="material-symbols-outlined absolute left-4 text-text-light-secondary dark:text-text-dark-secondary">search</span>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none rounded-lg border-2 border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark h-12 placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary px-4 pl-12 text-base font-normal leading-normal focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="Buscar por nombre o correo electrónico..." value=""/>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none rounded-lg border-2 border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark h-12 placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary px-4 pl-12 text-base font-normal leading-normal focus:outline-none focus:ring-2 focus:ring-primary/50" id="search-input" placeholder="Buscar por nombre o correo electrónico..." value=""/>
 </div>
 </label>
 </div>
 <div class="flex items-center justify-end gap-4">
-<button class="flex h-12 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary/20 hover:bg-primary/30 text-text-light-primary dark:text-text-dark-primary gap-2 text-sm font-bold min-w-0 px-4">
-<span class="material-symbols-outlined">sort</span>
-<span>Ordenar</span>
-</button>
-<button class="flex h-12 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary text-white hover:bg-primary/90 gap-2 text-sm font-bold min-w-0 px-6 shadow-sm" onclick="window.location.href='Creacion_usuario.html'">
+<a href="Creacion_usuario.html"><button class="flex h-12 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary text-white hover:bg-primary/90 gap-2 text-sm font-bold min-w-0 px-6 shadow-sm">
 <span class="material-symbols-outlined">add</span>
 <span class="truncate">Crear Nuevo Usuario</span>
-</button>
+</button></a>
 </div>
 </div>
-<div class="flex flex-wrap gap-3">
-<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/20 hover:bg-primary/30 px-4">
-<p class="text-sm font-medium">Puesto: Todos</p>
-<span class="material-symbols-outlined text-base">expand_more</span>
-</button>
-<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/20 hover:bg-primary/30 px-4">
-<p class="text-sm font-medium">Permiso: Todos</p>
-<span class="material-symbols-outlined text-base">expand_more</span>
-</button>
-</div>
+<p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="page-error"></p>
 </div>
 <!-- Users Table -->
 <div class="overflow-x-auto bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark">
@@ -123,100 +113,13 @@
 <th class="p-4 text-sm font-semibold text-text-light-secondary dark:text-text-dark-secondary text-right">Acciones</th>
 </tr>
 </thead>
-<tbody>
-<tr class="border-b border-border-light dark:border-border-dark last:border-b-0">
-<td class="p-4 font-medium">Ana García</td>
-<td class="p-4 text-text-light-secondary dark:text-text-dark-secondary"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3b5a555a155c5a4958525a7b5e565a525715585456">[email&#160;protected]</a></td>
-<td class="p-4">
-<span class="inline-flex items-center rounded-md bg-green-100 dark:bg-green-900 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-200 ring-1 ring-inset ring-green-600/20 dark:ring-green-700/30">
-                        Administrador
-                    </span>
-</td>
-<td class="p-4">
-<span class="inline-flex items-center rounded-md bg-blue-100 dark:bg-blue-900 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-200 ring-1 ring-inset ring-blue-700/10 dark:ring-blue-600/30">
-                        Admin Total
-                    </span>
-</td>
-<td class="p-4 text-right">
-<div class="inline-flex items-center gap-2">
-<button class="p-2 rounded-md hover:bg-primary/20"><span class="material-symbols-outlined text-xl">edit</span></button>
-<button class="p-2 rounded-md hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-xl">delete</span></button>
-</div>
-</td>
-</tr>
-<tr class="border-b border-border-light dark:border-border-dark last:border-b-0">
-<td class="p-4 font-medium">Carlos Martinez</td>
-<td class="p-4 text-text-light-secondary dark:text-text-dark-secondary"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b2d1d3c0deddc19cdff2d7dfd3dbde9cd1dddf">[email&#160;protected]</a></td>
-<td class="p-4">
-<span class="inline-flex items-center rounded-md bg-yellow-100 dark:bg-yellow-900 px-2 py-1 text-xs font-medium text-yellow-800 dark:text-yellow-200 ring-1 ring-inset ring-yellow-600/20 dark:ring-yellow-700/30">
-                        Operador de Báscula
-                    </span>
-</td>
-<td class="p-4">
-<span class="inline-flex items-center rounded-md bg-purple-100 dark:bg-purple-900 px-2 py-1 text-xs font-medium text-purple-700 dark:text-purple-200 ring-1 ring-inset ring-purple-700/10 dark:ring-purple-600/30">
-                        Gestión de Compras
-                    </span>
-</td>
-<td class="p-4 text-right">
-<div class="inline-flex items-center gap-2">
-<button class="p-2 rounded-md hover:bg-primary/20"><span class="material-symbols-outlined text-xl">edit</span></button>
-<button class="p-2 rounded-md hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-xl">delete</span></button>
-</div>
-</td>
-</tr>
-<tr class="border-b border-border-light dark:border-border-dark last:border-b-0">
-<td class="p-4 font-medium">Laura Fernández</td>
-<td class="p-4 text-text-light-secondary dark:text-text-dark-secondary"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5438352126357a32143139353d387a373b39">[email&#160;protected]</a></td>
-<td class="p-4">
-<span class="inline-flex items-center rounded-md bg-indigo-100 dark:bg-indigo-900 px-2 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-200 ring-1 ring-inset ring-indigo-700/10 dark:ring-indigo-600/30">
-                        Contador
-                    </span>
-</td>
-<td class="p-4">
-<span class="inline-flex items-center rounded-md bg-gray-100 dark:bg-gray-700 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10 dark:ring-gray-600/20">
-                        Solo Lectura
-                    </span>
-</td>
-<td class="p-4 text-right">
-<div class="inline-flex items-center gap-2">
-<button class="p-2 rounded-md hover:bg-primary/20"><span class="material-symbols-outlined text-xl">edit</span></button>
-<button class="p-2 rounded-md hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-xl">delete</span></button>
-</div>
-</td>
-</tr>
-<tr class="border-b border-border-light dark:border-border-dark last:border-b-0">
-<td class="p-4 font-medium">Javier Rodriguez</td>
-<td class="p-4 text-text-light-secondary dark:text-text-dark-secondary"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="73195d011c17011a1406160933161e121a1f5d101c1e">[email&#160;protected]</a></td>
-<td class="p-4">
-<span class="inline-flex items-center rounded-md bg-yellow-100 dark:bg-yellow-900 px-2 py-1 text-xs font-medium text-yellow-800 dark:text-yellow-200 ring-1 ring-inset ring-yellow-600/20 dark:ring-yellow-700/30">
-                        Operador de Báscula
-                    </span>
-</td>
-<td class="p-4">
-<span class="inline-flex items-center rounded-md bg-purple-100 dark:bg-purple-900 px-2 py-1 text-xs font-medium text-purple-700 dark:text-purple-200 ring-1 ring-inset ring-purple-700/10 dark:ring-purple-600/30">
-                        Gestión de Compras
-                    </span>
-</td>
-<td class="p-4 text-right">
-<div class="inline-flex items-center gap-2">
-<button class="p-2 rounded-md hover:bg-primary/20"><span class="material-symbols-outlined text-xl">edit</span></button>
-<button class="p-2 rounded-md hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-xl">delete</span></button>
-</div>
-</td>
-</tr>
+<tbody id="usuarios-tbody">
+<tr><td class="p-4 text-text-light-secondary dark:text-text-dark-secondary" colspan="5">Cargando…</td></tr>
 </tbody>
 </table>
 <!-- Pagination -->
 <div class="flex items-center justify-between p-4">
-<span class="text-sm text-text-light-secondary dark:text-text-dark-secondary">Mostrando 4 de 4 usuarios</span>
-<div class="flex items-center gap-2">
-<button class="flex h-8 w-8 items-center justify-center rounded-lg border border-border-light bg-surface-light text-text-light-secondary hover:bg-primary/10 dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-secondary dark:hover:bg-primary/20" disabled="">
-<span class="material-symbols-outlined text-xl">chevron_left</span>
-</button>
-<button class="flex h-8 w-8 items-center justify-center rounded-lg border border-border-light bg-surface-light text-text-light-secondary hover:bg-primary/10 dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-secondary dark:hover:bg-primary/20" disabled="">
-<span class="material-symbols-outlined text-xl">chevron_right</span>
-</button>
-</div>
+<span class="text-sm text-text-light-secondary dark:text-text-dark-secondary" id="pagination-label">Mostrando 0 usuarios</span>
 </div>
 </div>
 </div>
@@ -235,5 +138,76 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var tbody = document.getElementById('usuarios-tbody');
+  var searchInput = document.getElementById('search-input');
+  var paginationLabel = document.getElementById('pagination-label');
+  var errorBox = document.getElementById('page-error');
+  var usuarios = [];
+
+  var PERMISO_INFO = {
+    full: { cls: 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 ring-blue-700/10 dark:ring-blue-600/30', label: 'Admin Total' },
+    edit: { cls: 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-200 ring-purple-700/10 dark:ring-purple-600/30', label: 'Edición' },
+    view: { cls: 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 ring-gray-500/10 dark:ring-gray-600/20', label: 'Solo Lectura' },
+  };
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
+
+  function render() {
+    var q = searchInput.value.trim().toLowerCase();
+    var filtered = usuarios.filter(function (u) {
+      return u.nombre_usuario.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td class="p-4 text-text-light-secondary dark:text-text-dark-secondary" colspan="5">No se encontraron usuarios.</td></tr>';
+    } else {
+      tbody.innerHTML = filtered.map(function (u) {
+        var permiso = PERMISO_INFO[u.permiso] || PERMISO_INFO.view;
+        return '<tr class="border-b border-border-light dark:border-border-dark last:border-b-0">' +
+          '<td class="p-4 font-medium">' + api.escapeHtml(u.nombre_usuario) + '</td>' +
+          '<td class="p-4 text-text-light-secondary dark:text-text-dark-secondary">' + api.escapeHtml(u.email) + '</td>' +
+          '<td class="p-4"><span class="inline-flex items-center rounded-md bg-green-100 dark:bg-green-900 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-200 ring-1 ring-inset ring-green-600/20 dark:ring-green-700/30">' + api.escapeHtml(u.rol || '—') + '</span></td>' +
+          '<td class="p-4"><span class="inline-flex items-center rounded-md ' + permiso.cls + ' px-2 py-1 text-xs font-medium ring-1 ring-inset">' + permiso.label + '</span></td>' +
+          '<td class="p-4 text-right"><div class="inline-flex items-center gap-2">' +
+          '<button class="p-2 rounded-md hover:bg-red-500/20 text-red-500" data-delete="' + u.id + '"><span class="material-symbols-outlined text-xl">delete</span></button>' +
+          '</div></td></tr>';
+      }).join('');
+      tbody.querySelectorAll('[data-delete]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var uid = btn.getAttribute('data-delete');
+          var u = usuarios.find(function (x) { return String(x.id) === uid; });
+          if (!confirm('¿Desactivar a "' + (u ? u.nombre_usuario : 'este usuario') + '"?')) return;
+          api.apiFetch('/usuarios/' + uid, { method: 'DELETE' }).then(function () {
+            load();
+          }).catch(function (err) {
+            showError(err.message || 'No se pudo desactivar el usuario.');
+          });
+        });
+      });
+    }
+    paginationLabel.textContent = 'Mostrando ' + filtered.length + ' de ' + usuarios.length + ' usuarios';
+  }
+
+  function load() {
+    api.apiFetch('/usuarios').then(function (data) {
+      usuarios = data;
+      render();
+    }).catch(function (err) {
+      if (err.status === 403) {
+        showError('Tu cuenta no tiene permiso para ver la lista de usuarios (requiere permiso "full").');
+      } else {
+        showError(err.message || 'No se pudieron cargar los usuarios.');
+      }
+      tbody.innerHTML = '';
+    });
+  }
+
+  searchInput.addEventListener('input', render);
+  load();
+})();
 </script>
 </body></html>

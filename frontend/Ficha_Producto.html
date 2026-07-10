@@ -41,6 +41,9 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
 <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
 <div class="layout-container flex h-full grow flex-col">
 <div class="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
@@ -52,8 +55,9 @@
 <span class="text-gray-400 dark:text-gray-500 text-sm font-medium leading-normal">/</span>
 <a class="text-primary/80 dark:text-primary/70 hover:text-primary text-sm font-medium leading-normal" href="Inventario_Materiales.html">Materiales</a>
 <span class="text-gray-400 dark:text-gray-500 text-sm font-medium leading-normal">/</span>
-<span class="text-gray-800 dark:text-gray-200 text-sm font-medium leading-normal">PET Grado A</span>
+<span class="text-gray-800 dark:text-gray-200 text-sm font-medium leading-normal" id="breadcrumb-current">Nuevo Material</span>
 </div>
+<p class="hidden mx-4 rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="page-error"></p>
 <main class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 p-4">
 <div class="lg:col-span-3">
 <div class="flex flex-col gap-4">
@@ -71,44 +75,24 @@
 </div>
 <div class="mt-8">
 <div class="flex items-center gap-4">
-<h1 class="text-gray-900 dark:text-white tracking-tight text-3xl font-bold leading-tight">PET Grado A - Transparente</h1>
-<div class="flex h-7 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/20 px-3">
+<input class="text-gray-900 dark:text-white tracking-tight text-3xl font-bold leading-tight bg-transparent border-b-2 border-transparent focus:border-primary focus:outline-none w-full" id="nombre-input" placeholder="Nombre del material" type="text"/>
+<div class="hidden h-7 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/20 px-3" id="stock-badge">
 <p class="text-primary-darker dark:text-primary-lighter text-sm font-medium leading-normal">En Stock</p>
 </div>
 </div>
-<p class="text-gray-600 dark:text-gray-400 text-base font-normal leading-relaxed mt-4">
-                                    Plástico PET de alta calidad, transparente y limpio, ideal para la fabricación de nuevas botellas y envases. Proveniente de procesos de recolección post-consumo, clasificado y triturado para garantizar su pureza. Este material cumple con los más altos estándares de calidad para su reutilización en la industria alimentaria y de embalaje.
-                                </p>
-</div>
-<div class="mt-8">
-<div class="border-b border-gray-200 dark:border-gray-700">
-<nav aria-label="Tabs" class="-mb-px flex space-x-6">
-<a class="shrink-0 border-b-2 border-primary px-1 pb-4 text-sm font-medium text-primary" href="#">Especificaciones Técnicas</a>
-<a class="shrink-0 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-300" href="#">Historial de Movimientos</a>
-<a class="shrink-0 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-300" href="#">Proveedores Asociados</a>
-</nav>
-</div>
-<div class="py-6">
-<ul class="space-y-2 text-gray-600 dark:text-gray-400 text-sm">
-<li><span class="font-medium text-gray-800 dark:text-gray-200">Pureza:</span> 99.5% libre de contaminantes.</li>
-<li><span class="font-medium text-gray-800 dark:text-gray-200">Formato:</span> Triturado en hojuelas de 10-12 mm.</li>
-<li><span class="font-medium text-gray-800 dark:text-gray-200">Color:</span> Transparente / Cristal.</li>
-<li><span class="font-medium text-gray-800 dark:text-gray-200">Origen:</span> Post-consumo (botellas de bebidas).</li>
-</ul>
-</div>
-</div>
+<textarea class="text-gray-600 dark:text-gray-400 text-base font-normal leading-relaxed mt-4 w-full bg-transparent border border-gray-200 dark:border-gray-700 rounded-lg p-3 focus:border-primary focus:outline-none" id="descripcion-input" placeholder="Descripción del material" rows="3"></textarea>
 </div>
 <div class="lg:col-span-2">
 <div class="bg-white dark:bg-background-dark/50 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 sticky top-8">
 <div class="flex justify-between items-baseline">
 <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Gestión de Precios</h2>
-<p class="text-sm text-gray-500 dark:text-gray-400">Stock: 1,500 kg</p>
+<p class="text-sm text-gray-500 dark:text-gray-400" id="stock-label"></p>
 </div>
 <div class="mt-6 space-y-4">
 <div>
 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="unit">Unidad de Medida</label>
 <div class="relative mt-1">
-<input class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="unit" type="text" value="Kilogramo (kg)"/>
+<input class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="unit" placeholder="kg" type="text" value="kg"/>
 </div>
 </div>
 <div>
@@ -117,10 +101,7 @@
 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
 <span class="text-gray-500 sm:text-sm">$</span>
 </div>
-<input class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white pl-7 pr-12 focus:border-primary focus:ring-primary sm:text-sm" id="purchase-price" placeholder="0.00" type="text" value="8.25"/>
-<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-<span class="text-gray-500 sm:text-sm" id="price-currency">MXN</span>
-</div>
+<input class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white pl-7 pr-3 focus:border-primary focus:ring-primary sm:text-sm" id="purchase-price" placeholder="0.00" step="0.01" type="number"/>
 </div>
 </div>
 <div>
@@ -129,21 +110,24 @@
 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
 <span class="text-gray-500 sm:text-sm">$</span>
 </div>
-<input class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white pl-7 pr-12 focus:border-primary focus:ring-primary sm:text-sm" id="sale-price" placeholder="0.00" type="text" value="15.50"/>
-<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-<span class="text-gray-500 sm:text-sm" id="price-currency">MXN</span>
+<input class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white pl-7 pr-3 focus:border-primary focus:ring-primary sm:text-sm" id="sale-price" placeholder="0.00" step="0.01" type="number"/>
 </div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="stock-minimo">Stock Mínimo</label>
+<div class="relative mt-1">
+<input class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="stock-minimo" placeholder="0" step="0.01" type="number"/>
 </div>
 </div>
 </div>
 <div class="mt-8 flex justify-between items-center bg-primary/10 dark:bg-primary/20 rounded-lg p-4">
 <span class="text-base font-medium text-gray-800 dark:text-gray-200">Margen de Ganancia:</span>
-<span class="text-2xl font-bold text-primary dark:text-primary-lighter">87.88%</span>
+<span class="text-2xl font-bold text-primary dark:text-primary-lighter" id="margen-label">—</span>
 </div>
 <div class="mt-8 flex flex-col gap-4">
-<button class="w-full inline-flex items-center justify-center rounded-lg px-6 py-3 text-base font-medium leading-6 text-white shadow-sm bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark transition-colors">
+<button class="w-full inline-flex items-center justify-center rounded-lg px-6 py-3 text-base font-medium leading-6 text-white shadow-sm bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark transition-colors disabled:opacity-60" id="save-btn">
 <span class="material-symbols-outlined mr-2">save</span>
-                                        Guardar Cambios
+<span id="save-btn-label">Guardar Cambios</span>
                                     </button>
 <button class="w-full inline-flex items-center justify-center rounded-lg px-6 py-3 text-base font-medium leading-6 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 dark:focus:ring-offset-background-dark transition-colors" onclick="window.location.href='Inventario_Materiales.html'">
 <span class="material-symbols-outlined mr-2">cancel</span>
@@ -170,5 +154,111 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var id = new URLSearchParams(window.location.search).get('id');
+
+  var nombreInput = document.getElementById('nombre-input');
+  var descripcionInput = document.getElementById('descripcion-input');
+  var purchaseInput = document.getElementById('purchase-price');
+  var saleInput = document.getElementById('sale-price');
+  var stockMinimoInput = document.getElementById('stock-minimo');
+  var unitInput = document.getElementById('unit');
+  var margenLabel = document.getElementById('margen-label');
+  var stockLabel = document.getElementById('stock-label');
+  var stockBadge = document.getElementById('stock-badge');
+  var errorBox = document.getElementById('page-error');
+  var saveBtn = document.getElementById('save-btn');
+  var saveBtnLabel = document.getElementById('save-btn-label');
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
+
+  function updateMargen() {
+    var compra = parseFloat(purchaseInput.value);
+    var venta = parseFloat(saleInput.value);
+    if (!compra || !venta) { margenLabel.textContent = '—'; return; }
+    var margen = ((venta - compra) / compra) * 100;
+    margenLabel.textContent = margen.toFixed(2) + '%';
+  }
+  purchaseInput.addEventListener('input', updateMargen);
+  saleInput.addEventListener('input', updateMargen);
+
+  if (id) {
+    // Modo edición
+    unitInput.readOnly = true;
+    document.title = 'Ficha de Material';
+    api.apiFetch('/materiales/' + id).then(function (m) {
+      document.getElementById('breadcrumb-current').textContent = m.nombre;
+      document.title = 'Ficha de Material - ' + m.nombre;
+      nombreInput.value = m.nombre;
+      descripcionInput.value = m.descripcion || '';
+      unitInput.value = m.unidad_medida;
+      purchaseInput.value = m.precio_compra;
+      saleInput.value = m.precio_venta;
+      stockMinimoInput.value = m.stock_minimo;
+      stockLabel.textContent = 'Stock: ' + api.kg(m.stock_actual);
+      stockBadge.classList.remove('hidden');
+      stockBadge.classList.add('flex');
+      stockBadge.querySelector('p').textContent = Number(m.stock_actual) <= Number(m.stock_minimo) ? 'Stock Bajo' : 'En Stock';
+      updateMargen();
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo cargar el material.');
+    });
+
+    saveBtn.addEventListener('click', function () {
+      if (!nombreInput.value.trim()) return showError('El nombre es requerido.');
+      saveBtn.disabled = true;
+      saveBtnLabel.textContent = 'Guardando…';
+      api.apiFetch('/materiales/' + id, {
+        method: 'PUT',
+        body: JSON.stringify({
+          nombre: nombreInput.value.trim(),
+          descripcion: descripcionInput.value.trim(),
+          precio_compra: parseFloat(purchaseInput.value) || 0,
+          precio_venta: parseFloat(saleInput.value) || 0,
+          stock_minimo: parseFloat(stockMinimoInput.value) || 0,
+        }),
+      }).then(function () {
+        window.location.href = 'Inventario_Materiales.html';
+      }).catch(function (err) {
+        showError(err.message || 'No se pudo guardar el material.');
+        saveBtn.disabled = false;
+        saveBtnLabel.textContent = 'Guardar Cambios';
+      });
+    });
+  } else {
+    // Modo creación
+    document.getElementById('breadcrumb-current').textContent = 'Nuevo Material';
+    document.title = 'Nuevo Material';
+    stockLabel.textContent = 'Se crea con stock inicial en 0.';
+    saveBtnLabel.textContent = 'Crear Material';
+    unitInput.value = 'kg';
+
+    saveBtn.addEventListener('click', function () {
+      if (!nombreInput.value.trim()) return showError('El nombre es requerido.');
+      saveBtn.disabled = true;
+      saveBtnLabel.textContent = 'Creando…';
+      api.apiFetch('/materiales', {
+        method: 'POST',
+        body: JSON.stringify({
+          nombre: nombreInput.value.trim(),
+          descripcion: descripcionInput.value.trim(),
+          unidad_medida: unitInput.value.trim() || 'kg',
+          precio_compra: parseFloat(purchaseInput.value) || 0,
+          precio_venta: parseFloat(saleInput.value) || 0,
+          stock_minimo: parseFloat(stockMinimoInput.value) || 0,
+        }),
+      }).then(function () {
+        window.location.href = 'Inventario_Materiales.html';
+      }).catch(function (err) {
+        showError(err.message || 'No se pudo crear el material.');
+        saveBtn.disabled = false;
+        saveBtnLabel.textContent = 'Crear Material';
+      });
+    });
+  }
+})();
 </script>
 </body></html>

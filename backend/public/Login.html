@@ -50,6 +50,8 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark">
+<script src="js/api.js"></script>
+
 <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
 <div class="layout-container flex h-full grow flex-col">
 <main class="flex-1">
@@ -71,21 +73,22 @@
 <p class="text-text-secondary-light dark:text-text-secondary-dark text-base font-normal leading-normal">Gestionando el futuro del reciclaje</p>
 </div>
 </div>
-<form class="flex flex-col gap-6">
+<form class="flex flex-col gap-6" id="login-form">
+<p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="login-error"></p>
 <div class="flex flex-col gap-4">
 <label class="flex flex-col w-full">
 <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal pb-2">Usuario o Correo Electrónico</p>
 <div class="relative flex w-full items-center">
 <span class="material-symbols-outlined absolute left-4 text-text-secondary-light dark:text-text-secondary-dark">person</span>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-14 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-3.5 pl-12 text-base font-normal leading-normal" placeholder="Ingresa tu usuario o correo" type="email" value=""/>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-14 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-3.5 pl-12 text-base font-normal leading-normal" id="email-input" placeholder="Ingresa tu usuario o correo" type="email" value="" required/>
 </div>
 </label>
 <label class="flex flex-col w-full">
 <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal pb-2">Contraseña</p>
 <div class="relative flex w-full items-center">
 <span class="material-symbols-outlined absolute left-4 text-text-secondary-light dark:text-text-secondary-dark">lock</span>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-14 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-3.5 pl-12 pr-12 text-base font-normal leading-normal" placeholder="Ingresa tu contraseña" type="password" value=""/>
-<button aria-label="Mostrar contraseña" class="absolute right-4 text-text-secondary-light dark:text-text-secondary-dark" type="button">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-14 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-3.5 pl-12 pr-12 text-base font-normal leading-normal" id="password-input" placeholder="Ingresa tu contraseña" type="password" value="" required/>
+<button aria-label="Mostrar contraseña" class="absolute right-4 text-text-secondary-light dark:text-text-secondary-dark" id="toggle-password" type="button">
 <span class="material-symbols-outlined">visibility</span>
 </button>
 </div>
@@ -98,7 +101,7 @@
 </div>
 <a class="text-sm font-medium text-primary hover:underline" href="#">¿Olvidaste tu contraseña?</a>
 </div>
-<button class="flex items-center justify-center whitespace-nowrap h-14 w-full rounded-lg bg-primary text-white text-base font-bold leading-normal transition-all duration-300 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark" type="submit">
+<button class="flex items-center justify-center whitespace-nowrap h-14 w-full rounded-lg bg-primary text-white text-base font-bold leading-normal transition-all duration-300 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark disabled:opacity-60" id="login-submit" type="submit">
                                     Iniciar Sesión
                                 </button>
 </form>
@@ -121,5 +124,49 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  // Ya hay una sesión activa: no tiene sentido mostrar el login de nuevo.
+  if (window.ReciclaAPI.getToken()) {
+    window.location.href = 'Reciclaje_tablero_principal.html';
+    return;
+  }
+
+  var form = document.getElementById('login-form');
+  var errorBox = document.getElementById('login-error');
+  var submitBtn = document.getElementById('login-submit');
+  var toggleBtn = document.getElementById('toggle-password');
+  var passwordInput = document.getElementById('password-input');
+
+  toggleBtn.addEventListener('click', function () {
+    var showing = passwordInput.type === 'text';
+    passwordInput.type = showing ? 'password' : 'text';
+    toggleBtn.querySelector('.material-symbols-outlined').textContent = showing ? 'visibility' : 'visibility_off';
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    errorBox.classList.add('hidden');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Ingresando…';
+
+    var email = document.getElementById('email-input').value.trim();
+    var password = passwordInput.value;
+
+    window.ReciclaAPI.apiFetch('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email: email, password: password }),
+    }).then(function (data) {
+      window.ReciclaAPI.setSession(data.token, data.usuario);
+      window.location.href = 'Reciclaje_tablero_principal.html';
+    }).catch(function (err) {
+      errorBox.textContent = err.message || 'No se pudo iniciar sesión.';
+      errorBox.classList.remove('hidden');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Iniciar Sesión';
+    });
+  });
+})();
 </script>
 </body></html>

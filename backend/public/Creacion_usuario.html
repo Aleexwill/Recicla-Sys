@@ -47,6 +47,9 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
 <div class="relative flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 md:p-8">
 <div class="w-full max-w-4xl rounded-xl border border-zinc-200/50 dark:border-zinc-800/50 bg-white/50 dark:bg-background-dark/50 shadow-lg backdrop-blur-sm">
 <div class="flex flex-col p-6 sm:p-8 md:p-10">
@@ -54,28 +57,25 @@
 <p class="text-[#0e1b13] dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">Crear Nuevo Usuario</p>
 <p class="text-zinc-600 dark:text-zinc-400 mt-2 text-base">Rellena los siguientes campos para añadir un nuevo miembro al equipo.</p>
 </div>
+<p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 mb-6" id="form-error"></p>
 <div class="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
 <div class="flex flex-col">
 <label class="flex flex-col">
 <p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Nombre de Usuario</p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" placeholder="Ingrese el nombre de usuario" value=""/>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" id="nombre-input" placeholder="Ingrese el nombre de usuario" value=""/>
 </label>
 </div>
 <div class="flex flex-col">
 <label class="flex flex-col">
 <p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Correo Electrónico</p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" placeholder="ejemplo@correo.com" type="email" value=""/>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" id="email-input" placeholder="ejemplo@correo.com" type="email" value=""/>
 </label>
 </div>
 <div class="flex flex-col">
 <label class="flex flex-col">
 <p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Puesto</p>
-<select class="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 px-[15px] py-0 text-base font-normal leading-normal transition-all">
-<option disabled="" selected="" value="">Seleccione un rol</option>
-<option value="admin">Administrador</option>
-<option value="operator">Operador de Planta</option>
-<option value="finance">Finanzas</option>
-<option value="seller">Vendedor</option>
+<select class="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 px-[15px] py-0 text-base font-normal leading-normal transition-all" id="rol-select">
+<option value="">Cargando roles…</option>
 </select>
 </label>
 </div>
@@ -87,12 +87,12 @@
 <span class="text-[#0e1b13] dark:text-zinc-200 font-medium">Control Total</span>
 </label>
 <label class="flex items-center gap-3 p-4 rounded-lg border border-zinc-300 dark:border-zinc-700 has-[:checked]:border-primary has-[:checked]:bg-primary/10 dark:has-[:checked]:bg-primary/20 cursor-pointer transition-all">
-<input class="form-radio text-primary focus:ring-primary/50" name="permission" type="radio" value="edit"/>
-<span class="text-[#0e1b13] dark:text-zinc-200 font-medium">Edición</span>
+<input checked="" class="form-radio text-primary focus:ring-primary/50" name="permission" type="radio" value="view"/>
+<span class="text-[#0e1b13] dark:text-zinc-200 font-medium">Solo Vista</span>
 </label>
 <label class="flex items-center gap-3 p-4 rounded-lg border border-zinc-300 dark:border-zinc-700 has-[:checked]:border-primary has-[:checked]:bg-primary/10 dark:has-[:checked]:bg-primary/20 cursor-pointer transition-all">
-<input class="form-radio text-primary focus:ring-primary/50" name="permission" type="radio" value="view"/>
-<span class="text-[#0e1b13] dark:text-zinc-200 font-medium">Solo Vista</span>
+<input class="form-radio text-primary focus:ring-primary/50" name="permission" type="radio" value="edit"/>
+<span class="text-[#0e1b13] dark:text-zinc-200 font-medium">Edición</span>
 </label>
 </div>
 </div>
@@ -100,8 +100,8 @@
 <label class="flex flex-col">
 <p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Contraseña</p>
 <div class="relative">
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] pr-12 text-base font-normal leading-normal transition-all" placeholder="Mínimo 8 caracteres" type="password"/>
-<button class="absolute inset-y-0 right-0 flex items-center pr-4 text-zinc-500 dark:text-zinc-400 hover:text-primary" type="button">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] pr-12 text-base font-normal leading-normal transition-all" id="password-input" placeholder="Mínimo 8 caracteres" type="password"/>
+<button class="absolute inset-y-0 right-0 flex items-center pr-4 text-zinc-500 dark:text-zinc-400 hover:text-primary" id="toggle-password" type="button">
 <span class="material-symbols-outlined">visibility</span>
 </button>
 </div>
@@ -111,8 +111,8 @@
 <label class="flex flex-col">
 <p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Confirmar Contraseña</p>
 <div class="relative">
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] pr-12 text-base font-normal leading-normal transition-all" placeholder="Repita la contraseña" type="password"/>
-<button class="absolute inset-y-0 right-0 flex items-center pr-4 text-zinc-500 dark:text-zinc-400 hover:text-primary" type="button">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] pr-12 text-base font-normal leading-normal transition-all" id="password-confirm-input" placeholder="Repita la contraseña" type="password"/>
+<button class="absolute inset-y-0 right-0 flex items-center pr-4 text-zinc-500 dark:text-zinc-400 hover:text-primary" id="toggle-password-confirm" type="button">
 <span class="material-symbols-outlined">visibility_off</span>
 </button>
 </div>
@@ -120,8 +120,8 @@
 </div>
 </div>
 <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-4 mt-10 pt-6 border-t border-zinc-200/80 dark:border-zinc-800">
-<a href="Gestion_usuarios.html"><button class="flex h-12 w-full sm:w-auto items-center justify-center rounded-lg px-6 font-semibold text-zinc-700 dark:text-zinc-200 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">Cancelar</button></a>
-<button class="flex h-12 w-full sm:w-auto items-center justify-center rounded-lg bg-primary px-6 font-semibold text-white hover:bg-primary/90 transition-colors shadow-sm" onclick="window.location.href='Gestion_usuarios.html'">Guardar Usuario</button>
+<a href="Gestion_usuarios.html"><button class="flex h-12 w-full sm:w-auto items-center justify-center rounded-lg px-6 font-semibold text-zinc-700 dark:text-zinc-200 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" type="button">Cancelar</button></a>
+<button class="flex h-12 w-full sm:w-auto items-center justify-center rounded-lg bg-primary px-6 font-semibold text-white hover:bg-primary/90 transition-colors shadow-sm disabled:opacity-60" id="save-btn" type="button">Guardar Usuario</button>
 </div>
 </div>
 </div>
@@ -139,5 +139,72 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var rolSelect = document.getElementById('rol-select');
+  var errorBox = document.getElementById('form-error');
+  var saveBtn = document.getElementById('save-btn');
+  var passwordInput = document.getElementById('password-input');
+  var passwordConfirmInput = document.getElementById('password-confirm-input');
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
+
+  api.apiFetch('/usuarios/roles').then(function (roles) {
+    rolSelect.innerHTML = '<option value="">Sin rol asignado</option>' +
+      roles.map(function (r) { return '<option value="' + r.id + '">' + api.escapeHtml(r.nombre) + '</option>'; }).join('');
+  }).catch(function () {
+    rolSelect.innerHTML = '<option value="">No se pudieron cargar los roles</option>';
+  });
+
+  function wireToggle(btnId, inputId) {
+    var btn = document.getElementById(btnId);
+    var input = document.getElementById(inputId);
+    btn.addEventListener('click', function () {
+      var showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      btn.querySelector('.material-symbols-outlined').textContent = showing ? 'visibility' : 'visibility_off';
+    });
+  }
+  wireToggle('toggle-password', 'password-input');
+  wireToggle('toggle-password-confirm', 'password-confirm-input');
+
+  saveBtn.addEventListener('click', function () {
+    errorBox.classList.add('hidden');
+    var nombre = document.getElementById('nombre-input').value.trim();
+    var email = document.getElementById('email-input').value.trim();
+    var password = passwordInput.value;
+    var permisoInput = document.querySelector('input[name="permission"]:checked');
+
+    if (!nombre || !email || !password) return showError('Nombre, correo y contraseña son requeridos.');
+    if (password.length < 8) return showError('La contraseña debe tener al menos 8 caracteres.');
+    if (password !== passwordConfirmInput.value) return showError('Las contraseñas no coinciden.');
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Guardando…';
+
+    api.apiFetch('/usuarios', {
+      method: 'POST',
+      body: JSON.stringify({
+        nombre_usuario: nombre,
+        email: email,
+        password: password,
+        rol_id: rolSelect.value || null,
+        permiso: permisoInput ? permisoInput.value : 'view',
+      }),
+    }).then(function () {
+      window.location.href = 'Gestion_usuarios.html';
+    }).catch(function (err) {
+      if (err.status === 403) {
+        showError('Tu cuenta no tiene permiso para crear usuarios (requiere permiso "full").');
+      } else {
+        showError(err.message || 'No se pudo crear el usuario.');
+      }
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Guardar Usuario';
+    });
+  });
+})();
 </script>
 </body></html>

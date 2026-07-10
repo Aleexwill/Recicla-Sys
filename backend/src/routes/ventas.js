@@ -30,7 +30,13 @@ router.get('/', async (req, res) => {
 // GET /api/ventas/:id
 router.get('/:id', async (req, res) => {
   try {
-    const venta = await db.query('SELECT * FROM ventas WHERE id = $1', [req.params.id]);
+    const venta = await db.query(
+      `SELECT v.*, u.nombre_usuario AS vendedor
+       FROM ventas v
+       LEFT JOIN usuarios u ON u.id = v.usuario_id
+       WHERE v.id = $1`,
+      [req.params.id]
+    );
     if (venta.rows.length === 0) return res.status(404).json({ error: 'Venta no encontrada.' });
     const items = await db.query(
       `SELECT vi.*, m.nombre AS material_nombre

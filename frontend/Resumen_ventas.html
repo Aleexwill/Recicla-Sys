@@ -55,6 +55,9 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
 <div class="relative flex min-h-screen w-full">
 <!-- SideNavBar -->
 <aside class="sticky top-0 h-screen w-64 flex-shrink-0 bg-card-light dark:bg-card-dark border-r border-border-light dark:border-border-dark hidden lg:flex flex-col">
@@ -115,16 +118,17 @@
 <!-- Controls Section -->
 <div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm mb-8">
 <h3 class="text-lg font-bold leading-tight tracking-[-0.015em] mb-4">Seleccionar Período</h3>
+<p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 mb-4" id="page-error"></p>
 <div class="flex flex-col sm:flex-row items-end gap-4">
 <label class="flex flex-col w-full sm:w-auto flex-1">
 <p class="text-sm font-medium leading-normal pb-2">Fecha de Inicio</p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:border-primary h-12 px-3 text-base font-normal leading-normal" type="date" value="2023-10-01"/>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:border-primary h-12 px-3 text-base font-normal leading-normal" id="fecha-inicio" type="date"/>
 </label>
 <label class="flex flex-col w-full sm:w-auto flex-1">
 <p class="text-sm font-medium leading-normal pb-2">Fecha de Fin</p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:border-primary h-12 px-3 text-base font-normal leading-normal" type="date" value="2023-10-31"/>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:border-primary h-12 px-3 text-base font-normal leading-normal" id="fecha-fin" type="date"/>
 </label>
-<button class="flex min-w-[84px] w-full sm:w-auto cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90">
+<button class="flex min-w-[84px] w-full sm:w-auto cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90" id="generar-btn" type="button">
 <span class="truncate">Generar Informe</span>
 </button>
 </div>
@@ -133,15 +137,15 @@
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
 <div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
 <p class="text-sm font-medium text-text-muted-light dark:text-text-muted-dark mb-1">Ingresos Totales</p>
-<p class="text-3xl font-bold text-text-light dark:text-text-dark">$15,450.75</p>
+<p class="text-3xl font-bold text-text-light dark:text-text-dark" id="kpi-ingresos">$0.00</p>
 </div>
 <div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
 <p class="text-sm font-medium text-text-muted-light dark:text-text-muted-dark mb-1">Volumen Total Vendido</p>
-<p class="text-3xl font-bold text-text-light dark:text-text-dark">8,250 kg</p>
+<p class="text-3xl font-bold text-text-light dark:text-text-dark" id="kpi-volumen">0 kg</p>
 </div>
 <div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
 <p class="text-sm font-medium text-text-muted-light dark:text-text-muted-dark mb-1">Material Más Vendido</p>
-<p class="text-3xl font-bold text-text-light dark:text-text-dark">PET (Plástico)</p>
+<p class="text-3xl font-bold text-text-light dark:text-text-dark" id="kpi-material">—</p>
 </div>
 </div>
 <!-- Visualization Section -->
@@ -175,42 +179,8 @@
 <th class="px-6 py-3 font-semibold text-right" scope="col">Ingreso</th>
 </tr>
 </thead>
-<tbody>
-<tr class="border-b border-border-light dark:border-border-dark">
-<td class="px-6 py-4">2023-10-28</td>
-<td class="px-6 py-4 font-medium">EcoIndustrias S.A.</td>
-<td class="px-6 py-4">PET</td>
-<td class="px-6 py-4 text-right">1,200</td>
-<td class="px-6 py-4 text-right font-medium">$2,400.00</td>
-</tr>
-<tr class="border-b border-border-light dark:border-border-dark">
-<td class="px-6 py-4">2023-10-27</td>
-<td class="px-6 py-4 font-medium">Reciclajes del Norte</td>
-<td class="px-6 py-4">Cartón</td>
-<td class="px-6 py-4 text-right">2,500</td>
-<td class="px-6 py-4 text-right font-medium">$1,750.50</td>
-</tr>
-<tr class="border-b border-border-light dark:border-border-dark">
-<td class="px-6 py-4">2023-10-27</td>
-<td class="px-6 py-4 font-medium">Aluminios Modernos</td>
-<td class="px-6 py-4">Aluminio</td>
-<td class="px-6 py-4 text-right">550</td>
-<td class="px-6 py-4 text-right font-medium">$3,300.25</td>
-</tr>
-<tr class="border-b border-border-light dark:border-border-dark">
-<td class="px-6 py-4">2023-10-25</td>
-<td class="px-6 py-4 font-medium">EcoIndustrias S.A.</td>
-<td class="px-6 py-4">PET</td>
-<td class="px-6 py-4 text-right">950</td>
-<td class="px-6 py-4 text-right font-medium">$1,900.00</td>
-</tr>
-<tr>
-<td class="px-6 py-4">2023-10-24</td>
-<td class="px-6 py-4 font-medium">Reciclajes del Norte</td>
-<td class="px-6 py-4">Cartón</td>
-<td class="px-6 py-4 text-right">3,050</td>
-<td class="px-6 py-4 text-right font-medium">$2,135.00</td>
-</tr>
+<tbody id="informe-tbody">
+<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="5">Elegí un período y presioná "Generar Informe".</td></tr>
 </tbody>
 </table>
 </div>
@@ -231,5 +201,102 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var inicioInput = document.getElementById('fecha-inicio');
+  var finInput = document.getElementById('fecha-fin');
+  var generarBtn = document.getElementById('generar-btn');
+  var tbody = document.getElementById('informe-tbody');
+  var errorBox = document.getElementById('page-error');
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
+  function clearError() { errorBox.classList.add('hidden'); }
+
+  function defaultRange() {
+    var end = new Date();
+    var start = new Date();
+    start.setDate(start.getDate() - 30);
+    var iso = function (d) { return d.toISOString().slice(0, 10); };
+    inicioInput.value = iso(start);
+    finInput.value = iso(end);
+  }
+
+  function generar() {
+    clearError();
+    var start = inicioInput.value;
+    var end = finInput.value;
+    if (!start || !end) return showError('Elegí fecha de inicio y de fin.');
+
+    tbody.innerHTML = '<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="5">Cargando…</td></tr>';
+    generarBtn.disabled = true;
+
+    api.apiFetch('/ventas').then(function (ventas) {
+      var enRango = ventas.filter(function (v) {
+        var f = (v.fecha || '').slice(0, 10);
+        return f >= start && f <= end;
+      });
+      if (enRango.length === 0) {
+        tbody.innerHTML = '<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="5">No hay ventas en el período seleccionado.</td></tr>';
+        document.getElementById('kpi-ingresos').textContent = api.money(0);
+        document.getElementById('kpi-volumen').textContent = api.kg(0);
+        document.getElementById('kpi-material').textContent = '—';
+        generarBtn.disabled = false;
+        return;
+      }
+      // Traemos el detalle de cada venta del período para desglosar por material.
+      // Aceptable para el volumen de datos de este sistema; no está pensado para miles de ventas.
+      return Promise.all(enRango.map(function (v) { return api.apiFetch('/ventas/' + v.id); }))
+        .then(function (detalles) {
+          var filas = [];
+          var porMaterial = {};
+          var ingresoTotal = 0;
+          var volumenTotal = 0;
+
+          detalles.forEach(function (venta) {
+            ingresoTotal += Number(venta.total || 0);
+            (venta.items || []).forEach(function (item) {
+              volumenTotal += Number(item.cantidad_kg || 0);
+              porMaterial[item.material_nombre] = (porMaterial[item.material_nombre] || 0) + Number(item.cantidad_kg || 0);
+              filas.push({
+                fecha: venta.fecha,
+                cliente: venta.cliente_nombre || '—',
+                material: item.material_nombre,
+                cantidad: Number(item.cantidad_kg),
+                ingreso: Number(item.subtotal),
+              });
+            });
+          });
+
+          filas.sort(function (a, b) { return new Date(b.fecha) - new Date(a.fecha); });
+
+          tbody.innerHTML = filas.map(function (f) {
+            return '<tr class="border-b border-border-light dark:border-border-dark">' +
+              '<td class="px-6 py-4">' + api.fmtDate(f.fecha) + '</td>' +
+              '<td class="px-6 py-4 font-medium">' + api.escapeHtml(f.cliente) + '</td>' +
+              '<td class="px-6 py-4">' + api.escapeHtml(f.material) + '</td>' +
+              '<td class="px-6 py-4 text-right">' + f.cantidad.toFixed(2) + '</td>' +
+              '<td class="px-6 py-4 text-right font-medium">' + api.money(f.ingreso) + '</td>' +
+              '</tr>';
+          }).join('');
+
+          var topMaterial = Object.keys(porMaterial).sort(function (a, b) { return porMaterial[b] - porMaterial[a]; })[0];
+          document.getElementById('kpi-ingresos').textContent = api.money(ingresoTotal);
+          document.getElementById('kpi-volumen').textContent = api.kg(volumenTotal);
+          document.getElementById('kpi-material').textContent = topMaterial || '—';
+        });
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo generar el informe.');
+      tbody.innerHTML = '';
+    }).finally(function () {
+      generarBtn.disabled = false;
+    });
+  }
+
+  generarBtn.addEventListener('click', generar);
+  defaultRange();
+  generar();
+})();
 </script>
 </body></html>
