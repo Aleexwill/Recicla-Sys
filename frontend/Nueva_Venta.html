@@ -56,6 +56,9 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
 <div class="flex min-h-screen">
 <!-- SideNavBar Component -->
 <aside class="w-64 flex-shrink-0 bg-card-light dark:bg-card-dark p-4 flex flex-col justify-between border-r border-border-light/20 dark:border-border-dark/20">
@@ -113,14 +116,7 @@
 <p class="text-text-light/70 dark:text-text-dark/70 text-base font-normal leading-normal">Completa los detalles para crear una nueva transacción de venta.</p>
 </div>
 <div class="flex items-center gap-2">
-<button class="flex items-center justify-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark text-text-light dark:text-text-dark hover:bg-background-light/80 dark:hover:bg-background-dark/80">
-              Guardar como Borrador
-            </button>
-<button class="flex items-center justify-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark text-text-light dark:text-text-dark hover:bg-background-light/80 dark:hover:bg-background-dark/80">
-<span class="material-symbols-outlined" style="font-size: 20px;">local_shipping</span>
-              Iniciar Tránsito
-            </button>
-<button class="flex items-center justify-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary/90">
+<button class="flex items-center justify-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary/90 disabled:opacity-60" id="confirmar-venta-btn">
 <span class="material-symbols-outlined" style="font-size: 20px;">check_circle</span>
               Confirmar Venta
             </button>
@@ -132,32 +128,15 @@
 <!-- Sale Data Card -->
 <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-border-light/20 dark:border-border-dark/20">
 <h2 class="text-text-light dark:text-text-dark text-xl font-bold leading-tight tracking-tight mb-5">Datos de la Venta</h2>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-<div class="flex flex-col min-w-40 flex-1">
-<p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal pb-2">Buscar Cliente</p>
-<div class="flex items-center gap-2">
+<p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 mb-4" id="form-error"></p>
+<div class="grid grid-cols-1 gap-x-6 gap-y-4">
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal pb-2">Cliente</p>
 <div class="relative flex-1">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-light/50 dark:text-text-dark/50" style="font-size: 20px;">search</span>
-<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-12 placeholder:text-text-light/50 dark:placeholder:text-text-dark/50 pl-10 pr-4 py-3 text-base font-normal leading-normal" placeholder="Nombre o ID del cliente..." value=""/>
-</div>
-<button class="flex-shrink-0 flex items-center justify-center size-12 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30">
-<span class="material-symbols-outlined">add</span>
-</button>
-</div>
-</div>
-<label class="flex flex-col min-w-40 flex-1">
-<p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal pb-2">Fecha de Venta</p>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-light/50 dark:text-text-dark/50" style="font-size: 20px;">calendar_today</span>
-<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-12 placeholder:text-text-light/50 dark:placeholder:text-text-dark/50 pl-10 pr-4 py-3 text-base font-normal leading-normal" type="date" value="2023-10-27"/>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-12 placeholder:text-text-light/50 dark:placeholder:text-text-dark/50 pl-10 pr-4 py-3 text-base font-normal leading-normal" id="cliente-input" placeholder="Nombre del cliente..." value=""/>
 </div>
 </label>
-<div class="md:col-span-2">
-<label class="flex flex-col min-w-40 flex-1">
-<p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal pb-2">Referencia / N° de Orden (Opcional)</p>
-<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-12 placeholder:text-text-light/50 dark:placeholder:text-text-dark/50 px-4 py-3 text-base font-normal leading-normal" placeholder="Ej. ORD-00123" value=""/>
-</label>
-</div>
 </div>
 </div>
 <!-- Materials Card -->
@@ -167,24 +146,20 @@
 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end mb-6 p-4 bg-background-light dark:bg-background-dark rounded-lg border border-border-light/20 dark:border-border-dark/20">
 <label class="flex flex-col flex-1 col-span-12 md:col-span-4">
 <p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Material</p>
-<select class="form-select flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark h-12 px-3 text-base font-normal">
-<option>Seleccionar...</option>
-<option>PET (Plástico)</option>
-<option>Cartón</option>
-<option>Aluminio</option>
-<option>Vidrio</option>
+<select class="form-select flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark h-12 px-3 text-base font-normal" id="material-select">
+<option value="">Cargando materiales…</option>
 </select>
 </label>
 <label class="flex flex-col flex-1 col-span-6 md:col-span-2">
 <p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Cantidad (Kg)</p>
-<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark h-12 px-3 text-base font-normal" placeholder="0.00" type="number"/>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark h-12 px-3 text-base font-normal" id="cantidad-input" placeholder="0.00" type="number"/>
 </label>
 <label class="flex flex-col flex-1 col-span-6 md:col-span-3">
 <p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Precio Unitario ($)</p>
-<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark h-12 px-3 text-base font-normal" placeholder="0.00" type="number"/>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark bg-background-light dark:bg-background-dark h-12 px-3 text-base font-normal opacity-70" id="precio-input" placeholder="0.00" readonly="" type="text"/>
 </label>
 <div class="col-span-12 md:col-span-3">
-<button class="w-full flex items-center justify-center gap-2 h-12 px-4 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary/90">
+<button class="w-full flex items-center justify-center gap-2 h-12 px-4 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary/90" id="add-item-btn" type="button">
 <span class="material-symbols-outlined" style="font-size: 20px;">add</span>
                       Añadir a la Venta
                     </button>
@@ -202,34 +177,8 @@
 <th class="px-6 py-3 text-center rounded-r-lg" scope="col"></th>
 </tr>
 </thead>
-<tbody>
-<tr class="bg-card-light dark:bg-card-dark border-b border-border-light/20 dark:border-border-dark/20">
-<td class="px-6 py-4 font-medium whitespace-nowrap">PET (Plástico)</td>
-<td class="px-6 py-4 text-right">150.00</td>
-<td class="px-6 py-4 text-right">$0.25</td>
-<td class="px-6 py-4 text-right font-semibold">$37.50</td>
-<td class="px-6 py-4 text-center">
-<button class="text-danger/70 hover:text-danger"><span class="material-symbols-outlined" style="font-size: 20px;">delete</span></button>
-</td>
-</tr>
-<tr class="bg-card-light dark:bg-card-dark border-b border-border-light/20 dark:border-border-dark/20">
-<td class="px-6 py-4 font-medium whitespace-nowrap">Aluminio</td>
-<td class="px-6 py-4 text-right">75.50</td>
-<td class="px-6 py-4 text-right">$1.20</td>
-<td class="px-6 py-4 text-right font-semibold">$90.60</td>
-<td class="px-6 py-4 text-center">
-<button class="text-danger/70 hover:text-danger"><span class="material-symbols-outlined" style="font-size: 20px;">delete</span></button>
-</td>
-</tr>
-<tr class="bg-card-light dark:bg-card-dark">
-<td class="px-6 py-4 font-medium whitespace-nowrap">Cartón</td>
-<td class="px-6 py-4 text-right">320.00</td>
-<td class="px-6 py-4 text-right">$0.08</td>
-<td class="px-6 py-4 text-right font-semibold">$25.60</td>
-<td class="px-6 py-4 text-center">
-<button class="text-danger/70 hover:text-danger"><span class="material-symbols-outlined" style="font-size: 20px;">delete</span></button>
-</td>
-</tr>
+<tbody id="items-tbody">
+<tr id="items-empty-row"><td class="px-6 py-4 text-text-light/50 dark:text-text-dark/50" colspan="5">Todavía no añadiste materiales.</td></tr>
 </tbody>
 </table>
 </div>
@@ -242,23 +191,17 @@
 <div class="space-y-4">
 <div class="flex justify-between items-center text-base">
 <span class="text-text-light/70 dark:text-text-dark/70">Subtotal</span>
-<span class="font-medium">$153.70</span>
+<span class="font-medium" id="resumen-subtotal">$0.00</span>
 </div>
 <div class="flex justify-between items-center text-base">
-<span class="text-text-light/70 dark:text-text-dark/70">Descuento</span>
-<input class="form-input w-24 h-9 text-right rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-base font-medium" placeholder="$0.00" type="text" value="-$10.00"/>
+<span class="text-text-light/70 dark:text-text-dark/70">Impuesto (18%)</span>
+<span class="font-medium" id="resumen-impuesto">$0.00</span>
 </div>
 <div class="border-t border-dashed border-border-light dark:border-border-dark my-4"></div>
 <div class="flex justify-between items-center text-2xl font-bold">
 <span class="text-primary">Total General</span>
-<span class="text-primary">$143.70</span>
+<span class="text-primary" id="resumen-total">$0.00</span>
 </div>
-</div>
-<div class="mt-6">
-<label class="flex flex-col min-w-40 flex-1">
-<p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal pb-2">Notas (Opcional)</p>
-<textarea class="form-textarea flex w-full min-w-0 flex-1 resize-y overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-28 placeholder:text-text-light/50 dark:placeholder:text-text-dark/50 p-3 text-base font-normal leading-normal" placeholder="Añadir observaciones sobre la venta..."></textarea>
-</label>
 </div>
 </div>
 </div>
@@ -279,5 +222,113 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var materiales = [];
+  var cart = [];
+  var IMPUESTO_PCT = 18;
+
+  var select = document.getElementById('material-select');
+  var cantidadInput = document.getElementById('cantidad-input');
+  var precioInput = document.getElementById('precio-input');
+  var addBtn = document.getElementById('add-item-btn');
+  var tbody = document.getElementById('items-tbody');
+  var emptyRow = document.getElementById('items-empty-row');
+  var errorBox = document.getElementById('form-error');
+  var clienteInput = document.getElementById('cliente-input');
+  var confirmarBtn = document.getElementById('confirmar-venta-btn');
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
+  function clearError() { errorBox.classList.add('hidden'); }
+
+  api.apiFetch('/materiales').then(function (data) {
+    materiales = data;
+    select.innerHTML = '<option value="">Selecciona un material</option>' +
+      materiales.map(function (m) { return '<option value="' + m.id + '">' + api.escapeHtml(m.nombre) + ' (stock: ' + m.stock_actual + ' kg)</option>'; }).join('');
+  }).catch(function (err) {
+    select.innerHTML = '<option value="">No se pudieron cargar los materiales</option>';
+    showError(err.message || 'Error al cargar materiales.');
+  });
+
+  select.addEventListener('change', function () {
+    var material = materiales.find(function (m) { return String(m.id) === String(select.value); });
+    precioInput.value = material ? Number(material.precio_venta).toFixed(2) : '';
+  });
+
+  function renderTotals() {
+    var subtotal = cart.reduce(function (s, i) { return s + i.cantidad_kg * i.precio_unitario; }, 0);
+    var impuesto = subtotal * (IMPUESTO_PCT / 100);
+    document.getElementById('resumen-subtotal').textContent = api.money(subtotal);
+    document.getElementById('resumen-impuesto').textContent = api.money(impuesto);
+    document.getElementById('resumen-total').textContent = api.money(subtotal + impuesto);
+  }
+
+  function renderItems() {
+    if (cart.length === 0) {
+      tbody.innerHTML = '';
+      tbody.appendChild(emptyRow);
+      renderTotals();
+      return;
+    }
+    tbody.innerHTML = cart.map(function (item, idx) {
+      var subtotal = item.cantidad_kg * item.precio_unitario;
+      return '<tr class="bg-card-light dark:bg-card-dark border-b border-border-light/20 dark:border-border-dark/20">' +
+        '<td class="px-6 py-4 font-medium whitespace-nowrap">' + api.escapeHtml(item.nombre) + '</td>' +
+        '<td class="px-6 py-4 text-right">' + item.cantidad_kg.toFixed(2) + '</td>' +
+        '<td class="px-6 py-4 text-right">' + api.money(item.precio_unitario) + '</td>' +
+        '<td class="px-6 py-4 text-right font-semibold">' + api.money(subtotal) + '</td>' +
+        '<td class="px-6 py-4 text-center"><button class="text-danger/70 hover:text-danger" data-remove="' + idx + '">' +
+        '<span class="material-symbols-outlined" style="font-size: 20px;">delete</span></button></td></tr>';
+    }).join('');
+    tbody.querySelectorAll('[data-remove]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        cart.splice(Number(btn.getAttribute('data-remove')), 1);
+        renderItems();
+      });
+    });
+    renderTotals();
+  }
+
+  addBtn.addEventListener('click', function () {
+    clearError();
+    var materialId = select.value;
+    var cantidad = parseFloat(cantidadInput.value);
+    if (!materialId) return showError('Elegí un material.');
+    if (!cantidad || cantidad <= 0) return showError('Ingresá una cantidad mayor a cero.');
+    var material = materiales.find(function (m) { return String(m.id) === String(materialId); });
+    if (material && cantidad > Number(material.stock_actual)) {
+      return showError('No hay suficiente stock (' + material.stock_actual + ' kg disponibles).');
+    }
+    cart.push({ material_id: materialId, nombre: material ? material.nombre : '—', cantidad_kg: cantidad, precio_unitario: material ? Number(material.precio_venta) : 0 });
+    renderItems();
+    cantidadInput.value = '';
+    select.value = '';
+    precioInput.value = '';
+  });
+
+  confirmarBtn.addEventListener('click', function () {
+    clearError();
+    if (cart.length === 0) return showError('Añadí al menos un material a la venta.');
+
+    confirmarBtn.disabled = true;
+
+    api.apiFetch('/ventas', {
+      method: 'POST',
+      body: JSON.stringify({
+        cliente_nombre: clienteInput.value.trim() || null,
+        items: cart.map(function (i) { return { material_id: i.material_id, cantidad_kg: i.cantidad_kg }; }),
+      }),
+    }).then(function (data) {
+      window.location.href = 'Detalle_venta.html?id=' + data.venta_id;
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo registrar la venta.');
+      confirmarBtn.disabled = false;
+    });
+  });
+
+  renderItems();
+})();
 </script>
 </body></html>

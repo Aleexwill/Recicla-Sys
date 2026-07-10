@@ -45,6 +45,9 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-[#0e1b13] dark:text-gray-200">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
 <div class="relative flex min-h-screen w-full flex-col group/design-root" style='font-family: "Work Sans", "Noto Sans", sans-serif;'>
 <div class="layout-container flex h-full grow flex-col">
 <div class="px-4 sm:px-8 md:px-12 lg:px-20 xl:px-40 flex flex-1 justify-center py-10">
@@ -60,29 +63,31 @@
 <div class="w-full lg:w-2/5 flex flex-col gap-6">
 <div class="p-6 rounded-xl bg-white dark:bg-background-dark/50 border border-[#d1e6d9] dark:border-gray-700">
 <h2 class="text-[#0e1b13] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-5">Añadir Material</h2>
+<p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 mb-4" id="form-error"></p>
 <div class="flex flex-col gap-4">
 <label class="flex flex-col w-full">
+<p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Proveedor (opcional)</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="proveedor-input" placeholder="Nombre del proveedor" type="text"/>
+</label>
+<label class="flex flex-col w-full">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Material</p>
-<select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal appearance-none bg-[url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724px%27 height=%2724px%27 fill=%27rgb(80,149,108)%27 viewBox=%270 0 256 256%27%3e%3cpath d=%27M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z%27%3e%3c/path%3e%3c/svg%3e')] bg-no-repeat bg-right-4">
-<option>Busca o selecciona un material</option>
-<option value="pet">PET Cristal</option>
-<option value="carton">Cartón</option>
-<option value="aluminio">Aluminio</option>
+<select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal appearance-none bg-[url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724px%27 height=%2724px%27 fill=%27rgb(80,149,108)%27 viewBox=%270 0 256 256%27%3e%3cpath d=%27M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z%27%3e%3c/path%3e%3c/svg%3e')] bg-no-repeat bg-right-4" id="material-select">
+<option value="">Cargando materiales…</option>
 </select>
 </label>
 <div class="flex flex-col sm:flex-row gap-4">
 <label class="flex flex-col min-w-40 flex-1">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Peso (kg)</p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" placeholder="Ej: 25.5" step="0.1" type="number"/>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="peso-input" placeholder="Ej: 25.5" step="0.1" type="number"/>
 </label>
 <label class="flex flex-col min-w-40 flex-1">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Descuento por suciedad (%)</p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" placeholder="Ej: 10" step="1" type="number"/>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="descuento-input" placeholder="Ej: 10" step="1" type="number"/>
 </label>
 </div>
 </div>
 <div class="flex pt-6 justify-start">
-<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-[#0e1b13] gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-[#0e1b13] gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors" id="add-material-btn" type="button">
 <span class="material-symbols-outlined">add</span>
 <span class="truncate">Añadir Material</span>
 </button>
@@ -99,40 +104,22 @@
 <p class="text-[#50956c] dark:text-primary/70 text-sm font-semibold text-right">Descuento</p>
 <p class="text-[#50956c] dark:text-primary/70 text-sm font-semibold text-right"></p>
 </div>
-<div class="flex flex-col gap-2 mt-4">
-<!-- Example Item -->
-<div class="grid grid-cols-2 sm:grid-cols-[3fr_1fr_1fr_auto] gap-x-4 gap-y-2 items-center p-3 rounded-lg hover:bg-background-light dark:hover:bg-gray-800 transition-colors">
-<p class="col-span-2 sm:col-span-1 text-[#0e1b13] dark:text-white font-medium">PET Cristal</p>
-<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">25.5 kg</p>
-<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">10%</p>
-<button class="flex justify-self-end text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors">
-<span class="material-symbols-outlined">delete</span>
-</button>
+<div class="flex flex-col gap-2 mt-4" id="items-list">
+<div class="flex items-center justify-center text-center h-48" id="items-empty">
+<p class="text-[#50956c]">Aún no has añadido materiales. Usa el formulario para empezar.</p>
 </div>
-<div class="grid grid-cols-2 sm:grid-cols-[3fr_1fr_1fr_auto] gap-x-4 gap-y-2 items-center p-3 rounded-lg hover:bg-background-light dark:hover:bg-gray-800 transition-colors">
-<p class="col-span-2 sm:col-span-1 text-[#0e1b13] dark:text-white font-medium">Cartón</p>
-<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">150.2 kg</p>
-<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">5%</p>
-<button class="flex justify-self-end text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors">
-<span class="material-symbols-outlined">delete</span>
-</button>
-</div>
-<!-- Empty State -->
-<!-- <div class="flex items-center justify-center text-center h-48">
-                    <p class="text-[#50956c]">Aún no has añadido materiales. Usa el formulario para empezar.</p>
-                  </div> -->
 </div>
 </div>
 </div>
 </div>
 <!-- Actions Section -->
- <a href="Reciclaje_tablero_principal.html">
 <div class="flex flex-col sm:flex-row justify-end gap-4 mt-8 p-4 border-t border-[#d1e6d9] dark:border-gray-700">
+<a href="Reciclaje_tablero_principal.html">
 <button class="flex min-w-[84px] max-w-sm cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-transparent text-[#50956c] dark:text-primary/70 border border-[#d1e6d9] dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-base font-bold leading-normal tracking-[0.015em]">
 <span class="truncate">Cancelar Compra</span>
 </button>
 </a>
-<button class="flex min-w-[84px] max-w-sm cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-[#0e1b13] hover:bg-primary/90 transition-colors text-base font-bold leading-normal tracking-[0.015em] gap-2">
+<button class="flex min-w-[84px] max-w-sm cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-[#0e1b13] hover:bg-primary/90 transition-colors text-base font-bold leading-normal tracking-[0.015em] gap-2 disabled:opacity-60" id="siguiente-btn" type="button">
 <span class="truncate">Siguiente</span>
 <span class="material-symbols-outlined">arrow_forward</span>
 </button>
@@ -154,5 +141,102 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var materiales = [];
+  var cart = [];
+
+  var select = document.getElementById('material-select');
+  var pesoInput = document.getElementById('peso-input');
+  var descuentoInput = document.getElementById('descuento-input');
+  var addBtn = document.getElementById('add-material-btn');
+  var itemsList = document.getElementById('items-list');
+  var itemsEmpty = document.getElementById('items-empty');
+  var errorBox = document.getElementById('form-error');
+  var siguienteBtn = document.getElementById('siguiente-btn');
+  var proveedorInput = document.getElementById('proveedor-input');
+
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.classList.remove('hidden');
+  }
+  function clearError() {
+    errorBox.classList.add('hidden');
+  }
+
+  api.apiFetch('/materiales').then(function (data) {
+    materiales = data;
+    select.innerHTML = '<option value="">Selecciona un material</option>' +
+      materiales.map(function (m) { return '<option value="' + m.id + '">' + api.escapeHtml(m.nombre) + '</option>'; }).join('');
+  }).catch(function (err) {
+    select.innerHTML = '<option value="">No se pudieron cargar los materiales</option>';
+    showError(err.message || 'Error al cargar materiales.');
+  });
+
+  function renderItems() {
+    if (cart.length === 0) {
+      itemsList.innerHTML = '';
+      itemsList.appendChild(itemsEmpty);
+      itemsEmpty.classList.remove('hidden');
+      return;
+    }
+    itemsList.innerHTML = cart.map(function (item, idx) {
+      return '<div class="grid grid-cols-2 sm:grid-cols-[3fr_1fr_1fr_auto] gap-x-4 gap-y-2 items-center p-3 rounded-lg hover:bg-background-light dark:hover:bg-gray-800 transition-colors">' +
+        '<p class="col-span-2 sm:col-span-1 text-[#0e1b13] dark:text-white font-medium">' + api.escapeHtml(item.nombre) + '</p>' +
+        '<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">' + item.peso_kg + ' kg</p>' +
+        '<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">' + item.descuento_pct + '%</p>' +
+        '<button class="flex justify-self-end text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors" data-remove="' + idx + '">' +
+        '<span class="material-symbols-outlined">delete</span></button>' +
+        '</div>';
+    }).join('');
+    itemsList.querySelectorAll('[data-remove]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        cart.splice(Number(btn.getAttribute('data-remove')), 1);
+        renderItems();
+      });
+    });
+  }
+
+  addBtn.addEventListener('click', function () {
+    clearError();
+    var materialId = select.value;
+    var peso = parseFloat(pesoInput.value);
+    var descuento = descuentoInput.value === '' ? 0 : parseFloat(descuentoInput.value);
+    if (!materialId) return showError('Elegí un material.');
+    if (!peso || peso <= 0) return showError('Ingresá un peso mayor a cero.');
+    if (descuento < 0 || descuento > 100) return showError('El descuento debe estar entre 0 y 100.');
+
+    var material = materiales.find(function (m) { return String(m.id) === String(materialId); });
+    cart.push({ material_id: materialId, nombre: material ? material.nombre : '—', peso_kg: peso, descuento_pct: descuento });
+    renderItems();
+    pesoInput.value = '';
+    descuentoInput.value = '';
+    select.value = '';
+  });
+
+  siguienteBtn.addEventListener('click', function () {
+    clearError();
+    if (cart.length === 0) return showError('Añadí al menos un material antes de continuar.');
+
+    siguienteBtn.disabled = true;
+    siguienteBtn.querySelector('.truncate').textContent = 'Guardando…';
+
+    api.apiFetch('/compras', {
+      method: 'POST',
+      body: JSON.stringify({
+        proveedor_nombre: proveedorInput.value.trim() || null,
+        items: cart.map(function (i) { return { material_id: i.material_id, peso_kg: i.peso_kg, descuento_pct: i.descuento_pct }; }),
+      }),
+    }).then(function (data) {
+      window.location.href = 'Resumen_Compras.html?id=' + data.compra_id;
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo registrar la compra.');
+      siguienteBtn.disabled = false;
+      siguienteBtn.querySelector('.truncate').textContent = 'Siguiente';
+    });
+  });
+})();
 </script>
 </body></html>

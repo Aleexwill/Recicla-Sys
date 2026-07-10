@@ -40,6 +40,9 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
 <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
 <div class="layout-container flex h-full grow flex-col">
 <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 dark:border-primary/10 px-6 md:px-10 lg:px-20 py-3 bg-background-light dark:bg-background-dark">
@@ -54,7 +57,7 @@
 </div>
 <div class="hidden md:flex flex-1 justify-center gap-8">
 <div class="flex items-center gap-9">
-<a href="Reciclaje_tablero_principal.html" class="text-slate-800 dark:text-slate-300 text-sm font-medium leading-normal" href="#">Dashboard</a>
+<a href="Reciclaje_tablero_principal.html" class="text-slate-800 dark:text-slate-300 text-sm font-medium leading-normal">Dashboard</a>
 <a class="text-primary dark:text-primary text-sm font-bold leading-normal border-b-2 border-primary pb-1" href="#">Inventario</a>
 <a class="text-slate-800 dark:text-slate-300 text-sm font-medium leading-normal" href="Gestion_Ventas.html">Ventas</a>
 <a class="text-slate-800 dark:text-slate-300 text-sm font-medium leading-normal" href="Gestion_Compras.html">Compras</a>
@@ -78,11 +81,12 @@
 <p class="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Inventario de Materiales Reciclados</p>
 <p class="text-primary dark:text-primary/80 text-base font-normal leading-normal">Gestiona, añade y actualiza el inventario de materiales.</p>
 </div>
-<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-primary text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-4 hover:bg-primary/90 transition-colors">
+<a href="Ficha_Producto.html"><button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-primary text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-4 hover:bg-primary/90 transition-colors">
 <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">add</span>
 <span class="truncate">Añadir Nuevo Producto</span>
-</button>
+</button></a>
 </div>
+<p class="hidden mx-4 rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="page-error"></p>
 <div class="flex flex-col md:flex-row justify-between gap-4 p-4">
 <div class="flex-1">
 <label class="flex flex-col min-w-40 h-12 w-full">
@@ -90,36 +94,9 @@
 <div class="text-slate-500 dark:text-slate-400 flex border-none bg-primary/10 dark:bg-primary/5 items-center justify-center pl-4 rounded-l-lg border-r-0">
 <span class="material-symbols-outlined">search</span>
 </div>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border-none bg-primary/10 dark:bg-primary/5 h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Buscar por nombre de material..." value=""/>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border-none bg-primary/10 dark:bg-primary/5 h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" id="search-input" placeholder="Buscar por nombre de material..." value=""/>
 </div>
 </label>
-</div>
-<div class="flex items-center gap-2">
-<button class="flex h-12 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/10 dark:bg-primary/5 px-4 text-slate-800 dark:text-slate-300 hover:bg-primary/20 dark:hover:bg-primary/10 transition-colors">
-<span class="material-symbols-outlined text-lg">filter_list</span>
-<p class="text-sm font-medium leading-normal">Filtros</p>
-</button>
-<button class="flex h-12 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/10 dark:bg-primary/5 px-4 text-slate-800 dark:text-slate-300 hover:bg-primary/20 dark:hover:bg-primary/10 transition-colors">
-<span class="material-symbols-outlined text-lg">swap_vert</span>
-<p class="text-sm font-medium leading-normal">Ordenar</p>
-</button>
-<button class="flex h-12 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/10 dark:bg-primary/5 px-4 text-slate-800 dark:text-slate-300 hover:bg-primary/20 dark:hover:bg-primary/10 transition-colors">
-<span class="material-symbols-outlined text-lg">download</span>
-<p class="text-sm font-medium leading-normal">Exportar</p>
-</button>
-</div>
-</div>
-<div class="px-4 py-2">
-<div class="flex gap-3 overflow-x-auto pb-2">
-<div class="flex h-8 items-center justify-center gap-x-2 rounded-full bg-primary/20 dark:bg-primary/10 pl-3 pr-2 text-slate-800 dark:text-slate-300">
-<p class="text-sm font-medium leading-normal">Categoría: Plástico</p>
-<button class="p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10"><span class="material-symbols-outlined text-base">close</span></button>
-</div>
-<div class="flex h-8 items-center justify-center gap-x-2 rounded-full bg-primary/20 dark:bg-primary/10 pl-3 pr-2 text-slate-800 dark:text-slate-300">
-<p class="text-sm font-medium leading-normal">Stock: &gt; 100kg</p>
-<button class="p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10"><span class="material-symbols-outlined text-base">close</span></button>
-</div>
-<button class="text-sm font-medium leading-normal text-primary dark:text-primary/80 hover:underline">Limpiar filtros</button>
 </div>
 </div>
 <div class="p-4">
@@ -127,7 +104,6 @@
 <table class="w-full text-left text-sm text-slate-600 dark:text-slate-400">
 <thead class="bg-primary/5 dark:bg-primary/10 text-xs uppercase text-slate-700 dark:text-slate-300">
 <tr>
-<th class="p-4 w-12" scope="col"><input class="form-checkbox rounded border-slate-400 text-primary focus:ring-primary/50" type="checkbox"/></th>
 <th class="px-6 py-3 font-semibold" scope="col">Nombre del Material</th>
 <th class="px-6 py-3 font-semibold" scope="col">Inventario</th>
 <th class="px-6 py-3 font-semibold" scope="col">Unidad</th>
@@ -135,87 +111,14 @@
 <th class="px-6 py-3 font-semibold text-center" scope="col">Acciones</th>
 </tr>
 </thead>
-<tbody>
-<tr class="border-b border-primary/20 dark:border-primary/10 hover:bg-primary/5 dark:hover:bg-primary/5">
-<td class="p-4 w-12"><input class="form-checkbox rounded border-slate-400 text-primary focus:ring-primary/50" type="checkbox"/></td>
-<td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">Plástico PET (Botellas)</td>
-<td class="px-6 py-4">5,250</td>
-<td class="px-6 py-4">kg</td>
-<td class="px-6 py-4">$0.45 / kg</td>
-<td class="px-6 py-4">
-<div class="flex items-center justify-center gap-2">
-<button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-lg">edit</span></button>
-<button class="p-2 rounded-full hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-lg">delete</span></button>
-</div>
-</td>
-</tr>
-<tr class="border-b border-primary/20 dark:border-primary/10 hover:bg-primary/5 dark:hover:bg-primary/5">
-<td class="p-4 w-12"><input class="form-checkbox rounded border-slate-400 text-primary focus:ring-primary/50" type="checkbox"/></td>
-<td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">Cartón Corrugado</td>
-<td class="px-6 py-4">12,800</td>
-<td class="px-6 py-4">kg</td>
-<td class="px-6 py-4">$0.15 / kg</td>
-<td class="px-6 py-4">
-<div class="flex items-center justify-center gap-2">
-<button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-lg">edit</span></button>
-<button class="p-2 rounded-full hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-lg">delete</span></button>
-</div>
-</td>
-</tr>
-<tr class="border-b border-primary/20 dark:border-primary/10 hover:bg-primary/5 dark:hover:bg-primary/5">
-<td class="p-4 w-12"><input class="form-checkbox rounded border-slate-400 text-primary focus:ring-primary/50" type="checkbox"/></td>
-<td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">Aluminio (Latas)</td>
-<td class="px-6 py-4">1,500</td>
-<td class="px-6 py-4">kg</td>
-<td class="px-6 py-4">$1.20 / kg</td>
-<td class="px-6 py-4">
-<div class="flex items-center justify-center gap-2">
-<button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-lg">edit</span></button>
-<button class="p-2 rounded-full hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-lg">delete</span></button>
-</div>
-</td>
-</tr>
-<tr class="border-b border-primary/20 dark:border-primary/10 hover:bg-primary/5 dark:hover:bg-primary/5">
-<td class="p-4 w-12"><input class="form-checkbox rounded border-slate-400 text-primary focus:ring-primary/50" type="checkbox"/></td>
-<td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">Vidrio (Botellas)</td>
-<td class="px-6 py-4">8,450</td>
-<td class="px-6 py-4">kg</td>
-<td class="px-6 py-4">$0.05 / kg</td>
-<td class="px-6 py-4">
-<div class="flex items-center justify-center gap-2">
-<button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-lg">edit</span></button>
-<button class="p-2 rounded-full hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-lg">delete</span></button>
-</div>
-</td>
-</tr>
-<tr class="hover:bg-primary/5 dark:hover:bg-primary/5">
-<td class="p-4 w-12"><input class="form-checkbox rounded border-slate-400 text-primary focus:ring-primary/50" type="checkbox"/></td>
-<td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">Papel de Oficina</td>
-<td class="px-6 py-4">20.5</td>
-<td class="px-6 py-4">tonelada</td>
-<td class="px-6 py-4">$80.00 / tonelada</td>
-<td class="px-6 py-4">
-<div class="flex items-center justify-center gap-2">
-<button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-lg">edit</span></button>
-<button class="p-2 rounded-full hover:bg-red-500/20 text-red-500"><span class="material-symbols-outlined text-lg">delete</span></button>
-</div>
-</td>
-</tr>
+<tbody id="materiales-tbody">
+<tr><td class="px-6 py-4 text-slate-500 dark:text-slate-400" colspan="5">Cargando…</td></tr>
 </tbody>
 </table>
 </div>
 </div>
 <div class="flex items-center justify-between p-4 text-sm text-slate-600 dark:text-slate-400">
-<span>Mostrando 1-5 de 243 items</span>
-<div class="inline-flex items-center -space-x-px rounded-md text-sm">
-<button class="flex items-center justify-center px-3 h-8 leading-tight bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/10 rounded-l-lg hover:bg-primary/10 dark:hover:bg-primary/10">Anterior</button>
-<button class="flex items-center justify-center px-3 h-8 leading-tight bg-primary text-white border border-primary">1</button>
-<button class="flex items-center justify-center px-3 h-8 leading-tight bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/10 hover:bg-primary/10 dark:hover:bg-primary/10">2</button>
-<button class="flex items-center justify-center px-3 h-8 leading-tight bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/10 hover:bg-primary/10 dark:hover:bg-primary/10">3</button>
-<span class="flex items-center justify-center px-3 h-8 leading-tight bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/10">...</span>
-<button class="flex items-center justify-center px-3 h-8 leading-tight bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/10 hover:bg-primary/10 dark:hover:bg-primary/10">10</button>
-<button class="flex items-center justify-center px-3 h-8 leading-tight bg-white dark:bg-background-dark border border-primary/20 dark:border-primary/10 rounded-r-lg hover:bg-primary/10 dark:hover:bg-primary/10">Siguiente</button>
-</div>
+<span id="pagination-label">Mostrando 0 items</span>
 </div>
 </div>
 </main>
@@ -234,5 +137,65 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var tbody = document.getElementById('materiales-tbody');
+  var searchInput = document.getElementById('search-input');
+  var paginationLabel = document.getElementById('pagination-label');
+  var errorBox = document.getElementById('page-error');
+  var materiales = [];
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
+
+  function render() {
+    var q = searchInput.value.trim().toLowerCase();
+    var filtered = materiales.filter(function (m) { return m.nombre.toLowerCase().includes(q); });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td class="px-6 py-4 text-slate-500 dark:text-slate-400" colspan="5">No se encontraron materiales.</td></tr>';
+    } else {
+      tbody.innerHTML = filtered.map(function (m) {
+        var stockCls = Number(m.stock_actual) <= Number(m.stock_minimo) ? 'text-red-500 font-semibold' : '';
+        return '<tr class="border-b border-primary/20 dark:border-primary/10 hover:bg-primary/5 dark:hover:bg-primary/5">' +
+          '<td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">' + api.escapeHtml(m.nombre) + '</td>' +
+          '<td class="px-6 py-4 ' + stockCls + '">' + Number(m.stock_actual).toLocaleString('es-AR', { maximumFractionDigits: 2 }) + '</td>' +
+          '<td class="px-6 py-4">' + api.escapeHtml(m.unidad_medida) + '</td>' +
+          '<td class="px-6 py-4">' + api.money(m.precio_venta) + ' / ' + api.escapeHtml(m.unidad_medida) + '</td>' +
+          '<td class="px-6 py-4"><div class="flex items-center justify-center gap-2">' +
+          '<a href="Ficha_Producto.html?id=' + m.id + '"><button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-lg">edit</span></button></a>' +
+          '<button class="p-2 rounded-full hover:bg-red-500/20 text-red-500" data-delete="' + m.id + '"><span class="material-symbols-outlined text-lg">delete</span></button>' +
+          '</div></td></tr>';
+      }).join('');
+      tbody.querySelectorAll('[data-delete]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-delete');
+          var mat = materiales.find(function (m) { return String(m.id) === id; });
+          if (!confirm('¿Desactivar "' + (mat ? mat.nombre : 'este material') + '"?')) return;
+          api.apiFetch('/materiales/' + id, { method: 'DELETE' }).then(function () {
+            load();
+          }).catch(function (err) {
+            showError(err.message || 'No se pudo eliminar el material.');
+          });
+        });
+      });
+    }
+    paginationLabel.textContent = 'Mostrando ' + filtered.length + ' de ' + materiales.length + ' items';
+  }
+
+  function load() {
+    api.apiFetch('/materiales').then(function (data) {
+      materiales = data;
+      render();
+    }).catch(function (err) {
+      showError(err.message || 'No se pudieron cargar los materiales.');
+      tbody.innerHTML = '';
+    });
+  }
+
+  searchInput.addEventListener('input', render);
+  load();
+})();
 </script>
 </body></html>

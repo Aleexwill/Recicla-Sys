@@ -60,6 +60,9 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
 <div class="relative flex min-h-screen w-full flex-col">
 <div class="flex h-full grow flex-row">
 <!-- SideNavBar -->
@@ -97,7 +100,7 @@
 <span class="material-symbols-outlined text-text-light dark:text-text-dark">settings</span>
 <p class="text-sm font-medium">Configuraciones</p>
 </a>
-<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-subtle-light dark:text-text-subtle-dark transition-colors hover:bg-red-500/10 hover:text-red-500" href="Login.html">
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-subtle-light dark:text-text-subtle-dark transition-colors hover:bg-red-500/10 hover:text-red-500" data-logout href="Login.html">
 <span class="material-symbols-outlined">logout</span>
 <p class="text-sm font-medium">Cerrar Sesión</p>
 </a>

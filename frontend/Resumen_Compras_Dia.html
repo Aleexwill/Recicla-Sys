@@ -50,6 +50,9 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark text-text-primary-light dark:text-text-primary-dark">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
 <div class="flex min-h-screen">
 <!-- SideNavBar -->
 <aside class="w-64 flex-shrink-0 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex flex-col">
@@ -103,38 +106,34 @@
 <!-- PageHeading & Controls -->
 <div class="flex flex-wrap justify-between items-start gap-4 mb-6">
 <div class="flex flex-col gap-1">
-<h1 class="text-3xl font-bold tracking-tight">Resumen de Compras</h1>
-<p class="text-text-secondary-light dark:text-text-secondary-dark">24 de Octubre, 2023</p>
+<h1 class="text-3xl font-bold tracking-tight">Resumen de Compras del Día</h1>
+<p class="text-text-secondary-light dark:text-text-secondary-dark" id="fecha-label">—</p>
 </div>
 <div class="flex flex-wrap items-center gap-4">
 <label class="flex flex-col w-64">
 <p class="text-sm font-medium pb-2">Seleccionar fecha</p>
 <div class="relative flex w-full items-stretch rounded-lg">
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg bg-surface-light dark:bg-surface-dark text-text-primary-light dark:text-text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark h-11 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark px-3 text-base" type="text" value="24/10/2023"/>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg bg-surface-light dark:bg-surface-dark text-text-primary-light dark:text-text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark h-11 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark px-3 text-base" id="fecha-input" type="date"/>
 <div class="absolute right-0 top-0 bottom-0 text-text-secondary-light dark:text-text-secondary-dark flex items-center justify-center pr-3">
 <span class="material-symbols-outlined text-xl">calendar_today</span>
 </div>
 </div>
 </label>
-<button class="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-11 px-4 bg-primary text-white text-sm font-bold self-end hover:opacity-90 transition-opacity">
-<span class="material-symbols-outlined">download</span>
-<span class="truncate">Exportar</span>
-</button>
 </div>
 </div>
 <!-- Stats -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
 <div class="flex flex-col gap-2 rounded-xl p-6 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
-<p class="text-base font-medium text-text-secondary-light dark:text-text-secondary-dark">Total de Compras (€)</p>
-<p class="text-3xl font-bold tracking-tight">€2,450.75</p>
+<p class="text-base font-medium text-text-secondary-light dark:text-text-secondary-dark">Total de Compras</p>
+<p class="text-3xl font-bold tracking-tight" id="stat-monto">$ 0.00</p>
 </div>
 <div class="flex flex-col gap-2 rounded-xl p-6 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
 <p class="text-base font-medium text-text-secondary-light dark:text-text-secondary-dark">Peso Total (Kg)</p>
-<p class="text-3xl font-bold tracking-tight">1,820 Kg</p>
+<p class="text-3xl font-bold tracking-tight" id="stat-peso">0 kg</p>
 </div>
 <div class="flex flex-col gap-2 rounded-xl p-6 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
 <p class="text-base font-medium text-text-secondary-light dark:text-text-secondary-dark">Nº de Transacciones</p>
-<p class="text-3xl font-bold tracking-tight">42</p>
+<p class="text-3xl font-bold tracking-tight" id="stat-transacciones">0</p>
 </div>
 </div>
 <!-- Table -->
@@ -143,96 +142,32 @@
 <table class="w-full text-sm">
 <thead class="bg-background-light dark:bg-background-dark">
 <tr>
-<th class="px-6 py-3 text-left font-medium text-text-secondary-light dark:text-text-secondary-dark">Hora</th>
+<th class="px-6 py-3 text-left font-medium text-text-secondary-light dark:text-text-secondary-dark">Última Hora</th>
 <th class="px-6 py-3 text-left font-medium text-text-secondary-light dark:text-text-secondary-dark">Material</th>
 <th class="px-6 py-3 text-right font-medium text-text-secondary-light dark:text-text-secondary-dark">Peso (Kg)</th>
-<th class="px-6 py-3 text-right font-medium text-text-secondary-light dark:text-text-secondary-dark">% Descuento</th>
-<th class="px-6 py-3 text-right font-medium text-text-secondary-light dark:text-text-secondary-dark">Subtotal (€)</th>
-<th class="px-6 py-3 text-center font-medium text-text-secondary-light dark:text-text-secondary-dark">Acciones</th>
+<th class="px-6 py-3 text-right font-medium text-text-secondary-light dark:text-text-secondary-dark">% Descuento Prom.</th>
+<th class="px-6 py-3 text-right font-medium text-text-secondary-light dark:text-text-secondary-dark">Subtotal</th>
 </tr>
 </thead>
-<tbody>
-<tr class="border-t border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors">
-<td class="px-6 py-4 whitespace-nowrap">16:45</td>
-<td class="px-6 py-4 whitespace-nowrap font-medium">Plástico PET</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-text-secondary-light dark:text-text-secondary-dark">150.50</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-text-secondary-light dark:text-text-secondary-dark">5%</td>
-<td class="px-6 py-4 whitespace-nowrap text-right font-semibold">€142.98</td>
-<td class="px-6 py-4 text-center">
-<button class="p-1.5 rounded-md hover:bg-primary/20 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-xl">visibility</span>
-</button>
-</td>
-</tr>
-<tr class="border-t border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors">
-<td class="px-6 py-4 whitespace-nowrap">16:32</td>
-<td class="px-6 py-4 whitespace-nowrap font-medium">Cartón</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-text-secondary-light dark:text-text-secondary-dark">220.00</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-text-secondary-light dark:text-text-secondary-dark">2%</td>
-<td class="px-6 py-4 whitespace-nowrap text-right font-semibold">€215.60</td>
-<td class="px-6 py-4 text-center">
-<button class="p-1.5 rounded-md hover:bg-primary/20 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-xl">visibility</span>
-</button>
-</td>
-</tr>
-<tr class="border-t border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors">
-<td class="px-6 py-4 whitespace-nowrap">16:15</td>
-<td class="px-6 py-4 whitespace-nowrap font-medium">Aluminio</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-text-secondary-light dark:text-text-secondary-dark">85.20</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-text-secondary-light dark:text-text-secondary-dark">0%</td>
-<td class="px-6 py-4 whitespace-nowrap text-right font-semibold">€85.20</td>
-<td class="px-6 py-4 text-center">
-<button class="p-1.5 rounded-md hover:bg-primary/20 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-xl">visibility</span>
-</button>
-</td>
-</tr>
-<tr class="border-t border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors">
-<td class="px-6 py-4 whitespace-nowrap">15:58</td>
-<td class="px-6 py-4 whitespace-nowrap font-medium">Vidrio</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-text-secondary-light dark:text-text-secondary-dark">310.80</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-text-secondary-light dark:text-text-secondary-dark">8%</td>
-<td class="px-6 py-4 whitespace-nowrap text-right font-semibold">€285.94</td>
-<td class="px-6 py-4 text-center">
-<button class="p-1.5 rounded-md hover:bg-primary/20 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-xl">visibility</span>
-</button>
-</td>
-</tr>
-<tr class="border-t border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors">
-<td class="px-6 py-4 whitespace-nowrap">15:40</td>
-<td class="px-6 py-4 whitespace-nowrap font-medium">Cobre</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-text-secondary-light dark:text-text-secondary-dark">45.10</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-text-secondary-light dark:text-text-secondary-dark">1%</td>
-<td class="px-6 py-4 whitespace-nowrap text-right font-semibold">€44.65</td>
-<td class="px-6 py-4 text-center">
-<button class="p-1.5 rounded-md hover:bg-primary/20 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-xl">visibility</span>
-</button>
-</td>
-</tr>
+<tbody id="detalle-tbody">
+<tr><td class="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark" colspan="5">Cargando…</td></tr>
 </tbody>
 <tfoot class="border-t-2 border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
 <tr>
 <td class="px-6 py-4 font-bold text-base" colspan="2">TOTALES</td>
-<td class="px-6 py-4 text-right font-bold text-base">1,820.00</td>
+<td class="px-6 py-4 text-right font-bold text-base" id="footer-peso">0.00</td>
 <td class="px-6 py-4"></td>
-<td class="px-6 py-4 text-right font-bold text-base">€2,450.75</td>
-<td class="px-6 py-4"></td>
+<td class="px-6 py-4 text-right font-bold text-base" id="footer-monto">$ 0.00</td>
 </tr>
 </tfoot>
 </table>
 </div>
 </div>
-<!-- Empty State Example (Commented Out) -->
-<!-- 
-            <div class="mt-8 text-center py-16 border-2 border-dashed border-border-light dark:border-border-dark rounded-xl">
-              <span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark">folder_off</span>
-              <h3 class="mt-4 text-lg font-semibold">Sin Compras Registradas</h3>
-              <p class="mt-1 text-sm text-text-secondary-light dark:text-text-secondary-dark">No se encontraron transacciones para la fecha seleccionada.</p>
-            </div>
-            -->
+<div class="mt-8 text-center py-16 border-2 border-dashed border-border-light dark:border-border-dark rounded-xl hidden" id="empty-state">
+<span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark">folder_off</span>
+<h3 class="mt-4 text-lg font-semibold">Sin Compras Registradas</h3>
+<p class="mt-1 text-sm text-text-secondary-light dark:text-text-secondary-dark">No se encontraron transacciones para la fecha seleccionada.</p>
+</div>
 </div>
 </main>
 </div>
@@ -249,5 +184,51 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var fechaInput = document.getElementById('fecha-input');
+  var fechaLabel = document.getElementById('fecha-label');
+  var tbody = document.getElementById('detalle-tbody');
+  var table = tbody.closest('table');
+  var emptyState = document.getElementById('empty-state');
+
+  function load(fecha) {
+    fechaLabel.textContent = api.fmtDate(fecha);
+    tbody.innerHTML = '<tr><td class="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark" colspan="5">Cargando…</td></tr>';
+    api.apiFetch('/compras/resumen-dia?fecha=' + encodeURIComponent(fecha)).then(function (data) {
+      var totales = data.totales || {};
+      document.getElementById('stat-monto').textContent = api.money(totales.total_monto);
+      document.getElementById('stat-peso').textContent = api.kg(totales.total_kg);
+      document.getElementById('stat-transacciones').textContent = String(totales.total_transacciones || 0);
+      document.getElementById('footer-monto').textContent = api.money(totales.total_monto);
+      document.getElementById('footer-peso').textContent = (Number(totales.total_kg) || 0).toLocaleString('es-AR', { maximumFractionDigits: 2 });
+
+      if (!data.detalle || data.detalle.length === 0) {
+        table.parentElement.parentElement.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      table.parentElement.parentElement.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+      tbody.innerHTML = data.detalle.map(function (d) {
+        return '<tr class="border-t border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors">' +
+          '<td class="px-6 py-4 whitespace-nowrap">' + api.escapeHtml(d.hora_ultima || '—') + '</td>' +
+          '<td class="px-6 py-4 whitespace-nowrap font-medium">' + api.escapeHtml(d.material) + '</td>' +
+          '<td class="px-6 py-4 whitespace-nowrap text-right text-text-secondary-light dark:text-text-secondary-dark">' + Number(d.peso_total).toFixed(2) + '</td>' +
+          '<td class="px-6 py-4 whitespace-nowrap text-right text-text-secondary-light dark:text-text-secondary-dark">' + Number(d.descuento_promedio || 0).toFixed(1) + '%</td>' +
+          '<td class="px-6 py-4 whitespace-nowrap text-right font-semibold">' + api.money(d.subtotal) + '</td>' +
+          '</tr>';
+      }).join('');
+    }).catch(function (err) {
+      tbody.innerHTML = '<tr><td class="px-6 py-4 text-red-500" colspan="5">' + api.escapeHtml(err.message || 'Error al cargar el resumen.') + '</td></tr>';
+    });
+  }
+
+  fechaInput.value = api.todayISO();
+  fechaInput.addEventListener('change', function () { load(fechaInput.value); });
+  load(fechaInput.value);
+})();
 </script>
 </body></html>

@@ -47,6 +47,9 @@
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
 <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
 <header class="w-full px-4 sm:px-8 lg:px-16 xl:px-24 py-3 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-10">
 <div class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 pb-3">
@@ -74,57 +77,35 @@
 <div class="px-4 sm:px-8 lg:px-16 xl:px-24 flex flex-1 justify-center py-5 sm:py-10">
 <div class="layout-content-container flex flex-col w-full max-w-4xl flex-1 bg-white dark:bg-black/20 rounded-xl shadow-lg shadow-primary/10 dark:shadow-black/50 overflow-hidden">
 <div class="flex flex-col p-6 sm:p-8">
-<p class="text-slate-900 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">Resumen de Compra</p>
-<p class="text-slate-600 dark:text-slate-300 text-base font-normal leading-normal pt-2">Proveedor: Juan Pérez</p>
+<p class="text-slate-900 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]" id="page-title">Resumen de Compras</p>
+<p class="text-slate-600 dark:text-slate-300 text-base font-normal leading-normal pt-2" id="page-subtitle">Historial de compras registradas.</p>
 </div>
+<p class="hidden mx-6 sm:mx-8 rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="page-error"></p>
 <div class="px-6 sm:px-8 py-3 @container">
 <div class="overflow-hidden rounded-lg border border-primary/20 bg-background-light dark:bg-background-dark/50">
 <div class="overflow-x-auto">
 <table class="w-full min-w-[600px] text-left">
-<thead>
-<tr class="bg-primary/10 dark:bg-primary/20">
-<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal">Material</th>
-<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Peso (kg)</th>
-<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Desc. Suciedad (%)</th>
-<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Subtotal</th>
-</tr>
+<thead id="table-head">
 </thead>
-<tbody class="divide-y divide-primary/20">
-<tr>
-<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">PET Botellas</td>
-<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">150.5</td>
-<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">5%</td>
-<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal text-right">$ 1,250.00</td>
-</tr>
-<tr>
-<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">Cartón Corrugado</td>
-<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">220.0</td>
-<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">10%</td>
-<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal text-right">$ 990.00</td>
-</tr>
-<tr>
-<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">Aluminio Latas</td>
-<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">75.8</td>
-<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">2%</td>
-<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal text-right">$ 2,130.00</td>
-</tr>
+<tbody class="divide-y divide-primary/20" id="table-body">
+<tr><td class="px-4 py-3.5 text-slate-500 dark:text-slate-400" colspan="4">Cargando…</td></tr>
 </tbody>
 </table>
 </div>
 </div>
 </div>
-<div class="px-6 sm:px-8 mt-4">
+<div class="px-6 sm:px-8 mt-4 hidden" id="total-row">
 <div class="flex justify-end gap-x-6 py-4 border-t-2 border-dashed border-primary/20">
 <p class="text-slate-700 dark:text-slate-200 text-lg font-bold">Total General</p>
-<p class="text-slate-900 dark:text-white text-lg font-black text-right min-w-[120px]">$ 4,370.00</p>
+<p class="text-slate-900 dark:text-white text-lg font-black text-right min-w-[120px]" id="total-amount">$ 0.00</p>
 </div>
 </div>
 <div class="p-6 sm:p-8 mt-auto flex flex-col sm:flex-row justify-end gap-3 border-t border-primary/20 bg-primary/5 dark:bg-black/20">
 <a href="Registro_nueva_compra.html"><button class="flex items-center justify-center gap-2 h-11 px-6 rounded-lg text-sm font-bold border border-primary/50 text-slate-700 dark:text-slate-200 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
-<span class="material-symbols-outlined text-base">edit</span>
-                            Editar Compra
+<span class="material-symbols-outlined text-base">add_shopping_cart</span>
+                            Nueva Compra
                         </button></a>
-<button class="flex items-center justify-center gap-2 h-11 px-6 rounded-lg text-sm font-bold bg-primary text-white hover:bg-opacity-90 transition-colors" onclick="window.location.href='Reciclaje_tablero_principal.html'">
+<button class="hidden items-center justify-center gap-2 h-11 px-6 rounded-lg text-sm font-bold bg-primary text-white hover:bg-opacity-90 transition-colors disabled:opacity-60" id="confirm-btn">
 <span class="material-symbols-outlined text-base">check_circle</span>
                             Confirmar Compra
                         </button>
@@ -146,5 +127,100 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var id = new URLSearchParams(window.location.search).get('id');
+  var tableHead = document.getElementById('table-head');
+  var tableBody = document.getElementById('table-body');
+  var errorBox = document.getElementById('page-error');
+
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.classList.remove('hidden');
+  }
+
+  var ESTADO_BADGE = {
+    pendiente: 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300',
+    confirmada: 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300',
+    cancelada: 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300',
+  };
+  function badge(estado) {
+    var cls = ESTADO_BADGE[estado] || 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300';
+    return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + cls + '">' + api.escapeHtml(estado || '—') + '</span>';
+  }
+
+  if (id) {
+    // Modo confirmación: una compra puntual (viene de Registro_nueva_compra.html)
+    document.getElementById('page-title').textContent = 'Resumen de Compra';
+    tableHead.innerHTML = '<tr class="bg-primary/10 dark:bg-primary/20">' +
+      '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal">Material</th>' +
+      '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Peso (kg)</th>' +
+      '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Desc. Suciedad (%)</th>' +
+      '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Subtotal</th></tr>';
+
+    api.apiFetch('/compras/' + id).then(function (compra) {
+      document.getElementById('page-subtitle').textContent = 'Proveedor: ' + (compra.proveedor_nombre || '—') + ' · ' + api.fmtDateTime(compra.fecha);
+      tableBody.innerHTML = compra.items.map(function (item) {
+        return '<tr>' +
+          '<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">' + api.escapeHtml(item.material_nombre) + '</td>' +
+          '<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">' + item.peso_kg + '</td>' +
+          '<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">' + item.descuento_pct + '%</td>' +
+          '<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal text-right">' + api.money(item.subtotal) + '</td>' +
+          '</tr>';
+      }).join('');
+      document.getElementById('total-row').classList.remove('hidden');
+      document.getElementById('total-amount').textContent = api.money(compra.total);
+
+      var confirmBtn = document.getElementById('confirm-btn');
+      if (compra.estado === 'pendiente') {
+        confirmBtn.classList.remove('hidden');
+        confirmBtn.classList.add('flex');
+        confirmBtn.addEventListener('click', function () {
+          confirmBtn.disabled = true;
+          api.apiFetch('/compras/' + id + '/confirmar', { method: 'PATCH' }).then(function () {
+            window.location.href = 'Reciclaje_tablero_principal.html';
+          }).catch(function (err) {
+            showError(err.message || 'No se pudo confirmar la compra.');
+            confirmBtn.disabled = false;
+          });
+        });
+      } else {
+        document.getElementById('page-subtitle').textContent += ' · ' + compra.estado;
+      }
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo cargar la compra.');
+      tableBody.innerHTML = '';
+    });
+  } else {
+    // Modo historial: todas las compras registradas
+    tableHead.innerHTML = '<tr class="bg-primary/10 dark:bg-primary/20">' +
+      '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal">Fecha</th>' +
+      '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal">Proveedor</th>' +
+      '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Total</th>' +
+      '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-center">Estado</th>' +
+      '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-center">Ver</th></tr>';
+
+    api.apiFetch('/compras').then(function (compras) {
+      if (compras.length === 0) {
+        tableBody.innerHTML = '<tr><td class="px-4 py-3.5 text-slate-500 dark:text-slate-400" colspan="5">Todavía no hay compras registradas.</td></tr>';
+        return;
+      }
+      tableBody.innerHTML = compras.map(function (c) {
+        return '<tr>' +
+          '<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">' + api.fmtDate(c.fecha) + '</td>' +
+          '<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">' + api.escapeHtml(c.proveedor_nombre || '—') + '</td>' +
+          '<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal text-right">' + api.money(c.total) + '</td>' +
+          '<td class="px-4 py-3.5 text-center">' + badge(c.estado) + '</td>' +
+          '<td class="px-4 py-3.5 text-center"><a class="text-primary hover:underline text-sm font-medium" href="Resumen_Compras.html?id=' + c.id + '">Ver</a></td>' +
+          '</tr>';
+      }).join('');
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo cargar el historial.');
+      tableBody.innerHTML = '';
+    });
+  }
+})();
 </script>
 </body></html>
