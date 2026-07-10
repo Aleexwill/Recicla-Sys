@@ -40,6 +40,10 @@
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
     </style>
+<link href="manifest.json" rel="manifest"/>
+<meta content="#1dc962" name="theme-color"/>
+<link href="icons/icon-192.png" rel="icon" type="image/png"/>
+<link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-text-dark dark:text-gray-200">
 <div class="flex min-h-screen">
@@ -223,4 +227,11 @@
 <span>Desarrollado por <span class="font-semibold text-text-dark dark:text-gray-200">ALMN Tech &amp; Solutions</span></span>
 </p>
 </footer>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
 </body></html>

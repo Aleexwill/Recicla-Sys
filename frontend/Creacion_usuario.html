@@ -41,6 +41,10 @@
             'opsz' 24
         }
     </style>
+<link href="manifest.json" rel="manifest"/>
+<meta content="#1dc962" name="theme-color"/>
+<link href="icons/icon-192.png" rel="icon" type="image/png"/>
+<link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark">
 <div class="relative flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 md:p-8">
@@ -129,4 +133,11 @@
 <span>Desarrollado por <span class="font-semibold text-gray-700 dark:text-gray-200">ALMN Tech &amp; Solutions</span></span>
 </p>
 </footer>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
 </body></html>
