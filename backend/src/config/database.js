@@ -5,18 +5,29 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 // La mayoría de los Postgres administrados en la nube (Neon, Supabase,
-// Render) exigen SSL. En local (o Render/Railway con Postgres interno)
-// normalmente no hace falta, así que queda a opción con DB_SSL=true.
+// Render, Vercel Postgres) exigen SSL. En local normalmente no hace
+// falta, así que queda a opción con DB_SSL=true.
 const useSSL = process.env.DB_SSL === 'true' || process.env.DB_SSL === '1';
 
-const pool = new Pool({
-  host:     process.env.DB_HOST     || 'localhost',
-  port:     process.env.DB_PORT     || 5432,
-  database: process.env.DB_NAME     || 'recicla_sys',
-  user:     process.env.DB_USER     || 'postgres',
-  password: process.env.DB_PASSWORD || '',
-  ssl:      useSSL ? { rejectUnauthorized: false } : false,
-});
+// Si hay una connection string (la forma en que Neon/Supabase/Vercel
+// Postgres la entregan, ej: POSTGRES_URL o DATABASE_URL), la usamos
+// directamente en vez de armar la conexión a partir de variables
+// sueltas. Evita errores de tipeo al copiar host/puerto/usuario a mano.
+const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+
+const pool = connectionString
+  ? new Pool({
+      connectionString,
+      ssl: useSSL || /\bsslmode=require\b/.test(connectionString) ? { rejectUnauthorized: false } : false,
+    })
+  : new Pool({
+      host:     process.env.DB_HOST     || 'localhost',
+      port:     process.env.DB_PORT     || 5432,
+      database: process.env.DB_NAME     || 'recicla_sys',
+      user:     process.env.DB_USER     || 'postgres',
+      password: process.env.DB_PASSWORD || '',
+      ssl:      useSSL ? { rejectUnauthorized: false } : false,
+    });
 
 // Probar la conexión al iniciar
 pool.connect((err, client, release) => {
