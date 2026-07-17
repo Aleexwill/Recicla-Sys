@@ -158,11 +158,14 @@ if ('serviceWorker' in navigator) {
     } else {
       tbody.innerHTML = filtered.map(function (m) {
         var stockCls = Number(m.stock_actual) <= Number(m.stock_minimo) ? 'text-red-500 font-semibold' : '';
+        var precioTxt = m.moneda === 'PYG'
+          ? api.moneyGs(m.precio_venta_original != null ? m.precio_venta_original : m.precio_venta)
+          : api.money(m.precio_venta);
         return '<tr class="border-b border-primary/20 dark:border-primary/10 hover:bg-primary/5 dark:hover:bg-primary/5">' +
           '<td class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">' + api.escapeHtml(m.nombre) + '</td>' +
           '<td class="px-6 py-4 ' + stockCls + '">' + Number(m.stock_actual).toLocaleString('es-AR', { maximumFractionDigits: 2 }) + '</td>' +
           '<td class="px-6 py-4">' + api.escapeHtml(m.unidad_medida) + '</td>' +
-          '<td class="px-6 py-4">' + api.money(m.precio_venta) + ' / ' + api.escapeHtml(m.unidad_medida) + '</td>' +
+          '<td class="px-6 py-4">' + precioTxt + ' / ' + api.escapeHtml(m.unidad_medida) + '</td>' +
           '<td class="px-6 py-4"><div class="flex items-center justify-center gap-2">' +
           '<a href="Ficha_Producto.html?id=' + m.id + '"><button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-lg">edit</span></button></a>' +
           '<button class="p-2 rounded-full hover:bg-red-500/20 text-red-500" data-delete="' + m.id + '"><span class="material-symbols-outlined text-lg">delete</span></button>' +
