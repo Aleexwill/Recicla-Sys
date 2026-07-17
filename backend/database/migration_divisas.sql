@@ -43,3 +43,21 @@ END $$;
 -- Completar precio_original en filas ya existentes (quedan en USD, como estaban)
 UPDATE compra_items SET precio_original = precio_unitario WHERE precio_original IS NULL;
 UPDATE venta_items SET precio_original = precio_unitario WHERE precio_original IS NULL;
+
+-- Divisa del precio base de cada material (alta/edición de producto)
+ALTER TABLE materiales ADD COLUMN IF NOT EXISTS moneda VARCHAR(5) DEFAULT 'USD';
+ALTER TABLE materiales ADD COLUMN IF NOT EXISTS tipo_cambio NUMERIC(12, 2);
+ALTER TABLE materiales ADD COLUMN IF NOT EXISTS precio_compra_original NUMERIC(14, 2);
+ALTER TABLE materiales ADD COLUMN IF NOT EXISTS precio_venta_original NUMERIC(14, 2);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'materiales_moneda_check'
+  ) THEN
+    ALTER TABLE materiales ADD CONSTRAINT materiales_moneda_check CHECK (moneda IN ('USD', 'PYG'));
+  END IF;
+END $$;
+
+UPDATE materiales SET precio_compra_original = precio_compra WHERE precio_compra_original IS NULL;
+UPDATE materiales SET precio_venta_original = precio_venta WHERE precio_venta_original IS NULL;
