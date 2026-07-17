@@ -55,7 +55,7 @@
 <link href="icons/icon-192.png" rel="icon" type="image/png"/>
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark overflow-x-hidden">
 <script src="js/api.js"></script>
 <script src="js/auth-guard.js"></script>
 <script src="js/mobile-nav.js"></script>
@@ -121,7 +121,7 @@
 </div>
 </aside>
 <!-- Main Content -->
-<main class="flex-1 p-6 lg:p-10">
+<main class="flex-1 min-w-0 p-6 lg:p-10">
 <div class="max-w-7xl mx-auto">
 <!-- PageHeading Component -->
 <header class="flex flex-wrap justify-between items-center gap-4 mb-8">
@@ -308,9 +308,9 @@ if ('serviceWorker' in navigator) {
   function renderTotals() {
     var subtotal = cart.reduce(function (s, i) { return s + i.cantidad_kg * i.precio_unitario; }, 0);
     var impuesto = subtotal * (IMPUESTO_PCT / 100);
-    document.getElementById('resumen-subtotal').textContent = api.money(subtotal);
-    document.getElementById('resumen-impuesto').textContent = api.money(impuesto);
-    document.getElementById('resumen-total').textContent = api.money(subtotal + impuesto);
+    document.getElementById('resumen-subtotal').innerHTML = api.moneyDual(subtotal, tipoCambio);
+    document.getElementById('resumen-impuesto').innerHTML = api.moneyDual(impuesto, tipoCambio);
+    document.getElementById('resumen-total').innerHTML = api.moneyDual(subtotal + impuesto, tipoCambio);
   }
 
   function renderItems() {

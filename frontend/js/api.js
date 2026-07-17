@@ -79,6 +79,15 @@
     return (Number(usd) || 0) * (Number(tipoCambio) || 0);
   }
 
+  // Monto en USD junto a su equivalente en Gs. (si hay tipo de cambio disponible).
+  // Devuelve HTML — usar con innerHTML, no textContent.
+  function moneyDual(usd, tipoCambio) {
+    const usdTxt = escapeHtml(money(usd));
+    const tc = Number(tipoCambio) || 0;
+    if (!tc) return usdTxt;
+    return usdTxt + ' <span class="text-sm font-normal opacity-70">(≈ ' + escapeHtml(moneyGs(usdToGs(usd, tc))) + ')</span>';
+  }
+
   function gsToUsd(gs, tipoCambio) {
     const tc = Number(tipoCambio) || 0;
     if (!tc) return 0;
@@ -124,6 +133,7 @@
     clearSession: clearSession,
     money: money,
     moneyGs: moneyGs,
+    moneyDual: moneyDual,
     usdToGs: usdToGs,
     gsToUsd: gsToUsd,
     kg: kg,

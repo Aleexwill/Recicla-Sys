@@ -49,7 +49,7 @@
 <link href="icons/icon-192.png" rel="icon" type="image/png"/>
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
-<body class="font-display bg-background-light dark:bg-background-dark text-text-primary-light dark:text-text-primary-dark">
+<body class="font-display bg-background-light dark:bg-background-dark text-text-primary-light dark:text-text-primary-dark overflow-x-hidden">
 <script src="js/api.js"></script>
 <script src="js/auth-guard.js"></script>
 <script src="js/mobile-nav.js"></script>
@@ -117,7 +117,7 @@
 </div>
 </aside>
 <!-- Main Content -->
-<main class="flex-1 p-6 lg:p-8 overflow-y-auto">
+<main class="flex-1 min-w-0 p-6 lg:p-8 overflow-y-auto">
 <div class="max-w-7xl mx-auto">
 <!-- PageHeading & Controls -->
 <div class="flex flex-wrap justify-between items-start gap-4 mb-6">
@@ -209,16 +209,21 @@ if ('serviceWorker' in navigator) {
   var tbody = document.getElementById('detalle-tbody');
   var table = tbody.closest('table');
   var emptyState = document.getElementById('empty-state');
+  var tipoCambio = null;
+
+  api.apiFetch('/tipos-cambio/actual').then(function (data) {
+    tipoCambio = Number(data.valor);
+  }).catch(function () { tipoCambio = null; });
 
   function load(fecha) {
     fechaLabel.textContent = api.fmtDate(fecha);
     tbody.innerHTML = '<tr><td class="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark" colspan="5">Cargando…</td></tr>';
     api.apiFetch('/compras/resumen-dia?fecha=' + encodeURIComponent(fecha)).then(function (data) {
       var totales = data.totales || {};
-      document.getElementById('stat-monto').textContent = api.money(totales.total_monto);
+      document.getElementById('stat-monto').innerHTML = api.moneyDual(totales.total_monto, tipoCambio);
       document.getElementById('stat-peso').textContent = api.kg(totales.total_kg);
       document.getElementById('stat-transacciones').textContent = String(totales.total_transacciones || 0);
-      document.getElementById('footer-monto').textContent = api.money(totales.total_monto);
+      document.getElementById('footer-monto').innerHTML = api.moneyDual(totales.total_monto, tipoCambio);
       document.getElementById('footer-peso').textContent = (Number(totales.total_kg) || 0).toLocaleString('es-AR', { maximumFractionDigits: 2 });
 
       if (!data.detalle || data.detalle.length === 0) {
