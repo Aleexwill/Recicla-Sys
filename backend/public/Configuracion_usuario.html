@@ -119,16 +119,58 @@
 <!-- PageHeading -->
 <header class="mb-8 flex flex-wrap items-end justify-between gap-4">
 <div class="flex flex-col gap-2">
-<h1 class="text-3xl font-bold tracking-tight text-text-light dark:text-text-dark">Configuración de Usuarios</h1>
-<p class="text-base text-text-subtle-light dark:text-text-subtle-dark">Gestiona ajustes de cuentas y perfiles de los usuarios del sistema.</p>
+<h1 class="text-3xl font-bold tracking-tight text-text-light dark:text-text-dark">Configuración de Usuario</h1>
+<p class="text-base text-text-subtle-light dark:text-text-subtle-dark">Tu perfil y la contraseña de tu cuenta.</p>
 </div>
 <div class="flex gap-2">
-<a href="Gestion_configuracion.html"><button class="flex h-10 items-center justify-center rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-4 text-sm font-medium text-text-light dark:text-text-dark shadow-sm transition-colors hover:bg-gray-100 dark:hover:bg-white/5">Cancelar</button></a>
-<button class="flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">Guardar Cambios</button>
+<a href="Gestion_configuracion.html"><button class="flex h-10 items-center justify-center rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-4 text-sm font-medium text-text-light dark:text-text-dark shadow-sm transition-colors hover:bg-gray-100 dark:hover:bg-white/5">Volver</button></a>
 </div>
 </header>
 <!-- Configuration Cards -->
 <div class="flex flex-col gap-8">
+<!-- Mi Perfil Card -->
+<section class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
+<h2 class="border-b border-border-light dark:border-border-dark px-6 py-4 text-lg font-bold text-text-light dark:text-text-dark">Mi Perfil</h2>
+<div class="grid grid-cols-1 gap-4 p-6 sm:grid-cols-3">
+<div class="flex flex-col gap-1">
+<p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Nombre</p>
+<p class="font-medium text-text-light dark:text-text-dark" data-user-name>—</p>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Correo electrónico</p>
+<p class="font-medium text-text-light dark:text-text-dark" data-user-email>—</p>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Rol</p>
+<p class="font-medium text-text-light dark:text-text-dark" data-user-role>—</p>
+</div>
+</div>
+</section>
+<!-- Change Password Card -->
+<section class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
+<h2 class="border-b border-border-light dark:border-border-dark px-6 py-4 text-lg font-bold text-text-light dark:text-text-dark">Cambiar Contraseña</h2>
+<div class="flex flex-col gap-4 p-6">
+<p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="password-error"></p>
+<p class="hidden rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-primary" id="password-success"></p>
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+<label class="flex flex-col gap-2">
+<p class="text-sm font-medium text-text-light dark:text-text-dark">Contraseña actual</p>
+<input class="rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" id="password-actual" type="password"/>
+</label>
+<label class="flex flex-col gap-2">
+<p class="text-sm font-medium text-text-light dark:text-text-dark">Contraseña nueva</p>
+<input class="rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" id="password-nueva" placeholder="Mínimo 8 caracteres" type="password"/>
+</label>
+<label class="flex flex-col gap-2">
+<p class="text-sm font-medium text-text-light dark:text-text-dark">Confirmar contraseña nueva</p>
+<input class="rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" id="password-confirmar" type="password"/>
+</label>
+</div>
+<div class="flex justify-end">
+<button class="flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50" id="password-save-btn" type="button">Actualizar Contraseña</button>
+</div>
+</div>
+</section>
 <!-- Policies Card -->
 <section class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
 <h2 class="border-b border-border-light dark:border-border-dark px-6 py-4 text-lg font-bold text-text-light dark:text-text-dark">Políticas de Contraseña</h2>
@@ -231,5 +273,56 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var errorBox = document.getElementById('password-error');
+  var successBox = document.getElementById('password-success');
+  var saveBtn = document.getElementById('password-save-btn');
+  var actualInput = document.getElementById('password-actual');
+  var nuevaInput = document.getElementById('password-nueva');
+  var confirmarInput = document.getElementById('password-confirmar');
+
+  function showError(msg) {
+    successBox.classList.add('hidden');
+    errorBox.textContent = msg;
+    errorBox.classList.remove('hidden');
+  }
+  function showSuccess(msg) {
+    errorBox.classList.add('hidden');
+    successBox.textContent = msg;
+    successBox.classList.remove('hidden');
+  }
+
+  saveBtn.addEventListener('click', function () {
+    var actual = actualInput.value;
+    var nueva = nuevaInput.value;
+    var confirmar = confirmarInput.value;
+
+    if (!actual || !nueva || !confirmar) return showError('Completá los tres campos.');
+    if (nueva.length < 8) return showError('La nueva contraseña debe tener al menos 8 caracteres.');
+    if (nueva !== confirmar) return showError('La confirmación no coincide con la nueva contraseña.');
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Guardando…';
+
+    api.apiFetch('/auth/password', {
+      method: 'PUT',
+      body: JSON.stringify({ password_actual: actual, password_nueva: nueva }),
+    }).then(function () {
+      showSuccess('Contraseña actualizada correctamente.');
+      actualInput.value = '';
+      nuevaInput.value = '';
+      confirmarInput.value = '';
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Actualizar Contraseña';
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo actualizar la contraseña.');
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Actualizar Contraseña';
+    });
+  });
+})();
 </script>
 </body></html>
