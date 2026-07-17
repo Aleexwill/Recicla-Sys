@@ -173,6 +173,7 @@ if ('serviceWorker' in navigator) {
           '<td class="p-4"><span class="inline-flex items-center rounded-md bg-green-100 dark:bg-green-900 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-200 ring-1 ring-inset ring-green-600/20 dark:ring-green-700/30">' + api.escapeHtml(u.rol || '—') + '</span></td>' +
           '<td class="p-4"><span class="inline-flex items-center rounded-md ' + permiso.cls + ' px-2 py-1 text-xs font-medium ring-1 ring-inset">' + permiso.label + '</span></td>' +
           '<td class="p-4 text-right"><div class="inline-flex items-center gap-2">' +
+          '<a href="Creacion_usuario.html?id=' + u.id + '"><button class="p-2 rounded-md hover:bg-primary/20"><span class="material-symbols-outlined text-xl">edit</span></button></a>' +
           '<button class="p-2 rounded-md hover:bg-red-500/20 text-red-500" data-delete="' + u.id + '"><span class="material-symbols-outlined text-xl">delete</span></button>' +
           '</div></td></tr>';
       }).join('');
