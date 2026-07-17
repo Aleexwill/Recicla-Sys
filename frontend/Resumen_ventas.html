@@ -54,7 +54,7 @@
 <link href="icons/icon-192.png" rel="icon" type="image/png"/>
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
-<body class="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+<body class="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark overflow-x-hidden">
 <script src="js/api.js"></script>
 <script src="js/auth-guard.js"></script>
 <script src="js/mobile-nav.js"></script>
@@ -73,7 +73,7 @@
 <div class="relative flex min-h-screen w-full">
 <!-- SideNavBar -->
 <div class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" id="sidebar-backdrop"></div>
-<aside class="fixed inset-y-0 left-0 z-40 h-screen -translate-x-full overflow-y-auto transition-transform duration-200 ease-in-out md:relative md:inset-y-auto md:left-auto md:z-auto md:h-auto md:translate-x-0 sticky top-0 h-screen w-64 flex-shrink-0 bg-card-light dark:bg-card-dark border-r border-border-light dark:border-border-dark flex flex-col" id="sidebar">
+<aside class="fixed inset-y-0 left-0 z-40 h-screen -translate-x-full overflow-y-auto transition-transform duration-200 ease-in-out md:relative md:inset-y-auto md:left-auto md:z-auto md:h-auto md:translate-x-0 h-screen w-64 flex-shrink-0 bg-card-light dark:bg-card-dark border-r border-border-light dark:border-border-dark flex flex-col" id="sidebar">
 <div class="flex h-full flex-col justify-between p-4">
 <div class="flex flex-col gap-4">
 <div class="flex gap-3 items-center px-2 py-2">
@@ -122,7 +122,7 @@
 </div>
 </aside>
 <!-- Main Content -->
-<main class="flex-1 p-6 lg:p-10">
+<main class="flex-1 min-w-0 p-6 lg:p-10">
 <div class="mx-auto max-w-7xl">
 <!-- PageHeading -->
 <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
@@ -230,6 +230,11 @@ if ('serviceWorker' in navigator) {
   var generarBtn = document.getElementById('generar-btn');
   var tbody = document.getElementById('informe-tbody');
   var errorBox = document.getElementById('page-error');
+  var tipoCambio = null;
+
+  api.apiFetch('/tipos-cambio/actual').then(function (data) {
+    tipoCambio = Number(data.valor);
+  }).catch(function () { tipoCambio = null; });
 
   function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
   function clearError() { errorBox.classList.add('hidden'); }
@@ -302,7 +307,7 @@ if ('serviceWorker' in navigator) {
           }).join('');
 
           var topMaterial = Object.keys(porMaterial).sort(function (a, b) { return porMaterial[b] - porMaterial[a]; })[0];
-          document.getElementById('kpi-ingresos').textContent = api.money(ingresoTotal);
+          document.getElementById('kpi-ingresos').innerHTML = api.moneyDual(ingresoTotal, tipoCambio);
           document.getElementById('kpi-volumen').textContent = api.kg(volumenTotal);
           document.getElementById('kpi-material').textContent = topMaterial || '—';
         });

@@ -54,7 +54,7 @@
 <link href="icons/icon-192.png" rel="icon" type="image/png"/>
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display">
+<body class="bg-background-light dark:bg-background-dark font-display overflow-x-hidden">
 <script src="js/api.js"></script>
 <script src="js/auth-guard.js"></script>
 <script src="js/mobile-nav.js"></script>
@@ -73,7 +73,7 @@
 <div class="relative flex min-h-screen w-full flex-row">
 <!-- SideNavBar -->
 <div class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" id="sidebar-backdrop"></div>
-<aside class="fixed inset-y-0 left-0 z-40 h-screen -translate-x-full overflow-y-auto transition-transform duration-200 ease-in-out md:relative md:inset-y-auto md:left-auto md:z-auto md:h-auto md:translate-x-0 flex h-screen min-h-screen w-64 flex-col justify-between border-r border-border-light bg-surface-light p-4 dark:border-border-dark dark:bg-surface-dark sticky top-0" id="sidebar">
+<aside class="fixed inset-y-0 left-0 z-40 h-screen -translate-x-full overflow-y-auto transition-transform duration-200 ease-in-out md:relative md:inset-y-auto md:left-auto md:z-auto md:h-auto md:translate-x-0 flex h-screen min-h-screen w-64 flex-col justify-between border-r border-border-light bg-surface-light p-4 dark:border-border-dark dark:bg-surface-dark" id="sidebar">
 <div class="flex flex-col gap-6">
 <div class="flex items-center gap-3">
 <div class="size-10 rounded-full bg-primary/15 flex items-center justify-center text-primary"><div class="size-6"><svg fill="none" height="24" viewbox="0 0 48 48" width="24" xmlns="http://www.w3.org/2000/svg">
@@ -125,7 +125,7 @@
 </div>
 </aside>
 <!-- Main Content -->
-<main class="flex-1 p-8">
+<main class="flex-1 min-w-0 p-8">
 <div class="flex w-full flex-col gap-6">
 <!-- PageHeading -->
 <header class="flex flex-wrap items-center justify-between gap-4">
