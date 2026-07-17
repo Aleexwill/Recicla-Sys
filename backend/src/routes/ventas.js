@@ -55,6 +55,10 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/ventas
+// items: [{ material_id, cantidad_kg, moneda, precio_unitario, precio_original, tipo_cambio }]
+// precio_unitario, si viene, ya está expresado en USD (el frontend convierte cuando
+// el vendedor cargó el material en Guaraníes). moneda/precio_original/tipo_cambio son
+// solo trazabilidad de en qué divisa se cerró el precio.
 router.post('/', verificarPermiso('edit'), async (req, res) => {
   const { cliente_nombre, cliente_id, items, impuesto_pct = 18 } = req.body;
   if (!items || items.length === 0) return res.status(400).json({ error: 'Items requeridos.' });
@@ -68,10 +72,19 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
       const mat = await client.query('SELECT precio_venta, stock_actual FROM materiales WHERE id = $1', [item.material_id]);
       if (mat.rows.length === 0) throw new Error(`Material ${item.material_id} no existe`);
       if (mat.rows[0].stock_actual < item.cantidad_kg) throw new Error(`Stock insuficiente para material ${item.material_id}`);
-      const precio   = mat.rows[0].precio_venta;
+      const precioEnviado = Number(item.precio_unitario);
+      const precio   = precioEnviado > 0 ? precioEnviado : mat.rows[0].precio_venta;
       const sub      = item.cantidad_kg * precio;
       subtotal += sub;
-      itemsConPrecio.push({ ...item, precio_unitario: precio, subtotal: sub });
+      const moneda = item.moneda === 'PYG' ? 'PYG' : 'USD';
+      itemsConPrecio.push({
+        ...item,
+        precio_unitario: precio,
+        subtotal: sub,
+        moneda,
+        tipo_cambio: moneda === 'PYG' ? Number(item.tipo_cambio) || null : null,
+        precio_original: Number(item.precio_original) > 0 ? Number(item.precio_original) : precio,
+      });
     }
     const total = subtotal * (1 + impuesto_pct / 100);
 
@@ -84,9 +97,11 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
 
     for (const item of itemsConPrecio) {
       await client.query(
-        `INSERT INTO venta_items (venta_id, material_id, cantidad_kg, precio_unitario, subtotal)
-         VALUES ($1, $2, $3, $4, $5)`,
-        [ventaId, item.material_id, item.cantidad_kg, item.precio_unitario, item.subtotal]
+        `INSERT INTO venta_items
+           (venta_id, material_id, cantidad_kg, precio_unitario, subtotal, moneda, tipo_cambio, precio_original)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [ventaId, item.material_id, item.cantidad_kg, item.precio_unitario, item.subtotal,
+         item.moneda, item.tipo_cambio, item.precio_original]
       );
       // Descontar stock
       await client.query(

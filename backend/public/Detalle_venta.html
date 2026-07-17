@@ -65,7 +65,7 @@
 <span class="material-symbols-outlined text-text-dark dark:text-gray-300">dashboard</span>
 <p class="text-text-dark dark:text-gray-200 text-sm font-medium leading-normal">Dashboard</p>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 dark:bg-primary/30" href="#">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 dark:bg-primary/30" href="Gestion_Ventas.html">
 <span class="material-symbols-outlined text-green-primary font-bold">shopping_cart</span>
 <p class="text-text-dark dark:text-white text-sm font-bold leading-normal">Ventas</p>
 </a>
@@ -84,7 +84,7 @@
 </nav>
 </div>
 <div class="flex flex-col gap-1">
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors" href="#">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors" href="Gestion_configuracion.html">
 <span class="material-symbols-outlined text-text-dark dark:text-gray-300">settings</span>
 <p class="text-text-dark dark:text-gray-200 text-sm font-medium leading-normal">Configuración</p>
 </a>
@@ -256,8 +256,11 @@ if ('serviceWorker' in navigator) {
 
       var itemsList = document.getElementById('items-list');
       itemsList.innerHTML = venta.items.map(function (item) {
+        var precioTxt = item.moneda === 'PYG'
+          ? api.moneyGs(item.precio_original) + '/kg (cambio ' + api.moneyGs(item.tipo_cambio) + ')'
+          : api.money(item.precio_unitario) + '/kg';
         return '<div class="flex justify-between items-center text-base">' +
-          '<p class="text-text-medium dark:text-gray-400">' + api.escapeHtml(item.material_nombre) + ' (' + Number(item.cantidad_kg).toFixed(2) + ' kg x ' + api.money(item.precio_unitario) + '/kg)</p>' +
+          '<p class="text-text-medium dark:text-gray-400">' + api.escapeHtml(item.material_nombre) + ' (' + Number(item.cantidad_kg).toFixed(2) + ' kg x ' + precioTxt + ')</p>' +
           '<p class="text-text-dark dark:text-gray-200 font-medium">' + api.money(item.subtotal) + '</p></div>';
       }).join('') || '<p class="text-text-medium dark:text-gray-400">Sin materiales.</p>';
 

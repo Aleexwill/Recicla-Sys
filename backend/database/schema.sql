@@ -102,7 +102,10 @@ CREATE TABLE IF NOT EXISTS compra_items (
   peso_kg       NUMERIC(10, 2) NOT NULL,
   descuento_pct NUMERIC(5, 2) DEFAULT 0,
   precio_unitario NUMERIC(10, 2) NOT NULL,
-  subtotal      NUMERIC(12, 2) NOT NULL
+  subtotal      NUMERIC(12, 2) NOT NULL,
+  moneda          VARCHAR(5) CHECK (moneda IN ('USD', 'PYG')) DEFAULT 'USD',
+  tipo_cambio     NUMERIC(12, 2),
+  precio_original NUMERIC(14, 2)
 );
 
 -- =============================================
@@ -143,7 +146,20 @@ CREATE TABLE IF NOT EXISTS venta_items (
   material_id     INTEGER REFERENCES materiales(id),
   cantidad_kg     NUMERIC(10, 2) NOT NULL,
   precio_unitario NUMERIC(10, 2) NOT NULL,
-  subtotal        NUMERIC(12, 2) NOT NULL
+  subtotal        NUMERIC(12, 2) NOT NULL,
+  moneda          VARCHAR(5) CHECK (moneda IN ('USD', 'PYG')) DEFAULT 'USD',
+  tipo_cambio     NUMERIC(12, 2),
+  precio_original NUMERIC(14, 2)
+);
+
+-- =============================================
+-- TABLA: tipos_cambio (historial de tasas Gs. por USD)
+-- =============================================
+CREATE TABLE IF NOT EXISTS tipos_cambio (
+  id          SERIAL PRIMARY KEY,
+  valor       NUMERIC(12, 2) NOT NULL,   -- Guaraníes por 1 USD
+  usuario_id  INTEGER REFERENCES usuarios(id),
+  creado_en   TIMESTAMP DEFAULT NOW()
 );
 
 -- =============================================

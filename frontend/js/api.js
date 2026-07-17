@@ -69,6 +69,22 @@
     return '$ ' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
+  // Guaraníes: sin decimales, separador de miles con punto (convención local).
+  function moneyGs(n) {
+    const v = Math.round(Number(n) || 0);
+    return 'Gs. ' + v.toLocaleString('es-PY', { maximumFractionDigits: 0 });
+  }
+
+  function usdToGs(usd, tipoCambio) {
+    return (Number(usd) || 0) * (Number(tipoCambio) || 0);
+  }
+
+  function gsToUsd(gs, tipoCambio) {
+    const tc = Number(tipoCambio) || 0;
+    if (!tc) return 0;
+    return (Number(gs) || 0) / tc;
+  }
+
   function kg(n) {
     const v = Number(n) || 0;
     return v.toLocaleString('es-AR', { maximumFractionDigits: 2 }) + ' kg';
@@ -107,6 +123,9 @@
     setSession: setSession,
     clearSession: clearSession,
     money: money,
+    moneyGs: moneyGs,
+    usdToGs: usdToGs,
+    gsToUsd: gsToUsd,
     kg: kg,
     fmtDate: fmtDate,
     fmtDateTime: fmtDateTime,

@@ -77,7 +77,7 @@
 <span class="material-symbols-outlined text-text-light/80 dark:text-text-dark/80" style="font-size: 24px;">dashboard</span>
 <p class="text-sm font-medium leading-normal">Dashboard</p>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary-light dark:bg-primary/20" href="#">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary-light dark:bg-primary/20" href="Gestion_Ventas.html">
 <span class="material-symbols-outlined text-primary" style="font-size: 24px;">north_east</span>
 <p class="text-primary text-sm font-bold leading-normal">Ventas</p>
 </a>
@@ -89,7 +89,7 @@
 <span class="material-symbols-outlined text-text-light/80 dark:text-text-dark/80" style="font-size: 24px;">group</span>
 <p class="text-sm font-medium leading-normal">Clientes</p>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 text-text-light dark:text-text-dark hover:bg-primary-light dark:hover:bg-primary/20 rounded-lg transition-colors" href="#">
+<a class="flex items-center gap-3 px-3 py-2 text-text-light dark:text-text-dark hover:bg-primary-light dark:hover:bg-primary/20 rounded-lg transition-colors" href="Resumen_ventas.html">
 <span class="material-symbols-outlined text-text-light/80 dark:text-text-dark/80" style="font-size: 24px;">leaderboard</span>
 <p class="text-sm font-medium leading-normal">Reportes</p>
 </a>
@@ -116,6 +116,9 @@
 <p class="text-text-light/70 dark:text-text-dark/70 text-base font-normal leading-normal">Completa los detalles para crear una nueva transacción de venta.</p>
 </div>
 <div class="flex items-center gap-2">
+<a href="Gestion_Ventas.html"><button class="flex items-center justify-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-transparent border border-border-light dark:border-border-dark text-text-light dark:text-text-dark hover:bg-black/5 dark:hover:bg-white/5" type="button">
+              Cancelar
+            </button></a>
 <button class="flex items-center justify-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary/90 disabled:opacity-60" id="confirmar-venta-btn">
 <span class="material-symbols-outlined" style="font-size: 20px;">check_circle</span>
               Confirmar Venta
@@ -154,16 +157,24 @@
 <p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Cantidad (Kg)</p>
 <input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark h-12 px-3 text-base font-normal" id="cantidad-input" placeholder="0.00" type="number"/>
 </label>
-<label class="flex flex-col flex-1 col-span-6 md:col-span-3">
-<p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Precio Unitario ($)</p>
-<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark bg-background-light dark:bg-background-dark h-12 px-3 text-base font-normal opacity-70" id="precio-input" placeholder="0.00" readonly="" type="text"/>
+<label class="flex flex-col flex-1 col-span-6 md:col-span-2">
+<p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Moneda</p>
+<select class="form-select flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark h-12 px-3 text-base font-normal" id="moneda-select">
+<option value="USD">USD</option>
+<option value="PYG">Gs.</option>
+</select>
 </label>
-<div class="col-span-12 md:col-span-3">
+<label class="flex flex-col flex-1 col-span-6 md:col-span-2">
+<p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Precio Unitario</p>
+<input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark h-12 px-3 text-base font-normal" id="precio-input" placeholder="0.00" step="0.01" type="number"/>
+</label>
+<div class="col-span-12 md:col-span-2">
 <button class="w-full flex items-center justify-center gap-2 h-12 px-4 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary/90" id="add-item-btn" type="button">
 <span class="material-symbols-outlined" style="font-size: 20px;">add</span>
-                      Añadir a la Venta
+                      Añadir
                     </button>
 </div>
+<p class="hidden col-span-12 text-xs text-amber-600 dark:text-amber-400" id="sin-tipo-cambio-msg">No hay un tipo de cambio cargado todavía — <a class="underline" href="Tipos_Cambio.html">cargá uno acá</a> para poder usar Guaraníes.</p>
 </div>
 <!-- Items Table -->
 <div class="overflow-x-auto">
@@ -229,10 +240,13 @@ if ('serviceWorker' in navigator) {
   var materiales = [];
   var cart = [];
   var IMPUESTO_PCT = 18;
+  var tipoCambio = null;
 
   var select = document.getElementById('material-select');
   var cantidadInput = document.getElementById('cantidad-input');
+  var monedaSelect = document.getElementById('moneda-select');
   var precioInput = document.getElementById('precio-input');
+  var sinTipoCambioMsg = document.getElementById('sin-tipo-cambio-msg');
   var addBtn = document.getElementById('add-item-btn');
   var tbody = document.getElementById('items-tbody');
   var emptyRow = document.getElementById('items-empty-row');
@@ -252,9 +266,29 @@ if ('serviceWorker' in navigator) {
     showError(err.message || 'Error al cargar materiales.');
   });
 
-  select.addEventListener('change', function () {
+  api.apiFetch('/tipos-cambio/actual').then(function (data) {
+    tipoCambio = Number(data.valor);
+  }).catch(function () {
+    tipoCambio = null;
+    sinTipoCambioMsg.classList.remove('hidden');
+  });
+
+  function actualizarPrecioSugerido() {
     var material = materiales.find(function (m) { return String(m.id) === String(select.value); });
-    precioInput.value = material ? Number(material.precio_venta).toFixed(2) : '';
+    var base = material ? Number(material.precio_venta) : 0;
+    var sugerido = monedaSelect.value === 'PYG' ? api.usdToGs(base, tipoCambio) : base;
+    precioInput.value = sugerido ? (monedaSelect.value === 'PYG' ? Math.round(sugerido) : sugerido.toFixed(2)) : '';
+  }
+
+  select.addEventListener('change', actualizarPrecioSugerido);
+  monedaSelect.addEventListener('change', function () {
+    if (monedaSelect.value === 'PYG' && !tipoCambio) {
+      showError('No hay un tipo de cambio cargado. Cargá uno en la pantalla de Tipo de Cambio antes de usar Guaraníes.');
+      monedaSelect.value = 'USD';
+      return;
+    }
+    precioInput.step = monedaSelect.value === 'PYG' ? '1' : '0.01';
+    actualizarPrecioSugerido();
   });
 
   function renderTotals() {
@@ -274,10 +308,13 @@ if ('serviceWorker' in navigator) {
     }
     tbody.innerHTML = cart.map(function (item, idx) {
       var subtotal = item.cantidad_kg * item.precio_unitario;
+      var precioTxt = item.moneda === 'PYG'
+        ? api.moneyGs(item.precio_original) + ' <span class="text-xs text-text-light/50 dark:text-text-dark/50">(cambio ' + api.moneyGs(item.tipo_cambio) + ')</span>'
+        : api.money(item.precio_original);
       return '<tr class="bg-card-light dark:bg-card-dark border-b border-border-light/20 dark:border-border-dark/20">' +
         '<td class="px-6 py-4 font-medium whitespace-nowrap">' + api.escapeHtml(item.nombre) + '</td>' +
         '<td class="px-6 py-4 text-right">' + item.cantidad_kg.toFixed(2) + '</td>' +
-        '<td class="px-6 py-4 text-right">' + api.money(item.precio_unitario) + '</td>' +
+        '<td class="px-6 py-4 text-right">' + precioTxt + '</td>' +
         '<td class="px-6 py-4 text-right font-semibold">' + api.money(subtotal) + '</td>' +
         '<td class="px-6 py-4 text-center"><button class="text-danger/70 hover:text-danger" data-remove="' + idx + '">' +
         '<span class="material-symbols-outlined" style="font-size: 20px;">delete</span></button></td></tr>';
@@ -295,13 +332,26 @@ if ('serviceWorker' in navigator) {
     clearError();
     var materialId = select.value;
     var cantidad = parseFloat(cantidadInput.value);
+    var moneda = monedaSelect.value === 'PYG' ? 'PYG' : 'USD';
+    var precioIngresado = parseFloat(precioInput.value);
     if (!materialId) return showError('Elegí un material.');
     if (!cantidad || cantidad <= 0) return showError('Ingresá una cantidad mayor a cero.');
+    if (!precioIngresado || precioIngresado <= 0) return showError('Ingresá un precio unitario mayor a cero.');
+    if (moneda === 'PYG' && !tipoCambio) return showError('No hay un tipo de cambio cargado para convertir Guaraníes.');
     var material = materiales.find(function (m) { return String(m.id) === String(materialId); });
     if (material && cantidad > Number(material.stock_actual)) {
       return showError('No hay suficiente stock (' + material.stock_actual + ' kg disponibles).');
     }
-    cart.push({ material_id: materialId, nombre: material ? material.nombre : '—', cantidad_kg: cantidad, precio_unitario: material ? Number(material.precio_venta) : 0 });
+    var precioUsd = moneda === 'PYG' ? api.gsToUsd(precioIngresado, tipoCambio) : precioIngresado;
+    cart.push({
+      material_id: materialId,
+      nombre: material ? material.nombre : '—',
+      cantidad_kg: cantidad,
+      moneda: moneda,
+      precio_unitario: precioUsd,
+      precio_original: precioIngresado,
+      tipo_cambio: moneda === 'PYG' ? tipoCambio : null,
+    });
     renderItems();
     cantidadInput.value = '';
     select.value = '';
@@ -318,7 +368,12 @@ if ('serviceWorker' in navigator) {
       method: 'POST',
       body: JSON.stringify({
         cliente_nombre: clienteInput.value.trim() || null,
-        items: cart.map(function (i) { return { material_id: i.material_id, cantidad_kg: i.cantidad_kg }; }),
+        items: cart.map(function (i) {
+          return {
+            material_id: i.material_id, cantidad_kg: i.cantidad_kg,
+            moneda: i.moneda, precio_unitario: i.precio_unitario, precio_original: i.precio_original, tipo_cambio: i.tipo_cambio,
+          };
+        }),
       }),
     }).then(function (data) {
       window.location.href = 'Detalle_venta.html?id=' + data.venta_id;
