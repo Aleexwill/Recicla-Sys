@@ -96,10 +96,20 @@
 </div>
 </div>
 <div>
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="moneda-select">Moneda de los precios</label>
+<div class="relative mt-1">
+<select class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="moneda-select">
+<option value="USD">Dólares (USD)</option>
+<option value="PYG">Guaraníes (Gs.)</option>
+</select>
+</div>
+<p class="hidden mt-1 text-xs text-amber-600 dark:text-amber-400" id="sin-tipo-cambio-msg">No hay un tipo de cambio cargado — <a class="underline" href="Tipos_Cambio.html">cargá uno acá</a> para poder usar Guaraníes.</p>
+</div>
+<div>
 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="purchase-price">Precio de Compra</label>
 <div class="relative mt-1 rounded-md shadow-sm">
 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-<span class="text-gray-500 sm:text-sm">$</span>
+<span class="text-gray-500 sm:text-sm" id="purchase-price-prefix">$</span>
 </div>
 <input class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white pl-7 pr-3 focus:border-primary focus:ring-primary sm:text-sm" id="purchase-price" placeholder="0.00" step="0.01" type="number"/>
 </div>
@@ -108,7 +118,7 @@
 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="sale-price">Precio de Venta</label>
 <div class="relative mt-1 rounded-md shadow-sm">
 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-<span class="text-gray-500 sm:text-sm">$</span>
+<span class="text-gray-500 sm:text-sm" id="sale-price-prefix">$</span>
 </div>
 <input class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white pl-7 pr-3 focus:border-primary focus:ring-primary sm:text-sm" id="sale-price" placeholder="0.00" step="0.01" type="number"/>
 </div>
@@ -159,11 +169,16 @@ if ('serviceWorker' in navigator) {
 (function () {
   var api = window.ReciclaAPI;
   var id = new URLSearchParams(window.location.search).get('id');
+  var tipoCambio = null;
 
   var nombreInput = document.getElementById('nombre-input');
   var descripcionInput = document.getElementById('descripcion-input');
+  var monedaSelect = document.getElementById('moneda-select');
+  var sinTipoCambioMsg = document.getElementById('sin-tipo-cambio-msg');
   var purchaseInput = document.getElementById('purchase-price');
   var saleInput = document.getElementById('sale-price');
+  var purchasePrefix = document.getElementById('purchase-price-prefix');
+  var salePrefix = document.getElementById('sale-price-prefix');
   var stockMinimoInput = document.getElementById('stock-minimo');
   var unitInput = document.getElementById('unit');
   var margenLabel = document.getElementById('margen-label');
@@ -185,6 +200,47 @@ if ('serviceWorker' in navigator) {
   purchaseInput.addEventListener('input', updateMargen);
   saleInput.addEventListener('input', updateMargen);
 
+  api.apiFetch('/tipos-cambio/actual').then(function (data) {
+    tipoCambio = Number(data.valor);
+  }).catch(function () {
+    tipoCambio = null;
+    sinTipoCambioMsg.classList.remove('hidden');
+  });
+
+  function formatPrecio(v) {
+    if (!v && v !== 0) return '';
+    return monedaSelect.value === 'PYG' ? String(Math.round(v)) : Number(v).toFixed(2);
+  }
+
+  monedaSelect.addEventListener('change', function () {
+    if (monedaSelect.value === 'PYG' && !tipoCambio) {
+      showError('No hay un tipo de cambio cargado. Cargá uno en la pantalla de Tipo de Cambio antes de usar Guaraníes.');
+      monedaSelect.value = 'USD';
+      return;
+    }
+    var wasUsd = purchasePrefix.textContent === '$';
+    var nowGs = monedaSelect.value === 'PYG';
+    var compra = parseFloat(purchaseInput.value);
+    var venta = parseFloat(saleInput.value);
+    if (wasUsd && nowGs) {
+      if (compra) purchaseInput.value = formatPrecio(api.usdToGs(compra, tipoCambio));
+      if (venta) saleInput.value = formatPrecio(api.usdToGs(venta, tipoCambio));
+    } else if (!wasUsd && !nowGs) {
+      if (compra) purchaseInput.value = api.gsToUsd(compra, tipoCambio).toFixed(2);
+      if (venta) saleInput.value = api.gsToUsd(venta, tipoCambio).toFixed(2);
+    }
+    var prefix = nowGs ? 'Gs.' : '$';
+    purchasePrefix.textContent = prefix;
+    salePrefix.textContent = prefix;
+    purchaseInput.step = nowGs ? '1' : '0.01';
+    saleInput.step = nowGs ? '1' : '0.01';
+  });
+
+  function precioUsdActual(input) {
+    var v = parseFloat(input.value) || 0;
+    return monedaSelect.value === 'PYG' ? api.gsToUsd(v, tipoCambio) : v;
+  }
+
   if (id) {
     // Modo edición
     unitInput.readOnly = true;
@@ -195,8 +251,15 @@ if ('serviceWorker' in navigator) {
       nombreInput.value = m.nombre;
       descripcionInput.value = m.descripcion || '';
       unitInput.value = m.unidad_medida;
-      purchaseInput.value = m.precio_compra;
-      saleInput.value = m.precio_venta;
+      var esGs = m.moneda === 'PYG';
+      monedaSelect.value = esGs ? 'PYG' : 'USD';
+      var prefix = esGs ? 'Gs.' : '$';
+      purchasePrefix.textContent = prefix;
+      salePrefix.textContent = prefix;
+      purchaseInput.step = esGs ? '1' : '0.01';
+      saleInput.step = esGs ? '1' : '0.01';
+      purchaseInput.value = esGs && m.precio_compra_original != null ? Math.round(m.precio_compra_original) : m.precio_compra;
+      saleInput.value = esGs && m.precio_venta_original != null ? Math.round(m.precio_venta_original) : m.precio_venta;
       stockMinimoInput.value = m.stock_minimo;
       stockLabel.textContent = 'Stock: ' + api.kg(m.stock_actual);
       stockBadge.classList.remove('hidden');
@@ -209,6 +272,7 @@ if ('serviceWorker' in navigator) {
 
     saveBtn.addEventListener('click', function () {
       if (!nombreInput.value.trim()) return showError('El nombre es requerido.');
+      if (monedaSelect.value === 'PYG' && !tipoCambio) return showError('No hay un tipo de cambio cargado para convertir Guaraníes.');
       saveBtn.disabled = true;
       saveBtnLabel.textContent = 'Guardando…';
       api.apiFetch('/materiales/' + id, {
@@ -216,9 +280,13 @@ if ('serviceWorker' in navigator) {
         body: JSON.stringify({
           nombre: nombreInput.value.trim(),
           descripcion: descripcionInput.value.trim(),
-          precio_compra: parseFloat(purchaseInput.value) || 0,
-          precio_venta: parseFloat(saleInput.value) || 0,
+          precio_compra: precioUsdActual(purchaseInput),
+          precio_venta: precioUsdActual(saleInput),
           stock_minimo: parseFloat(stockMinimoInput.value) || 0,
+          moneda: monedaSelect.value,
+          tipo_cambio: monedaSelect.value === 'PYG' ? tipoCambio : null,
+          precio_compra_original: parseFloat(purchaseInput.value) || 0,
+          precio_venta_original: parseFloat(saleInput.value) || 0,
         }),
       }).then(function () {
         window.location.href = 'Inventario_Materiales.html';
@@ -238,6 +306,7 @@ if ('serviceWorker' in navigator) {
 
     saveBtn.addEventListener('click', function () {
       if (!nombreInput.value.trim()) return showError('El nombre es requerido.');
+      if (monedaSelect.value === 'PYG' && !tipoCambio) return showError('No hay un tipo de cambio cargado para convertir Guaraníes.');
       saveBtn.disabled = true;
       saveBtnLabel.textContent = 'Creando…';
       api.apiFetch('/materiales', {
@@ -246,9 +315,13 @@ if ('serviceWorker' in navigator) {
           nombre: nombreInput.value.trim(),
           descripcion: descripcionInput.value.trim(),
           unidad_medida: unitInput.value.trim() || 'kg',
-          precio_compra: parseFloat(purchaseInput.value) || 0,
-          precio_venta: parseFloat(saleInput.value) || 0,
+          precio_compra: precioUsdActual(purchaseInput),
+          precio_venta: precioUsdActual(saleInput),
           stock_minimo: parseFloat(stockMinimoInput.value) || 0,
+          moneda: monedaSelect.value,
+          tipo_cambio: monedaSelect.value === 'PYG' ? tipoCambio : null,
+          precio_compra_original: parseFloat(purchaseInput.value) || 0,
+          precio_venta_original: parseFloat(saleInput.value) || 0,
         }),
       }).then(function () {
         window.location.href = 'Inventario_Materiales.html';

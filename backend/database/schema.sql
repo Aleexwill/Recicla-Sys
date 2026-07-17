@@ -52,7 +52,11 @@ CREATE TABLE IF NOT EXISTS materiales (
   stock_actual    NUMERIC(10, 2) DEFAULT 0,
   stock_minimo    NUMERIC(10, 2) DEFAULT 0,
   activo          BOOLEAN DEFAULT TRUE,
-  creado_en       TIMESTAMP DEFAULT NOW()
+  creado_en       TIMESTAMP DEFAULT NOW(),
+  moneda                  VARCHAR(5) CHECK (moneda IN ('USD', 'PYG')) DEFAULT 'USD',
+  tipo_cambio             NUMERIC(12, 2),
+  precio_compra_original  NUMERIC(14, 2),
+  precio_venta_original   NUMERIC(14, 2)
 );
 
 -- Materiales de ejemplo

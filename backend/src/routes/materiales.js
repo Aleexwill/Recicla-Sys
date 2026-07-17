@@ -35,14 +35,28 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/materiales — Crear (requiere permiso edit o full)
+// precio_compra/precio_venta, si vienen, ya están expresados en USD (el frontend
+// convierte cuando el material se da de alta en Guaraníes). moneda/tipo_cambio/
+// precio_*_original son solo trazabilidad de en qué divisa se cargó el precio.
 router.post('/', verificarPermiso('edit'), async (req, res) => {
-  const { nombre, descripcion, unidad_medida, precio_compra, precio_venta, stock_minimo } = req.body;
+  const {
+    nombre, descripcion, unidad_medida, precio_compra, precio_venta, stock_minimo,
+    moneda, tipo_cambio, precio_compra_original, precio_venta_original,
+  } = req.body;
   if (!nombre) return res.status(400).json({ error: 'El nombre es requerido.' });
+  const monedaFinal = moneda === 'PYG' ? 'PYG' : 'USD';
   try {
     const { rows } = await db.query(
-      `INSERT INTO materiales (nombre, descripcion, unidad_medida, precio_compra, precio_venta, stock_minimo)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [nombre, descripcion, unidad_medida || 'kg', precio_compra || 0, precio_venta || 0, stock_minimo || 0]
+      `INSERT INTO materiales
+         (nombre, descripcion, unidad_medida, precio_compra, precio_venta, stock_minimo,
+          moneda, tipo_cambio, precio_compra_original, precio_venta_original)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+      [
+        nombre, descripcion, unidad_medida || 'kg', precio_compra || 0, precio_venta || 0, stock_minimo || 0,
+        monedaFinal, monedaFinal === 'PYG' ? Number(tipo_cambio) || null : null,
+        precio_compra_original != null ? Number(precio_compra_original) : (precio_compra || 0),
+        precio_venta_original != null ? Number(precio_venta_original) : (precio_venta || 0),
+      ]
     );
     res.status(201).json(rows[0]);
   } catch (err) {
@@ -52,7 +66,11 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
 
 // PUT /api/materiales/:id — Actualizar precios/datos
 router.put('/:id', verificarPermiso('edit'), async (req, res) => {
-  const { nombre, descripcion, precio_compra, precio_venta, stock_minimo } = req.body;
+  const {
+    nombre, descripcion, precio_compra, precio_venta, stock_minimo,
+    moneda, tipo_cambio, precio_compra_original, precio_venta_original,
+  } = req.body;
+  const monedaFinal = moneda === 'PYG' ? 'PYG' : 'USD';
   try {
     const { rows } = await db.query(
       `UPDATE materiales SET
@@ -60,9 +78,19 @@ router.put('/:id', verificarPermiso('edit'), async (req, res) => {
          descripcion   = COALESCE($2, descripcion),
          precio_compra = COALESCE($3, precio_compra),
          precio_venta  = COALESCE($4, precio_venta),
-         stock_minimo  = COALESCE($5, stock_minimo)
-       WHERE id = $6 RETURNING *`,
-      [nombre, descripcion, precio_compra, precio_venta, stock_minimo, req.params.id]
+         stock_minimo  = COALESCE($5, stock_minimo),
+         moneda        = $6,
+         tipo_cambio   = $7,
+         precio_compra_original = COALESCE($8, precio_compra, precio_compra_original),
+         precio_venta_original  = COALESCE($9, precio_venta, precio_venta_original)
+       WHERE id = $10 RETURNING *`,
+      [
+        nombre, descripcion, precio_compra, precio_venta, stock_minimo,
+        monedaFinal, monedaFinal === 'PYG' ? Number(tipo_cambio) || null : null,
+        precio_compra_original != null ? Number(precio_compra_original) : null,
+        precio_venta_original != null ? Number(precio_venta_original) : null,
+        req.params.id,
+      ]
     );
     if (rows.length === 0) return res.status(404).json({ error: 'Material no encontrado.' });
     res.json(rows[0]);
