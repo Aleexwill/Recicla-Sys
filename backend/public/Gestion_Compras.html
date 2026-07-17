@@ -40,11 +40,24 @@
 <body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
 <script src="js/api.js"></script>
 <script src="js/auth-guard.js"></script>
+<script src="js/mobile-nav.js"></script>
+
+<div class="md:hidden sticky top-0 z-20 flex items-center justify-between border-b border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 px-4 py-3">
+<div class="flex items-center gap-2">
+<div class="bg-primary/20 p-1.5 rounded-lg text-primary flex items-center justify-center"><span class="material-symbols-outlined text-xl">recycling</span></div>
+<span class="font-bold text-gray-800 dark:text-white">ReciclaS</span>
+</div>
+<button class="rounded-lg p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10" id="mobile-menu-btn" type="button">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+
 
 <div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
 <div class="flex flex-1">
 <!-- SideNavBar -->
-<aside class="flex flex-col w-64 p-4 bg-white dark:bg-black/20 border-r border-gray-200 dark:border-gray-800">
+<div class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" id="sidebar-backdrop"></div>
+<aside class="fixed inset-y-0 left-0 z-40 h-screen -translate-x-full overflow-y-auto transition-transform duration-200 ease-in-out md:relative md:inset-y-auto md:left-auto md:z-auto md:h-auto md:translate-x-0 flex flex-col w-64 p-4 bg-white dark:bg-black/20 border-r border-gray-200 dark:border-gray-800" id="sidebar">
 <div class="flex gap-3 items-center mb-8">
 <div class="size-10 rounded-full bg-primary/15 flex items-center justify-center text-primary"><div class="size-6"><svg fill="none" height="24" viewbox="0 0 48 48" width="24" xmlns="http://www.w3.org/2000/svg">
 <path d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z" fill="currentColor"></path>
