@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tipo de Cambio - Sistema de Reciclaje</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1dc962",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                    },
+                    fontFamily: {
+                        "display": ["Work Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+<link href="manifest.json" rel="manifest"/>
+<meta content="#1dc962" name="theme-color"/>
+<link href="icons/icon-192.png" rel="icon" type="image/png"/>
+<link href="icons/icon-180.png" rel="apple-touch-icon"/>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<header class="w-full px-4 sm:px-8 lg:px-16 xl:px-24 py-3 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-10">
+<div class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 pb-3">
+<div class="flex items-center gap-4 text-slate-800 dark:text-white">
+<span class="material-symbols-outlined text-primary">currency_exchange</span>
+<h2 class="text-slate-800 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Tipo de Cambio</h2>
+</div>
+<a class="text-sm font-medium text-primary hover:underline" href="Gestion_configuracion.html">Volver a Configuración</a>
+</div>
+</header>
+<main class="layout-container flex h-full grow flex-col">
+<div class="px-4 sm:px-8 lg:px-16 xl:px-24 flex flex-1 justify-center py-5 sm:py-10">
+<div class="layout-content-container flex flex-col w-full max-w-4xl flex-1 gap-6">
+<div class="bg-white dark:bg-black/20 rounded-xl shadow-lg shadow-primary/10 dark:shadow-black/50 overflow-hidden">
+<div class="flex flex-col p-6 sm:p-8">
+<p class="text-slate-900 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">Cargar Tipo de Cambio</p>
+<p class="text-slate-600 dark:text-slate-300 text-base font-normal leading-normal pt-2">Registrá cuántos Guaraníes equivalen a 1 Dólar. Se usa para convertir los precios cuando se carga un material en Gs.</p>
+</div>
+<p class="hidden mx-6 sm:mx-8 rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="form-error"></p>
+<p class="hidden mx-6 sm:mx-8 rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-primary" id="form-success"></p>
+<div class="flex flex-col sm:flex-row gap-4 items-end p-6 sm:p-8 pt-4">
+<label class="flex flex-col w-full sm:max-w-xs">
+<p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Guaraníes por 1 USD</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" id="valor-input" placeholder="Ej: 7300" step="1" type="number"/>
+</label>
+<button class="flex h-14 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-white hover:bg-primary/90 transition-colors shadow-sm disabled:opacity-60" id="save-btn" type="button">Guardar Tasa</button>
+</div>
+</div>
+<div class="bg-white dark:bg-black/20 rounded-xl shadow-lg shadow-primary/10 dark:shadow-black/50 overflow-hidden">
+<div class="flex flex-col p-6 sm:p-8 pb-3">
+<p class="text-slate-900 dark:text-white text-xl font-bold leading-tight">Historial</p>
+</div>
+<div class="px-6 sm:px-8 pb-6 sm:pb-8">
+<div class="overflow-hidden rounded-lg border border-primary/20 bg-background-light dark:bg-background-dark/50">
+<div class="overflow-x-auto">
+<table class="w-full min-w-[500px] text-left">
+<thead>
+<tr class="bg-primary/10 dark:bg-primary/20">
+<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal">Fecha</th>
+<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Gs. por USD</th>
+<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal">Cargado por</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/20" id="table-body">
+<tr><td class="px-4 py-3.5 text-slate-500 dark:text-slate-400" colspan="3">Cargando…</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Sello corporativo -->
+<footer class="w-full border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 py-3 px-4 sm:px-6">
+<p class="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-sm text-primary">verified</span>
+<span>Desarrollado por <span class="font-semibold text-gray-700 dark:text-gray-200">ALMN Tech &amp; Solutions</span></span>
+</p>
+</footer>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var valorInput = document.getElementById('valor-input');
+  var saveBtn = document.getElementById('save-btn');
+  var errorBox = document.getElementById('form-error');
+  var successBox = document.getElementById('form-success');
+  var tableBody = document.getElementById('table-body');
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); successBox.classList.add('hidden'); }
+  function clearMsgs() { errorBox.classList.add('hidden'); successBox.classList.add('hidden'); }
+
+  function cargarHistorial() {
+    api.apiFetch('/tipos-cambio').then(function (rows) {
+      if (rows.length === 0) {
+        tableBody.innerHTML = '<tr><td class="px-4 py-3.5 text-slate-500 dark:text-slate-400" colspan="3">Todavía no se cargó ningún tipo de cambio.</td></tr>';
+        return;
+      }
+      tableBody.innerHTML = rows.map(function (r) {
+        return '<tr>' +
+          '<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm">' + api.fmtDateTime(r.creado_en) + '</td>' +
+          '<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium text-right">' + api.moneyGs(r.valor) + '</td>' +
+          '<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm">' + api.escapeHtml(r.usuario || '—') + '</td>' +
+          '</tr>';
+      }).join('');
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo cargar el historial.');
+      tableBody.innerHTML = '';
+    });
+  }
+
+  saveBtn.addEventListener('click', function () {
+    clearMsgs();
+    var valor = parseFloat(valorInput.value);
+    if (!valor || valor <= 0) return showError('Ingresá un valor mayor a cero.');
+
+    saveBtn.disabled = true;
+    api.apiFetch('/tipos-cambio', {
+      method: 'POST',
+      body: JSON.stringify({ valor: valor }),
+    }).then(function () {
+      successBox.textContent = 'Tipo de cambio guardado correctamente.';
+      successBox.classList.remove('hidden');
+      valorInput.value = '';
+      cargarHistorial();
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo guardar el tipo de cambio.');
+    }).finally(function () {
+      saveBtn.disabled = false;
+    });
+  });
+
+  cargarHistorial();
+})();
+</script>
+</body></html>

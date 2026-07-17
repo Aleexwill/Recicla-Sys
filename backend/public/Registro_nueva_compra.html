@@ -85,6 +85,20 @@
 <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="descuento-input" placeholder="Ej: 10" step="1" type="number"/>
 </label>
 </div>
+<div class="flex flex-col sm:flex-row gap-4">
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Moneda</p>
+<select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="moneda-select">
+<option value="USD">Dólares (USD)</option>
+<option value="PYG">Guaraníes (Gs.)</option>
+</select>
+</label>
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Precio por kg</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="precio-input" placeholder="0.00" step="0.01" type="number"/>
+</label>
+</div>
+<p class="hidden text-xs text-amber-600 dark:text-amber-400" id="sin-tipo-cambio-msg">No hay un tipo de cambio cargado todavía — <a class="underline" href="Tipos_Cambio.html">cargá uno acá</a> para poder usar Guaraníes.</p>
 </div>
 <div class="flex pt-6 justify-start">
 <button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-[#0e1b13] gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors" id="add-material-btn" type="button">
@@ -147,10 +161,14 @@ if ('serviceWorker' in navigator) {
   var api = window.ReciclaAPI;
   var materiales = [];
   var cart = [];
+  var tipoCambio = null;
 
   var select = document.getElementById('material-select');
   var pesoInput = document.getElementById('peso-input');
   var descuentoInput = document.getElementById('descuento-input');
+  var monedaSelect = document.getElementById('moneda-select');
+  var precioInput = document.getElementById('precio-input');
+  var sinTipoCambioMsg = document.getElementById('sin-tipo-cambio-msg');
   var addBtn = document.getElementById('add-material-btn');
   var itemsList = document.getElementById('items-list');
   var itemsEmpty = document.getElementById('items-empty');
@@ -175,6 +193,35 @@ if ('serviceWorker' in navigator) {
     showError(err.message || 'Error al cargar materiales.');
   });
 
+  api.apiFetch('/tipos-cambio/actual').then(function (data) {
+    tipoCambio = Number(data.valor);
+  }).catch(function () {
+    tipoCambio = null;
+    sinTipoCambioMsg.classList.remove('hidden');
+  });
+
+  function precioSugerido() {
+    var material = materiales.find(function (m) { return String(m.id) === String(select.value); });
+    var base = material ? Number(material.precio_compra) : 0;
+    return monedaSelect.value === 'PYG' ? api.usdToGs(base, tipoCambio) : base;
+  }
+
+  function actualizarPrecioSugerido() {
+    var sugerido = precioSugerido();
+    precioInput.value = sugerido ? (monedaSelect.value === 'PYG' ? Math.round(sugerido) : sugerido.toFixed(2)) : '';
+  }
+
+  select.addEventListener('change', actualizarPrecioSugerido);
+  monedaSelect.addEventListener('change', function () {
+    if (monedaSelect.value === 'PYG' && !tipoCambio) {
+      showError('No hay un tipo de cambio cargado. Cargá uno en la pantalla de Tipo de Cambio antes de usar Guaraníes.');
+      monedaSelect.value = 'USD';
+      return;
+    }
+    precioInput.step = monedaSelect.value === 'PYG' ? '1' : '0.01';
+    actualizarPrecioSugerido();
+  });
+
   function renderItems() {
     if (cart.length === 0) {
       itemsList.innerHTML = '';
@@ -183,8 +230,11 @@ if ('serviceWorker' in navigator) {
       return;
     }
     itemsList.innerHTML = cart.map(function (item, idx) {
+      var precioTxt = item.moneda === 'PYG'
+        ? api.moneyGs(item.precio_original) + '/kg (cambio ' + api.moneyGs(item.tipo_cambio) + ')'
+        : api.money(item.precio_original) + '/kg';
       return '<div class="grid grid-cols-2 sm:grid-cols-[3fr_1fr_1fr_auto] gap-x-4 gap-y-2 items-center p-3 rounded-lg hover:bg-background-light dark:hover:bg-gray-800 transition-colors">' +
-        '<p class="col-span-2 sm:col-span-1 text-[#0e1b13] dark:text-white font-medium">' + api.escapeHtml(item.nombre) + '</p>' +
+        '<p class="col-span-2 sm:col-span-1 text-[#0e1b13] dark:text-white font-medium">' + api.escapeHtml(item.nombre) + '<br/><span class="text-xs text-gray-500 dark:text-gray-400 font-normal">' + precioTxt + '</span></p>' +
         '<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">' + item.peso_kg + ' kg</p>' +
         '<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">' + item.descuento_pct + '%</p>' +
         '<button class="flex justify-self-end text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors" data-remove="' + idx + '">' +
@@ -204,16 +254,31 @@ if ('serviceWorker' in navigator) {
     var materialId = select.value;
     var peso = parseFloat(pesoInput.value);
     var descuento = descuentoInput.value === '' ? 0 : parseFloat(descuentoInput.value);
+    var moneda = monedaSelect.value === 'PYG' ? 'PYG' : 'USD';
+    var precioIngresado = parseFloat(precioInput.value);
     if (!materialId) return showError('Elegí un material.');
     if (!peso || peso <= 0) return showError('Ingresá un peso mayor a cero.');
     if (descuento < 0 || descuento > 100) return showError('El descuento debe estar entre 0 y 100.');
+    if (!precioIngresado || precioIngresado <= 0) return showError('Ingresá un precio por kg mayor a cero.');
+    if (moneda === 'PYG' && !tipoCambio) return showError('No hay un tipo de cambio cargado para convertir Guaraníes.');
 
     var material = materiales.find(function (m) { return String(m.id) === String(materialId); });
-    cart.push({ material_id: materialId, nombre: material ? material.nombre : '—', peso_kg: peso, descuento_pct: descuento });
+    var precioUsd = moneda === 'PYG' ? api.gsToUsd(precioIngresado, tipoCambio) : precioIngresado;
+    cart.push({
+      material_id: materialId,
+      nombre: material ? material.nombre : '—',
+      peso_kg: peso,
+      descuento_pct: descuento,
+      moneda: moneda,
+      precio_unitario: precioUsd,
+      precio_original: precioIngresado,
+      tipo_cambio: moneda === 'PYG' ? tipoCambio : null,
+    });
     renderItems();
     pesoInput.value = '';
     descuentoInput.value = '';
     select.value = '';
+    precioInput.value = '';
   });
 
   siguienteBtn.addEventListener('click', function () {
@@ -227,7 +292,12 @@ if ('serviceWorker' in navigator) {
       method: 'POST',
       body: JSON.stringify({
         proveedor_nombre: proveedorInput.value.trim() || null,
-        items: cart.map(function (i) { return { material_id: i.material_id, peso_kg: i.peso_kg, descuento_pct: i.descuento_pct }; }),
+        items: cart.map(function (i) {
+          return {
+            material_id: i.material_id, peso_kg: i.peso_kg, descuento_pct: i.descuento_pct,
+            moneda: i.moneda, precio_unitario: i.precio_unitario, precio_original: i.precio_original, tipo_cambio: i.tipo_cambio,
+          };
+        }),
       }),
     }).then(function (data) {
       window.location.href = 'Resumen_Compras.html?id=' + data.compra_id;

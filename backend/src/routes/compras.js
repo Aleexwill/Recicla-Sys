@@ -91,7 +91,10 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/compras — Registrar nueva compra
-// Body: { proveedor_nombre, items: [{ material_id, peso_kg, descuento_pct }] }
+// Body: { proveedor_nombre, items: [{ material_id, peso_kg, descuento_pct, moneda, precio_unitario, precio_original, tipo_cambio }] }
+// precio_unitario, si viene, ya está expresado en USD (el frontend hace la conversión
+// cuando el operador cargó el material en Guaraníes). moneda/precio_original/tipo_cambio
+// son solo para trazabilidad de en qué divisa se negoció el precio.
 router.post('/', verificarPermiso('edit'), async (req, res) => {
   const { proveedor_nombre, proveedor_id, items } = req.body;
   if (!items || items.length === 0) {
@@ -102,7 +105,8 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
   try {
     await client.query('BEGIN');
 
-    // Calcular subtotales con precio actual del material
+    // Calcular subtotales; usa el precio enviado por el cliente si vino uno válido,
+    // o si no el precio de compra actual del material.
     let total = 0;
     const itemsConPrecio = [];
     for (const item of items) {
@@ -110,11 +114,20 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
         'SELECT precio_compra FROM materiales WHERE id = $1', [item.material_id]
       );
       if (mat.rows.length === 0) throw new Error(`Material ${item.material_id} no encontrado`);
-      const precio    = mat.rows[0].precio_compra;
+      const precioEnviado = Number(item.precio_unitario);
+      const precio    = precioEnviado > 0 ? precioEnviado : mat.rows[0].precio_compra;
       const pesoNeto  = item.peso_kg * (1 - (item.descuento_pct || 0) / 100);
       const subtotal  = pesoNeto * precio;
       total += subtotal;
-      itemsConPrecio.push({ ...item, precio_unitario: precio, subtotal });
+      const moneda = item.moneda === 'PYG' ? 'PYG' : 'USD';
+      itemsConPrecio.push({
+        ...item,
+        precio_unitario: precio,
+        subtotal,
+        moneda,
+        tipo_cambio: moneda === 'PYG' ? Number(item.tipo_cambio) || null : null,
+        precio_original: Number(item.precio_original) > 0 ? Number(item.precio_original) : precio,
+      });
     }
 
     // Insertar cabecera
@@ -128,9 +141,11 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
     // Insertar items
     for (const item of itemsConPrecio) {
       await client.query(
-        `INSERT INTO compra_items (compra_id, material_id, peso_kg, descuento_pct, precio_unitario, subtotal)
-         VALUES ($1, $2, $3, $4, $5, $6)`,
-        [compraId, item.material_id, item.peso_kg, item.descuento_pct || 0, item.precio_unitario, item.subtotal]
+        `INSERT INTO compra_items
+           (compra_id, material_id, peso_kg, descuento_pct, precio_unitario, subtotal, moneda, tipo_cambio, precio_original)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        [compraId, item.material_id, item.peso_kg, item.descuento_pct || 0, item.precio_unitario, item.subtotal,
+         item.moneda, item.tipo_cambio, item.precio_original]
       );
     }
 
@@ -153,6 +168,20 @@ router.patch('/:id/confirmar', verificarPermiso('edit'), async (req, res) => {
     );
     if (rows.length === 0) return res.status(400).json({ error: 'Compra no encontrada o ya procesada.' });
     res.json({ mensaje: 'Compra confirmada. Stock actualizado.', compra: rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH /api/compras/:id/cancelar — Anular una compra pendiente (no confirmada)
+router.patch('/:id/cancelar', verificarPermiso('edit'), async (req, res) => {
+  try {
+    const { rows } = await db.query(
+      `UPDATE compras SET estado = 'cancelada' WHERE id = $1 AND estado = 'pendiente' RETURNING *`,
+      [req.params.id]
+    );
+    if (rows.length === 0) return res.status(400).json({ error: 'Compra no encontrada o ya procesada.' });
+    res.json({ mensaje: 'Compra cancelada.', compra: rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
