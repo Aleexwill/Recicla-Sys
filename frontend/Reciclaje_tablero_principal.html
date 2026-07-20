@@ -137,30 +137,41 @@
 </div>
 </div>
 <!-- Filters -->
-<div class="flex gap-2 mb-6 overflow-x-auto pb-2">
-<button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/20 dark:bg-primary/30 pl-3 pr-3">
+<div class="flex gap-2 mb-3 overflow-x-auto pb-2" id="filtros-periodo">
+<button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/20 dark:bg-primary/30 pl-3 pr-3" data-range="hoy" type="button">
 <p class="text-gray-800 dark:text-white text-sm font-medium leading-normal">Hoy</p>
 </button>
-<button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-black/20 pl-3 pr-3 border border-gray-200 dark:border-white/10">
+<button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-black/20 pl-3 pr-3 border border-gray-200 dark:border-white/10" data-range="semana" type="button">
 <p class="text-gray-600 dark:text-gray-300 text-sm font-medium leading-normal">Esta Semana</p>
 </button>
-<button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-black/20 pl-3 pr-3 border border-gray-200 dark:border-white/10">
+<button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-black/20 pl-3 pr-3 border border-gray-200 dark:border-white/10" data-range="mes" type="button">
 <p class="text-gray-600 dark:text-gray-300 text-sm font-medium leading-normal">Este Mes</p>
 </button>
-<button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-black/20 pl-3 pr-2 border border-gray-200 dark:border-white/10">
+<button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-black/20 pl-3 pr-2 border border-gray-200 dark:border-white/10" data-range="personalizado" type="button">
 <p class="text-gray-600 dark:text-gray-300 text-sm font-medium leading-normal">Personalizado</p>
 <span class="material-symbols-outlined text-gray-500 dark:text-gray-400 text-lg">calendar_today</span>
 </button>
 </div>
+<div class="hidden flex-col sm:flex-row items-start sm:items-end gap-3 mb-6" id="filtro-personalizado-panel">
+<label class="flex flex-col">
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Desde</span>
+<input class="rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 text-gray-800 dark:text-white text-sm h-9 px-3 focus:border-primary focus:ring-primary" id="filtro-fecha-inicio" type="date"/>
+</label>
+<label class="flex flex-col">
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Hasta</span>
+<input class="rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 text-gray-800 dark:text-white text-sm h-9 px-3 focus:border-primary focus:ring-primary" id="filtro-fecha-fin" type="date"/>
+</label>
+<button class="flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-bold text-white" id="filtro-personalizado-aplicar" type="button">Aplicar</button>
+</div>
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 <div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
-<p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal">Compras del Mes</p>
+<p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal" id="stat-compras-label">Compras del Mes</p>
 <p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight" id="stat-compras-mes">—</p>
 <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-compras-mes-sub"></p>
 </div>
 <div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
-<p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal">Ventas del Mes</p>
+<p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal" id="stat-ventas-label">Ventas del Mes</p>
 <p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight" id="stat-ventas-mes">—</p>
 <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-ventas-mes-sub"></p>
 </div>
@@ -246,40 +257,67 @@ if ('serviceWorker' in navigator) {
       api.escapeHtml(estado || '—') + '</span>';
   }
 
-  function isThisMonth(iso) {
-    var d = new Date(iso);
-    var now = new Date();
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  var filtroBtns = document.querySelectorAll('.filtro-btn');
+  var personalizadoPanel = document.getElementById('filtro-personalizado-panel');
+  var fechaInicioInput = document.getElementById('filtro-fecha-inicio');
+  var fechaFinInput = document.getElementById('filtro-fecha-fin');
+  var aplicarBtn = document.getElementById('filtro-personalizado-aplicar');
+  var comprasLabel = document.getElementById('stat-compras-label');
+  var ventasLabel = document.getElementById('stat-ventas-label');
+
+  var compras = [];
+  var ventas = [];
+  var currentRange = 'mes';
+
+  function activarBoton(range) {
+    filtroBtns.forEach(function (btn) {
+      var activo = btn.getAttribute('data-range') === range;
+      var p = btn.querySelector('p');
+      if (activo) {
+        btn.classList.remove('bg-white', 'dark:bg-black/20', 'border', 'border-gray-200', 'dark:border-white/10');
+        btn.classList.add('bg-primary/20', 'dark:bg-primary/30');
+        p.classList.remove('text-gray-600', 'dark:text-gray-300');
+        p.classList.add('text-gray-800', 'dark:text-white');
+      } else {
+        btn.classList.remove('bg-primary/20', 'dark:bg-primary/30');
+        btn.classList.add('bg-white', 'dark:bg-black/20', 'border', 'border-gray-200', 'dark:border-white/10');
+        p.classList.remove('text-gray-800', 'dark:text-white');
+        p.classList.add('text-gray-600', 'dark:text-gray-300');
+      }
+    });
   }
 
-  Promise.all([
-    api.apiFetch('/compras'),
-    api.apiFetch('/ventas'),
-    api.apiFetch('/materiales'),
-  ]).then(function (results) {
-    var compras = results[0] || [];
-    var ventas = results[1] || [];
-    var materiales = results[2] || [];
+  function getRango(range) {
+    var hoy = api.todayISO();
+    if (range === 'hoy') return { start: hoy, end: hoy, label: 'Hoy' };
+    if (range === 'semana') {
+      var d = new Date();
+      d.setDate(d.getDate() - 6);
+      var pad = function (n) { return String(n).padStart(2, '0'); };
+      var start = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+      return { start: start, end: hoy, label: 'Esta Semana' };
+    }
+    if (range === 'mes') {
+      var start2 = hoy.slice(0, 8) + '01';
+      return { start: start2, end: hoy, label: 'Este Mes' };
+    }
+    // personalizado
+    var s = fechaInicioInput.value || hoy;
+    var e = fechaFinInput.value || hoy;
+    return { start: s, end: e, label: 'Personalizado' };
+  }
 
-    var comprasMes = compras.filter(function (c) { return isThisMonth(c.fecha); });
-    var ventasMes = ventas.filter(function (v) { return isThisMonth(v.fecha); });
-    var totalComprasMes = comprasMes.reduce(function (sum, c) { return sum + Number(c.total || 0); }, 0);
-    var totalVentasMes = ventasMes.reduce(function (sum, v) { return sum + Number(v.total || 0); }, 0);
-    var stockTotal = materiales.reduce(function (sum, m) { return sum + Number(m.stock_actual || 0); }, 0);
-    var stockBajo = materiales.filter(function (m) { return Number(m.stock_actual) <= Number(m.stock_minimo); });
+  function enRango(lista, start, end) {
+    return lista.filter(function (x) {
+      var f = (x.fecha || '').slice(0, 10);
+      return f >= start && f <= end;
+    });
+  }
 
-    document.getElementById('stat-compras-mes').textContent = api.money(totalComprasMes);
-    document.getElementById('stat-compras-mes-sub').textContent = comprasMes.length + ' compra(s) este mes';
-    document.getElementById('stat-ventas-mes').textContent = api.money(totalVentasMes);
-    document.getElementById('stat-ventas-mes-sub').textContent = ventasMes.length + ' venta(s) este mes';
-    document.getElementById('stat-stock-bajo').textContent = String(stockBajo.length);
-    document.getElementById('stat-stock-bajo-sub').textContent = 'de ' + materiales.length + ' materiales activos';
-    document.getElementById('stat-stock-total').textContent = api.kg(stockTotal);
-    document.getElementById('stat-stock-total-sub').textContent = materiales.length + ' materiales en inventario';
-
-    var actividad = compras.map(function (c) {
+  function renderActividad(comprasF, ventasF) {
+    var actividad = comprasF.map(function (c) {
       return { fecha: c.fecha, tipo: 'Compra', contraparte: c.proveedor_nombre || '—', monto: c.total, estado: c.estado };
-    }).concat(ventas.map(function (v) {
+    }).concat(ventasF.map(function (v) {
       return { fecha: v.fecha, tipo: 'Venta', contraparte: v.cliente_nombre || '—', monto: v.total, estado: v.estado };
     }));
     actividad.sort(function (a, b) { return new Date(b.fecha) - new Date(a.fecha); });
@@ -287,7 +325,7 @@ if ('serviceWorker' in navigator) {
 
     var tbody = document.getElementById('actividad-tbody');
     if (actividad.length === 0) {
-      tbody.innerHTML = '<tr><td class="px-6 py-4 text-gray-500 dark:text-gray-400" colspan="5">Todavía no hay compras ni ventas registradas.</td></tr>';
+      tbody.innerHTML = '<tr><td class="px-6 py-4 text-gray-500 dark:text-gray-400" colspan="5">No hay compras ni ventas en el período seleccionado.</td></tr>';
       return;
     }
     tbody.innerHTML = actividad.map(function (a) {
@@ -299,6 +337,61 @@ if ('serviceWorker' in navigator) {
         '<td class="px-6 py-4 text-center">' + badge(a.estado) + '</td>' +
         '</tr>';
     }).join('');
+  }
+
+  function aplicarFiltro(range) {
+    currentRange = range;
+    activarBoton(range);
+    personalizadoPanel.classList.toggle('hidden', range !== 'personalizado');
+    personalizadoPanel.classList.toggle('flex', range === 'personalizado');
+
+    var rango = getRango(range);
+    var comprasF = enRango(compras, rango.start, rango.end);
+    var ventasF = enRango(ventas, rango.start, rango.end);
+    var totalComprasF = comprasF.reduce(function (sum, c) { return sum + Number(c.total || 0); }, 0);
+    var totalVentasF = ventasF.reduce(function (sum, v) { return sum + Number(v.total || 0); }, 0);
+
+    comprasLabel.textContent = 'Compras (' + rango.label + ')';
+    ventasLabel.textContent = 'Ventas (' + rango.label + ')';
+    document.getElementById('stat-compras-mes').textContent = api.money(totalComprasF);
+    document.getElementById('stat-compras-mes-sub').textContent = comprasF.length + ' compra(s) en el período';
+    document.getElementById('stat-ventas-mes').textContent = api.money(totalVentasF);
+    document.getElementById('stat-ventas-mes-sub').textContent = ventasF.length + ' venta(s) en el período';
+
+    renderActividad(comprasF, ventasF);
+  }
+
+  filtroBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var range = btn.getAttribute('data-range');
+      if (range === 'personalizado' && !fechaInicioInput.value) {
+        var hoy = api.todayISO();
+        fechaInicioInput.value = hoy;
+        fechaFinInput.value = hoy;
+      }
+      aplicarFiltro(range);
+    });
+  });
+  aplicarBtn.addEventListener('click', function () { aplicarFiltro('personalizado'); });
+
+  Promise.all([
+    api.apiFetch('/compras'),
+    api.apiFetch('/ventas'),
+    api.apiFetch('/materiales'),
+  ]).then(function (results) {
+    compras = results[0] || [];
+    ventas = results[1] || [];
+    var materiales = results[2] || [];
+
+    var stockTotal = materiales.reduce(function (sum, m) { return sum + Number(m.stock_actual || 0); }, 0);
+    var stockBajo = materiales.filter(function (m) { return Number(m.stock_actual) <= Number(m.stock_minimo); });
+
+    document.getElementById('stat-stock-bajo').textContent = String(stockBajo.length);
+    document.getElementById('stat-stock-bajo-sub').textContent = 'de ' + materiales.length + ' materiales activos';
+    document.getElementById('stat-stock-total').textContent = api.kg(stockTotal);
+    document.getElementById('stat-stock-total-sub').textContent = materiales.length + ' materiales en inventario';
+
+    aplicarFiltro(currentRange);
   }).catch(function (err) {
     document.getElementById('actividad-tbody').innerHTML =
       '<tr><td class="px-6 py-4 text-red-500" colspan="5">' + api.escapeHtml(err.message || 'Error al cargar los datos.') + '</td></tr>';
