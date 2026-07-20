@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Crear Nuevo Cliente</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1dc962",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                    },
+                    fontFamily: {
+                        "display": ["Work Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+<link href="manifest.json" rel="manifest"/>
+<meta content="#1dc962" name="theme-color"/>
+<link href="icons/icon-192.png" rel="icon" type="image/png"/>
+<link href="icons/icon-180.png" rel="apple-touch-icon"/>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark overflow-x-hidden">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 md:p-8">
+<div class="w-full max-w-2xl rounded-xl border border-zinc-200/50 dark:border-zinc-800/50 bg-white/50 dark:bg-background-dark/50 shadow-lg backdrop-blur-sm">
+<div class="flex flex-col p-6 sm:p-8 md:p-10">
+<div class="mb-8">
+<p class="text-[#0e1b13] dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]" id="page-title">Crear Nuevo Cliente</p>
+<p class="text-zinc-600 dark:text-zinc-400 mt-2 text-base" id="page-subtitle">Rellená los siguientes campos para registrar un nuevo cliente.</p>
+</div>
+<p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 mb-6" id="form-error"></p>
+<div class="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
+<div class="flex flex-col md:col-span-2">
+<label class="flex flex-col">
+<p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Nombre</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" id="nombre-input" placeholder="Nombre completo o razón social" value=""/>
+</label>
+</div>
+<div class="flex flex-col">
+<label class="flex flex-col">
+<p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Correo Electrónico</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" id="email-input" placeholder="ejemplo@correo.com" type="email" value=""/>
+</label>
+</div>
+<div class="flex flex-col">
+<label class="flex flex-col">
+<p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Teléfono</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" id="telefono-input" placeholder="Ej: 0981 123 456" type="tel" value=""/>
+</label>
+</div>
+<div class="flex flex-col md:col-span-2">
+<label class="flex flex-col">
+<p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Dirección</p>
+<textarea class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" id="direccion-input" placeholder="Dirección completa" rows="3"></textarea>
+</label>
+</div>
+</div>
+<div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-4 mt-10 pt-6 border-t border-zinc-200/80 dark:border-zinc-800">
+<a href="Gestion_Clientes.html"><button class="flex h-12 w-full sm:w-auto items-center justify-center rounded-lg px-6 font-semibold text-zinc-700 dark:text-zinc-200 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" type="button">Cancelar</button></a>
+<button class="flex h-12 w-full sm:w-auto items-center justify-center rounded-lg bg-primary px-6 font-semibold text-white hover:bg-primary/90 transition-colors shadow-sm disabled:opacity-60" id="save-btn" type="button">Guardar Cliente</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Sello corporativo -->
+<footer class="w-full border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 py-3 px-4 sm:px-6">
+<p class="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-sm text-primary">verified</span>
+<span>Desarrollado por <span class="font-semibold text-gray-700 dark:text-gray-200">ALMN Tech &amp; Solutions</span></span>
+</p>
+</footer>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var id = new URLSearchParams(window.location.search).get('id');
+  var errorBox = document.getElementById('form-error');
+  var saveBtn = document.getElementById('save-btn');
+  var nombreInput = document.getElementById('nombre-input');
+  var emailInput = document.getElementById('email-input');
+  var telefonoInput = document.getElementById('telefono-input');
+  var direccionInput = document.getElementById('direccion-input');
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
+
+  if (id) {
+    document.getElementById('page-title').textContent = 'Editar Cliente';
+    document.getElementById('page-subtitle').textContent = 'Modificá los datos del cliente.';
+    saveBtn.textContent = 'Guardar Cambios';
+
+    api.apiFetch('/clientes/' + id).then(function (c) {
+      nombreInput.value = c.nombre;
+      emailInput.value = c.email || '';
+      telefonoInput.value = c.telefono || '';
+      direccionInput.value = c.direccion || '';
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo cargar el cliente.');
+    });
+  }
+
+  saveBtn.addEventListener('click', function () {
+    errorBox.classList.add('hidden');
+    var nombre = nombreInput.value.trim();
+    if (!nombre) return showError('El nombre es requerido.');
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Guardando…';
+
+    var body = {
+      nombre: nombre,
+      email: emailInput.value.trim() || null,
+      telefono: telefonoInput.value.trim() || null,
+      direccion: direccionInput.value.trim() || null,
+    };
+
+    var request = id
+      ? api.apiFetch('/clientes/' + id, { method: 'PUT', body: JSON.stringify(body) })
+      : api.apiFetch('/clientes', { method: 'POST', body: JSON.stringify(body) });
+
+    request.then(function () {
+      window.location.href = 'Gestion_Clientes.html';
+    }).catch(function (err) {
+      if (err.status === 403) {
+        showError('Tu cuenta no tiene permiso para ' + (id ? 'editar' : 'crear') + ' clientes (requiere permiso "edit" o superior).');
+      } else {
+        showError(err.message || 'No se pudo guardar el cliente.');
+      }
+      saveBtn.disabled = false;
+      saveBtn.textContent = id ? 'Guardar Cambios' : 'Guardar Cliente';
+    });
+  });
+})();
+</script>
+</body></html>

@@ -31,6 +31,8 @@ app.use('/api/ventas',     require('./src/routes/ventas'));
 app.use('/api/usuarios',   require('./src/routes/usuarios'));
 app.use('/api/tipos-cambio', require('./src/routes/tiposCambio'));
 app.use('/api/configuracion', require('./src/routes/configuracion'));
+app.use('/api/clientes',    require('./src/routes/clientes'));
+app.use('/api/proveedores', require('./src/routes/proveedores'));
 
 // Ruta raíz → redirigir al login
 app.get('/', (req, res) => {
