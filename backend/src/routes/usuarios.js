@@ -5,6 +5,7 @@ const router  = express.Router();
 const bcrypt  = require('bcryptjs');
 const db      = require('../config/database');
 const { verificarToken, verificarPermiso } = require('../middleware/auth');
+const { getPolicy, validatePassword } = require('../utils/passwordPolicy');
 
 router.use(verificarToken);
 
@@ -28,6 +29,11 @@ router.post('/', verificarPermiso('full'), async (req, res) => {
   const { nombre_usuario, email, password, rol_id, permiso } = req.body;
   if (!nombre_usuario || !email || !password) {
     return res.status(400).json({ error: 'Nombre, email y contraseña son requeridos.' });
+  }
+  const policy = await getPolicy();
+  const policyError = validatePassword(password, policy);
+  if (policyError) {
+    return res.status(400).json({ error: policyError });
   }
   try {
     const hash = await bcrypt.hash(password, 10);
@@ -78,8 +84,12 @@ router.put('/:id', verificarPermiso('full'), async (req, res) => {
   if (!nombre_usuario || !email) {
     return res.status(400).json({ error: 'Nombre y correo son requeridos.' });
   }
-  if (password && password.length < 8) {
-    return res.status(400).json({ error: 'La nueva contraseña debe tener al menos 8 caracteres.' });
+  if (password) {
+    const policy = await getPolicy();
+    const policyError = validatePassword(password, policy);
+    if (policyError) {
+      return res.status(400).json({ error: policyError });
+    }
   }
   try {
     let query, params;

@@ -8,6 +8,7 @@ const jwt     = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
 const db      = require('../config/database');
 const { verificarToken } = require('../middleware/auth');
+const { getPolicy, validatePassword } = require('../utils/passwordPolicy');
 
 // Límite de intentos de login por IP, para frenar fuerza bruta contra contraseñas.
 const loginLimiter = rateLimit({
@@ -91,8 +92,10 @@ router.put('/password', verificarToken, async (req, res) => {
   if (!password_actual || !password_nueva) {
     return res.status(400).json({ error: 'La contraseña actual y la nueva son requeridas.' });
   }
-  if (password_nueva.length < 8) {
-    return res.status(400).json({ error: 'La nueva contraseña debe tener al menos 8 caracteres.' });
+  const policy = await getPolicy();
+  const policyError = validatePassword(password_nueva, policy);
+  if (policyError) {
+    return res.status(400).json({ error: policyError });
   }
 
   try {
