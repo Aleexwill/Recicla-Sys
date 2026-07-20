@@ -3,7 +3,7 @@
 <html class="light" lang="es"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Informe de Ventas - ReciclaS</title>
+<title>Reportes - ReciclaS</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -127,8 +127,8 @@
 <!-- PageHeading -->
 <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
 <div class="flex flex-col">
-<h1 class="text-3xl lg:text-4xl font-black leading-tight tracking-tight text-text-light dark:text-text-dark">Informe de Ventas</h1>
-<p class="text-base font-normal leading-normal text-text-muted-light dark:text-text-muted-dark">Genera informes detallados por período para analizar el rendimiento.</p>
+<h1 class="text-3xl lg:text-4xl font-black leading-tight tracking-tight text-text-light dark:text-text-dark">Reportes</h1>
+<p class="text-base font-normal leading-normal text-text-muted-light dark:text-text-muted-dark">Ventas, compras e inventario por material, filtrados por período.</p>
 </div>
 <button class="flex items-center justify-center gap-2 min-w-[84px] cursor-pointer overflow-hidden rounded-lg h-11 px-5 bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark text-sm font-bold leading-normal tracking-[0.015em] border border-border-light dark:border-border-dark shadow-sm hover:bg-background-light dark:hover:bg-gray-800">
 <span class="material-symbols-outlined">download</span>
@@ -153,7 +153,8 @@
 </button>
 </div>
 </div>
-<!-- Summary KPI Cards -->
+<!-- Resumen de Ventas -->
+<h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] mb-4">Resumen de Ventas</h2>
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
 <div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
 <p class="text-sm font-medium text-text-muted-light dark:text-text-muted-dark mb-1">Ingresos Totales</p>
@@ -205,6 +206,70 @@
 </table>
 </div>
 </div>
+<!-- Resumen de Compras -->
+<h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] mb-4 mt-10">Resumen de Compras</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+<div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+<p class="text-sm font-medium text-text-muted-light dark:text-text-muted-dark mb-1">Total Comprado</p>
+<p class="text-3xl font-bold text-text-light dark:text-text-dark" id="kpi-compras-monto">$0.00</p>
+</div>
+<div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+<p class="text-sm font-medium text-text-muted-light dark:text-text-muted-dark mb-1">Volumen Total Comprado</p>
+<p class="text-3xl font-bold text-text-light dark:text-text-dark" id="kpi-compras-volumen">0 kg</p>
+</div>
+<div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+<p class="text-sm font-medium text-text-muted-light dark:text-text-muted-dark mb-1">Material Más Comprado</p>
+<p class="text-3xl font-bold text-text-light dark:text-text-dark" id="kpi-compras-material">—</p>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden mb-10">
+<div class="p-6">
+<h3 class="text-lg font-bold">Detalle de Compras</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm text-left">
+<thead class="bg-background-light dark:bg-background-dark text-xs uppercase text-text-muted-light dark:text-text-muted-dark">
+<tr>
+<th class="px-6 py-3 font-semibold" scope="col">Fecha</th>
+<th class="px-6 py-3 font-semibold" scope="col">Proveedor</th>
+<th class="px-6 py-3 font-semibold" scope="col">Material</th>
+<th class="px-6 py-3 font-semibold text-right" scope="col">Cantidad (kg)</th>
+<th class="px-6 py-3 font-semibold text-right" scope="col">Monto</th>
+</tr>
+</thead>
+<tbody id="compras-tbody">
+<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="5">Elegí un período y presioná "Generar Informe".</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Inventario por Material -->
+<div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+<h2 class="text-2xl font-bold leading-tight tracking-[-0.015em]">Inventario por Material</h2>
+<label class="flex flex-col w-full sm:w-64">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted-light dark:text-text-muted-dark" style="font-size: 20px;">search</span>
+<input class="form-input w-full rounded-lg border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark h-11 pl-10 pr-3 text-sm focus:outline-0 focus:ring-2 focus:ring-primary/50" id="material-filtro" placeholder="Buscar material (ej: cobre)..." type="text"/>
+</div>
+</label>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden mb-8">
+<div class="overflow-x-auto">
+<table class="w-full text-sm text-left">
+<thead class="bg-background-light dark:bg-background-dark text-xs uppercase text-text-muted-light dark:text-text-muted-dark">
+<tr>
+<th class="px-6 py-3 font-semibold" scope="col">Material</th>
+<th class="px-6 py-3 font-semibold text-right" scope="col">Stock Actual</th>
+<th class="px-6 py-3 font-semibold text-right" scope="col">Comprado en el Período</th>
+<th class="px-6 py-3 font-semibold text-right" scope="col">Vendido en el Período</th>
+</tr>
+</thead>
+<tbody id="inventario-tbody">
+<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="4">Elegí un período y presioná "Generar Informe".</td></tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </main>
 </div>
@@ -228,9 +293,13 @@ if ('serviceWorker' in navigator) {
   var inicioInput = document.getElementById('fecha-inicio');
   var finInput = document.getElementById('fecha-fin');
   var generarBtn = document.getElementById('generar-btn');
-  var tbody = document.getElementById('informe-tbody');
+  var ventasTbody = document.getElementById('informe-tbody');
+  var comprasTbody = document.getElementById('compras-tbody');
+  var inventarioTbody = document.getElementById('inventario-tbody');
+  var materialFiltro = document.getElementById('material-filtro');
   var errorBox = document.getElementById('page-error');
   var tipoCambio = null;
+  var inventarioRows = [];
 
   api.apiFetch('/tipos-cambio/actual').then(function (data) {
     tipoCambio = Number(data.valor);
@@ -248,77 +317,179 @@ if ('serviceWorker' in navigator) {
     finInput.value = iso(end);
   }
 
+  function enRangoPorFecha(lista, start, end) {
+    return lista.filter(function (x) {
+      var f = (x.fecha || '').slice(0, 10);
+      return f >= start && f <= end;
+    });
+  }
+
+  // ---- Ventas ----
+  function cargarVentas(start, end) {
+    return api.apiFetch('/ventas').then(function (ventas) {
+      var enRango = enRangoPorFecha(ventas, start, end);
+      if (enRango.length === 0) {
+        ventasTbody.innerHTML = '<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="5">No hay ventas en el período seleccionado.</td></tr>';
+        document.getElementById('kpi-ingresos').textContent = api.money(0);
+        document.getElementById('kpi-volumen').textContent = api.kg(0);
+        document.getElementById('kpi-material').textContent = '—';
+        return {};
+      }
+      // Traemos el detalle de cada venta del período para desglosar por material.
+      // Aceptable para el volumen de datos de este sistema; no está pensado para miles de ventas.
+      return Promise.all(enRango.map(function (v) { return api.apiFetch('/ventas/' + v.id); })).then(function (detalles) {
+        var filas = [];
+        var porMaterial = {};
+        var ingresoTotal = 0;
+        var volumenTotal = 0;
+
+        detalles.forEach(function (venta) {
+          ingresoTotal += Number(venta.total || 0);
+          (venta.items || []).forEach(function (item) {
+            volumenTotal += Number(item.cantidad_kg || 0);
+            porMaterial[item.material_nombre] = (porMaterial[item.material_nombre] || 0) + Number(item.cantidad_kg || 0);
+            filas.push({
+              fecha: venta.fecha,
+              cliente: venta.cliente_nombre || '—',
+              material: item.material_nombre,
+              cantidad: Number(item.cantidad_kg),
+              ingreso: Number(item.subtotal),
+            });
+          });
+        });
+
+        filas.sort(function (a, b) { return new Date(b.fecha) - new Date(a.fecha); });
+
+        ventasTbody.innerHTML = filas.map(function (f) {
+          return '<tr class="border-b border-border-light dark:border-border-dark">' +
+            '<td class="px-6 py-4">' + api.fmtDate(f.fecha) + '</td>' +
+            '<td class="px-6 py-4 font-medium">' + api.escapeHtml(f.cliente) + '</td>' +
+            '<td class="px-6 py-4">' + api.escapeHtml(f.material) + '</td>' +
+            '<td class="px-6 py-4 text-right">' + f.cantidad.toFixed(2) + '</td>' +
+            '<td class="px-6 py-4 text-right font-medium">' + api.money(f.ingreso) + '</td>' +
+            '</tr>';
+        }).join('');
+
+        var topMaterial = Object.keys(porMaterial).sort(function (a, b) { return porMaterial[b] - porMaterial[a]; })[0];
+        document.getElementById('kpi-ingresos').innerHTML = api.moneyDual(ingresoTotal, tipoCambio);
+        document.getElementById('kpi-volumen').textContent = api.kg(volumenTotal);
+        document.getElementById('kpi-material').textContent = topMaterial || '—';
+        return porMaterial;
+      });
+    });
+  }
+
+  // ---- Compras ----
+  function cargarCompras(start, end) {
+    return api.apiFetch('/compras').then(function (compras) {
+      var enRango = enRangoPorFecha(compras, start, end).filter(function (c) { return c.estado === 'confirmada'; });
+      if (enRango.length === 0) {
+        comprasTbody.innerHTML = '<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="5">No hay compras confirmadas en el período seleccionado.</td></tr>';
+        document.getElementById('kpi-compras-monto').textContent = api.money(0);
+        document.getElementById('kpi-compras-volumen').textContent = api.kg(0);
+        document.getElementById('kpi-compras-material').textContent = '—';
+        return {};
+      }
+      return Promise.all(enRango.map(function (c) { return api.apiFetch('/compras/' + c.id); })).then(function (detalles) {
+        var filas = [];
+        var porMaterial = {};
+        var montoTotal = 0;
+        var volumenTotal = 0;
+
+        detalles.forEach(function (compra) {
+          montoTotal += Number(compra.total || 0);
+          (compra.items || []).forEach(function (item) {
+            volumenTotal += Number(item.peso_kg || 0);
+            porMaterial[item.material_nombre] = (porMaterial[item.material_nombre] || 0) + Number(item.peso_kg || 0);
+            filas.push({
+              fecha: compra.fecha,
+              proveedor: compra.proveedor_nombre || '—',
+              material: item.material_nombre,
+              cantidad: Number(item.peso_kg),
+              monto: Number(item.subtotal),
+            });
+          });
+        });
+
+        filas.sort(function (a, b) { return new Date(b.fecha) - new Date(a.fecha); });
+
+        comprasTbody.innerHTML = filas.map(function (f) {
+          return '<tr class="border-b border-border-light dark:border-border-dark">' +
+            '<td class="px-6 py-4">' + api.fmtDate(f.fecha) + '</td>' +
+            '<td class="px-6 py-4 font-medium">' + api.escapeHtml(f.proveedor) + '</td>' +
+            '<td class="px-6 py-4">' + api.escapeHtml(f.material) + '</td>' +
+            '<td class="px-6 py-4 text-right">' + f.cantidad.toFixed(2) + '</td>' +
+            '<td class="px-6 py-4 text-right font-medium">' + api.money(f.monto) + '</td>' +
+            '</tr>';
+        }).join('');
+
+        var topMaterial = Object.keys(porMaterial).sort(function (a, b) { return porMaterial[b] - porMaterial[a]; })[0];
+        document.getElementById('kpi-compras-monto').innerHTML = api.moneyDual(montoTotal, tipoCambio);
+        document.getElementById('kpi-compras-volumen').textContent = api.kg(volumenTotal);
+        document.getElementById('kpi-compras-material').textContent = topMaterial || '—';
+        return porMaterial;
+      });
+    });
+  }
+
+  // ---- Inventario por material ----
+  function renderInventario(filtro) {
+    var q = (filtro || '').trim().toLowerCase();
+    var filtrado = inventarioRows.filter(function (r) { return r.nombre.toLowerCase().includes(q); });
+    if (filtrado.length === 0) {
+      inventarioTbody.innerHTML = '<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="4">No se encontraron materiales.</td></tr>';
+      return;
+    }
+    inventarioTbody.innerHTML = filtrado.map(function (r) {
+      var stockCls = r.stockBajo ? 'text-red-500 font-semibold' : '';
+      return '<tr class="border-b border-border-light dark:border-border-dark">' +
+        '<td class="px-6 py-4 font-medium">' + api.escapeHtml(r.nombre) + '</td>' +
+        '<td class="px-6 py-4 text-right ' + stockCls + '">' + api.kg(r.stockActual) + '</td>' +
+        '<td class="px-6 py-4 text-right">' + api.kg(r.comprado) + '</td>' +
+        '<td class="px-6 py-4 text-right">' + api.kg(r.vendido) + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  function cargarInventario(porMaterialComprado, porMaterialVendido) {
+    return api.apiFetch('/materiales').then(function (materiales) {
+      inventarioRows = materiales.map(function (m) {
+        return {
+          nombre: m.nombre,
+          stockActual: Number(m.stock_actual) || 0,
+          stockBajo: Number(m.stock_actual) <= Number(m.stock_minimo),
+          comprado: porMaterialComprado[m.nombre] || 0,
+          vendido: porMaterialVendido[m.nombre] || 0,
+        };
+      }).sort(function (a, b) { return a.nombre.localeCompare(b.nombre); });
+      renderInventario(materialFiltro.value);
+    });
+  }
+
   function generar() {
     clearError();
     var start = inicioInput.value;
     var end = finInput.value;
     if (!start || !end) return showError('Elegí fecha de inicio y de fin.');
 
-    tbody.innerHTML = '<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="5">Cargando…</td></tr>';
+    ventasTbody.innerHTML = '<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="5">Cargando…</td></tr>';
+    comprasTbody.innerHTML = '<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="5">Cargando…</td></tr>';
+    inventarioTbody.innerHTML = '<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="4">Cargando…</td></tr>';
     generarBtn.disabled = true;
 
-    api.apiFetch('/ventas').then(function (ventas) {
-      var enRango = ventas.filter(function (v) {
-        var f = (v.fecha || '').slice(0, 10);
-        return f >= start && f <= end;
-      });
-      if (enRango.length === 0) {
-        tbody.innerHTML = '<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="5">No hay ventas en el período seleccionado.</td></tr>';
-        document.getElementById('kpi-ingresos').textContent = api.money(0);
-        document.getElementById('kpi-volumen').textContent = api.kg(0);
-        document.getElementById('kpi-material').textContent = '—';
+    Promise.all([cargarVentas(start, end), cargarCompras(start, end)])
+      .then(function (results) {
+        return cargarInventario(results[1] || {}, results[0] || {});
+      })
+      .catch(function (err) {
+        showError(err.message || 'No se pudo generar el informe.');
+      })
+      .finally(function () {
         generarBtn.disabled = false;
-        return;
-      }
-      // Traemos el detalle de cada venta del período para desglosar por material.
-      // Aceptable para el volumen de datos de este sistema; no está pensado para miles de ventas.
-      return Promise.all(enRango.map(function (v) { return api.apiFetch('/ventas/' + v.id); }))
-        .then(function (detalles) {
-          var filas = [];
-          var porMaterial = {};
-          var ingresoTotal = 0;
-          var volumenTotal = 0;
-
-          detalles.forEach(function (venta) {
-            ingresoTotal += Number(venta.total || 0);
-            (venta.items || []).forEach(function (item) {
-              volumenTotal += Number(item.cantidad_kg || 0);
-              porMaterial[item.material_nombre] = (porMaterial[item.material_nombre] || 0) + Number(item.cantidad_kg || 0);
-              filas.push({
-                fecha: venta.fecha,
-                cliente: venta.cliente_nombre || '—',
-                material: item.material_nombre,
-                cantidad: Number(item.cantidad_kg),
-                ingreso: Number(item.subtotal),
-              });
-            });
-          });
-
-          filas.sort(function (a, b) { return new Date(b.fecha) - new Date(a.fecha); });
-
-          tbody.innerHTML = filas.map(function (f) {
-            return '<tr class="border-b border-border-light dark:border-border-dark">' +
-              '<td class="px-6 py-4">' + api.fmtDate(f.fecha) + '</td>' +
-              '<td class="px-6 py-4 font-medium">' + api.escapeHtml(f.cliente) + '</td>' +
-              '<td class="px-6 py-4">' + api.escapeHtml(f.material) + '</td>' +
-              '<td class="px-6 py-4 text-right">' + f.cantidad.toFixed(2) + '</td>' +
-              '<td class="px-6 py-4 text-right font-medium">' + api.money(f.ingreso) + '</td>' +
-              '</tr>';
-          }).join('');
-
-          var topMaterial = Object.keys(porMaterial).sort(function (a, b) { return porMaterial[b] - porMaterial[a]; })[0];
-          document.getElementById('kpi-ingresos').innerHTML = api.moneyDual(ingresoTotal, tipoCambio);
-          document.getElementById('kpi-volumen').textContent = api.kg(volumenTotal);
-          document.getElementById('kpi-material').textContent = topMaterial || '—';
-        });
-    }).catch(function (err) {
-      showError(err.message || 'No se pudo generar el informe.');
-      tbody.innerHTML = '';
-    }).finally(function () {
-      generarBtn.disabled = false;
-    });
+      });
   }
 
+  materialFiltro.addEventListener('input', function () { renderInventario(materialFiltro.value); });
   generarBtn.addEventListener('click', generar);
   defaultRange();
   generar();
