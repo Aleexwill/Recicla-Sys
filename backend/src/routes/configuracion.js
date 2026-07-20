@@ -25,12 +25,13 @@ router.get('/', async (req, res) => {
 
 // PUT /api/configuracion — solo administradores (permiso full)
 router.put('/', verificarPermiso('full'), async (req, res) => {
-  const { password_min_length, password_requiere_especiales, idioma_default, notificaciones_email } = req.body;
+  const { password_min_length, password_requiere_especiales, idioma_default, notificaciones_email, moneda_principal } = req.body;
 
   const minLength = Number(password_min_length);
   if (!minLength || minLength < 4 || minLength > 64) {
     return res.status(400).json({ error: 'El largo mínimo de contraseña debe estar entre 4 y 64 caracteres.' });
   }
+  const monedaPrincipal = moneda_principal === 'PYG' ? 'PYG' : 'USD';
 
   try {
     const { rows } = await db.query(
@@ -39,10 +40,11 @@ router.put('/', verificarPermiso('full'), async (req, res) => {
          password_requiere_especiales = $2,
          idioma_default = $3,
          notificaciones_email = $4,
+         moneda_principal = $5,
          actualizado_en = NOW(),
-         actualizado_por = $5
+         actualizado_por = $6
        WHERE id = 1 RETURNING *`,
-      [minLength, !!password_requiere_especiales, idioma_default || 'es', !!notificaciones_email, req.usuario.id]
+      [minLength, !!password_requiere_especiales, idioma_default || 'es', !!notificaciones_email, monedaPrincipal, req.usuario.id]
     );
     if (rows.length === 0) return res.status(404).json({ error: 'No se encontró la configuración.' });
     res.json({ mensaje: 'Configuración guardada.', configuracion: rows[0] });

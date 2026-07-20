@@ -223,6 +223,28 @@
 </div>
 </section>
 <section class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
+<h4 class="border-b border-border-light dark:border-border-dark px-6 py-4 text-lg font-bold text-text-light dark:text-text-dark">Divisa</h4>
+<div class="divide-y divide-border-light dark:divide-border-dark p-2">
+<div class="flex min-h-[72px] items-center justify-between gap-4 px-4 py-3">
+<div class="flex items-center gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined">currency_exchange</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="font-medium text-text-light dark:text-text-dark">Divisa Principal</p>
+<p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Moneda que aparece por defecto al cargar compras, ventas y reportes.</p>
+</div>
+</div>
+<div class="shrink-0">
+<select class="rounded-lg border-border-light bg-background-light dark:border-border-dark dark:bg-surface-dark text-sm focus:border-primary focus:ring-primary" id="moneda-principal-select">
+<option value="USD">Dólares (USD)</option>
+<option value="PYG">Guaraníes (Gs.)</option>
+</select>
+</div>
+</div>
+</div>
+</section>
+<section class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
 <h4 class="border-b border-border-light dark:border-border-dark px-6 py-4 text-lg font-bold text-text-light dark:text-text-dark">Preferencias de Cuenta</h4>
 <div class="divide-y divide-border-light dark:divide-border-dark p-2">
 <div class="flex min-h-[72px] items-center justify-between gap-4 px-4 py-3">
@@ -289,6 +311,7 @@ if ('serviceWorker' in navigator) {
   var minLengthPlus = document.getElementById('min-length-plus');
   var toggleEspeciales = document.getElementById('toggle-especiales');
   var idiomaSelect = document.getElementById('idioma-select');
+  var monedaPrincipalSelect = document.getElementById('moneda-principal-select');
   var toggleNotificaciones = document.getElementById('toggle-notificaciones');
   var guardarBtn = document.getElementById('guardar-config-btn');
   var errorBox = document.getElementById('config-error');
@@ -344,6 +367,7 @@ if ('serviceWorker' in navigator) {
       minLengthInput.value = clampMinLength(cfg.password_min_length);
       setToggle(toggleEspeciales, !!cfg.password_requiere_especiales);
       idiomaSelect.value = cfg.idioma_default || 'es';
+      monedaPrincipalSelect.value = cfg.moneda_principal === 'PYG' ? 'PYG' : 'USD';
       setToggle(toggleNotificaciones, !!cfg.notificaciones_email);
     }).catch(function (err) {
       showError(err.message || 'No se pudo cargar la configuración.');
@@ -359,6 +383,7 @@ if ('serviceWorker' in navigator) {
         password_min_length: clampMinLength(minLengthInput.value),
         password_requiere_especiales: toggleChecked(toggleEspeciales),
         idioma_default: idiomaSelect.value,
+        moneda_principal: monedaPrincipalSelect.value,
         notificaciones_email: toggleChecked(toggleNotificaciones),
       }),
     }).then(function () {

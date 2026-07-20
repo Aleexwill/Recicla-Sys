@@ -200,12 +200,26 @@ if ('serviceWorker' in navigator) {
   purchaseInput.addEventListener('input', updateMargen);
   saleInput.addEventListener('input', updateMargen);
 
-  api.apiFetch('/tipos-cambio/actual').then(function (data) {
+  var tipoCambioPromise = api.apiFetch('/tipos-cambio/actual').then(function (data) {
     tipoCambio = Number(data.valor);
   }).catch(function () {
     tipoCambio = null;
     sinTipoCambioMsg.classList.remove('hidden');
   });
+
+  if (!id) {
+    api.apiFetch('/configuracion').then(function (cfg) {
+      return tipoCambioPromise.then(function () {
+        if (cfg.moneda_principal === 'PYG' && tipoCambio) {
+          monedaSelect.value = 'PYG';
+          purchasePrefix.textContent = 'Gs.';
+          salePrefix.textContent = 'Gs.';
+          purchaseInput.step = '1';
+          saleInput.step = '1';
+        }
+      });
+    }).catch(function () {});
+  }
 
   function formatPrecio(v) {
     if (!v && v !== 0) return '';

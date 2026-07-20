@@ -255,6 +255,9 @@ if ('serviceWorker' in navigator) {
   var tipoCambioPromise = api.apiFetch('/tipos-cambio/actual').then(function (data) {
     return Number(data.valor);
   }).catch(function () { return null; });
+  var monedaPrincipalPromise = api.apiFetch('/configuracion').then(function (cfg) {
+    return cfg.moneda_principal === 'PYG' ? 'PYG' : 'USD';
+  }).catch(function () { return 'USD'; });
 
   if (!id) {
     showError('No se especificó una venta. Volvé al listado para elegir una.');
@@ -263,9 +266,10 @@ if ('serviceWorker' in navigator) {
   }
 
   function load() {
-    Promise.all([tipoCambioPromise, api.apiFetch('/ventas/' + id)]).then(function (results) {
+    Promise.all([tipoCambioPromise, api.apiFetch('/ventas/' + id), monedaPrincipalPromise]).then(function (results) {
       var tipoCambio = results[0];
       var venta = results[1];
+      var monedaPrincipal = results[2];
       document.getElementById('page-title').textContent = 'Detalle de Venta #VENTA-' + String(venta.id).padStart(5, '0');
       var info = ESTADO_INFO[venta.estado] || { cls: 'text-text-medium bg-gray-200 dark:bg-gray-700', label: venta.estado || '—' };
       var badge = document.getElementById('estado-badge');
@@ -283,14 +287,14 @@ if ('serviceWorker' in navigator) {
           : api.money(item.precio_unitario) + '/kg';
         return '<div class="flex justify-between items-center text-base">' +
           '<p class="text-text-medium dark:text-gray-400">' + api.escapeHtml(item.material_nombre) + ' (' + Number(item.cantidad_kg).toFixed(2) + ' kg x ' + precioTxt + ')</p>' +
-          '<p class="text-text-dark dark:text-gray-200 font-medium">' + api.moneyDual(item.subtotal, tipoCambio) + '</p></div>';
+          '<p class="text-text-dark dark:text-gray-200 font-medium">' + api.moneyDual(item.subtotal, tipoCambio, monedaPrincipal) + '</p></div>';
       }).join('') || '<p class="text-text-medium dark:text-gray-400">Sin materiales.</p>';
 
       var impuestoPct = venta.impuesto_pct != null ? venta.impuesto_pct : 18;
-      document.getElementById('fin-subtotal').innerHTML = api.moneyDual(venta.subtotal, tipoCambio);
+      document.getElementById('fin-subtotal').innerHTML = api.moneyDual(venta.subtotal, tipoCambio, monedaPrincipal);
       document.getElementById('fin-impuesto-label').textContent = 'Impuestos (' + impuestoPct + '%)';
-      document.getElementById('fin-impuesto').innerHTML = api.moneyDual(venta.total - venta.subtotal, tipoCambio);
-      document.getElementById('fin-total').innerHTML = api.moneyDual(venta.total, tipoCambio);
+      document.getElementById('fin-impuesto').innerHTML = api.moneyDual(venta.total - venta.subtotal, tipoCambio, monedaPrincipal);
+      document.getElementById('fin-total').innerHTML = api.moneyDual(venta.total, tipoCambio, monedaPrincipal);
 
       var siguientes = SIGUIENTES[venta.estado] || [];
       ['en_transito', 'completada', 'cancelada'].forEach(function (estado) {

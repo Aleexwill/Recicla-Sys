@@ -210,6 +210,7 @@ CREATE TABLE IF NOT EXISTS configuracion (
   password_requiere_especiales  BOOLEAN NOT NULL DEFAULT FALSE,
   idioma_default                VARCHAR(10) NOT NULL DEFAULT 'es',
   notificaciones_email          BOOLEAN NOT NULL DEFAULT TRUE,
+  moneda_principal               VARCHAR(5) NOT NULL DEFAULT 'USD' CHECK (moneda_principal IN ('USD', 'PYG')),
   actualizado_en                TIMESTAMP DEFAULT NOW(),
   actualizado_por               INTEGER REFERENCES usuarios(id)
 );

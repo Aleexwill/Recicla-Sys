@@ -214,12 +214,22 @@ if ('serviceWorker' in navigator) {
     showError(err.message || 'Error al cargar materiales.');
   });
 
-  api.apiFetch('/tipos-cambio/actual').then(function (data) {
+  var tipoCambioPromise = api.apiFetch('/tipos-cambio/actual').then(function (data) {
     tipoCambio = Number(data.valor);
   }).catch(function () {
     tipoCambio = null;
     sinTipoCambioMsg.classList.remove('hidden');
   });
+
+  api.apiFetch('/configuracion').then(function (cfg) {
+    return tipoCambioPromise.then(function () {
+      if (cfg.moneda_principal === 'PYG' && tipoCambio) {
+        monedaSelect.value = 'PYG';
+        precioInput.step = '1';
+        actualizarPrecioSugerido();
+      }
+    });
+  }).catch(function () {});
 
   api.apiFetch('/proveedores').then(function (data) {
     proveedores = data;

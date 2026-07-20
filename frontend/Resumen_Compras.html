@@ -140,6 +140,9 @@ if ('serviceWorker' in navigator) {
   var tipoCambioPromise = api.apiFetch('/tipos-cambio/actual').then(function (data) {
     return Number(data.valor);
   }).catch(function () { return null; });
+  var monedaPrincipalPromise = api.apiFetch('/configuracion').then(function (cfg) {
+    return cfg.moneda_principal === 'PYG' ? 'PYG' : 'USD';
+  }).catch(function () { return 'USD'; });
 
   function showError(msg) {
     errorBox.textContent = msg;
@@ -165,9 +168,10 @@ if ('serviceWorker' in navigator) {
       '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Desc. Suciedad (%)</th>' +
       '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-right">Subtotal</th></tr>';
 
-    Promise.all([tipoCambioPromise, api.apiFetch('/compras/' + id)]).then(function (results) {
+    Promise.all([tipoCambioPromise, api.apiFetch('/compras/' + id), monedaPrincipalPromise]).then(function (results) {
       var tipoCambio = results[0];
       var compra = results[1];
+      var monedaPrincipal = results[2];
       document.getElementById('page-subtitle').textContent = 'Proveedor: ' + (compra.proveedor_nombre || '—') + ' · ' + api.fmtDateTime(compra.fecha);
       tableBody.innerHTML = compra.items.map(function (item) {
         var precioTxt = item.moneda === 'PYG'
@@ -177,11 +181,11 @@ if ('serviceWorker' in navigator) {
           '<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">' + api.escapeHtml(item.material_nombre) + (precioTxt ? '<br/>' + precioTxt : '') + '</td>' +
           '<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">' + item.peso_kg + '</td>' +
           '<td class="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal text-right">' + item.descuento_pct + '%</td>' +
-          '<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal text-right">' + api.moneyDual(item.subtotal, tipoCambio) + '</td>' +
+          '<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal text-right">' + api.moneyDual(item.subtotal, tipoCambio, monedaPrincipal) + '</td>' +
           '</tr>';
       }).join('');
       document.getElementById('total-row').classList.remove('hidden');
-      document.getElementById('total-amount').innerHTML = api.moneyDual(compra.total, tipoCambio);
+      document.getElementById('total-amount').innerHTML = api.moneyDual(compra.total, tipoCambio, monedaPrincipal);
 
       var confirmBtn = document.getElementById('confirm-btn');
       var cancelBtn = document.getElementById('cancel-btn');
