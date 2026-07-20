@@ -177,9 +177,11 @@
 </div>
 <div class="flex gap-2">
 <a href="Configuracion_usuario.html"><button class="flex h-10 items-center justify-center rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-4 text-sm font-medium text-text-light dark:text-text-dark shadow-sm transition-colors hover:bg-gray-100 dark:hover:bg-white/5">Ir a Configuración</button></a>
-<button class="flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">Guardar Cambios</button>
+<button class="flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50" id="guardar-config-btn" type="button">Guardar Cambios</button>
 </div>
 </header>
+<p class="hidden mb-4 rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="config-error"></p>
+<p class="hidden mb-4 rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-primary" id="config-success"></p>
 <div class="flex flex-col gap-8">
 <section class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
 <h4 class="border-b border-border-light dark:border-border-dark px-6 py-4 text-lg font-bold text-text-light dark:text-text-dark">Políticas de Contraseña</h4>
@@ -196,9 +198,9 @@
 </div>
 <div class="shrink-0">
 <div class="flex items-center gap-2 text-text-light dark:text-text-dark">
-<button class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200/50 dark:bg-white/10 text-xl font-light cursor-pointer hover:bg-gray-200 dark:hover:bg-white/20">-</button>
-<input class="w-8 border-none bg-transparent p-0 text-center font-medium focus:outline-none focus:ring-0 [appearance:textfield] [&amp;::-webkit-inner-spin-button]:appearance-none [&amp;::-webkit-outer-spin-button]:appearance-none" type="number" value="8"/>
-<button class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200/50 dark:bg-white/10 text-xl font-light cursor-pointer hover:bg-gray-200 dark:hover:bg-white/20">+</button>
+<button class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200/50 dark:bg-white/10 text-xl font-light cursor-pointer hover:bg-gray-200 dark:hover:bg-white/20" id="min-length-minus" type="button">-</button>
+<input class="w-8 border-none bg-transparent p-0 text-center font-medium focus:outline-none focus:ring-0 [appearance:textfield] [&amp;::-webkit-inner-spin-button]:appearance-none [&amp;::-webkit-outer-spin-button]:appearance-none" id="password-min-length" max="64" min="4" type="number" value="8"/>
+<button class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200/50 dark:bg-white/10 text-xl font-light cursor-pointer hover:bg-gray-200 dark:hover:bg-white/20" id="min-length-plus" type="button">+</button>
 </div>
 </div>
 </div>
@@ -213,7 +215,7 @@
 </div>
 </div>
 <div class="shrink-0">
-<button aria-checked="false" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:bg-gray-700" role="switch" type="button">
+<button aria-checked="false" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:bg-gray-700" id="toggle-especiales" role="switch" type="button">
 <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
 </button>
 </div>
@@ -234,10 +236,10 @@
 </div>
 </div>
 <div class="shrink-0">
-<select class="rounded-lg border-border-light bg-background-light dark:border-border-dark dark:bg-surface-dark text-sm focus:border-primary focus:ring-primary">
-<option>Español</option>
-<option>English</option>
-<option>Português</option>
+<select class="rounded-lg border-border-light bg-background-light dark:border-border-dark dark:bg-surface-dark text-sm focus:border-primary focus:ring-primary" id="idioma-select">
+<option value="es">Español</option>
+<option value="en">English</option>
+<option value="pt">Português</option>
 </select>
 </div>
 </div>
@@ -252,7 +254,7 @@
 </div>
 </div>
 <div class="shrink-0">
-<button aria-checked="true" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" role="switch" type="button">
+<button aria-checked="true" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="toggle-notificaciones" role="switch" type="button">
 <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-5"></span>
 </button>
 </div>
@@ -278,5 +280,97 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var minLengthInput = document.getElementById('password-min-length');
+  var minLengthMinus = document.getElementById('min-length-minus');
+  var minLengthPlus = document.getElementById('min-length-plus');
+  var toggleEspeciales = document.getElementById('toggle-especiales');
+  var idiomaSelect = document.getElementById('idioma-select');
+  var toggleNotificaciones = document.getElementById('toggle-notificaciones');
+  var guardarBtn = document.getElementById('guardar-config-btn');
+  var errorBox = document.getElementById('config-error');
+  var successBox = document.getElementById('config-success');
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); successBox.classList.add('hidden'); }
+  function showSuccess(msg) { successBox.textContent = msg; successBox.classList.remove('hidden'); errorBox.classList.add('hidden'); }
+  function clearMsgs() { errorBox.classList.add('hidden'); successBox.classList.add('hidden'); }
+
+  function setToggle(btn, checked) {
+    btn.setAttribute('aria-checked', checked ? 'true' : 'false');
+    var thumb = btn.querySelector('span');
+    if (checked) {
+      btn.classList.remove('bg-gray-200', 'dark:bg-gray-700');
+      btn.classList.add('bg-primary');
+      thumb.classList.add('translate-x-5');
+    } else {
+      btn.classList.remove('bg-primary');
+      btn.classList.add('bg-gray-200', 'dark:bg-gray-700');
+      thumb.classList.remove('translate-x-5');
+    }
+  }
+
+  function toggleChecked(btn) {
+    return btn.getAttribute('aria-checked') === 'true';
+  }
+
+  function clampMinLength(v) {
+    v = Math.round(Number(v) || 8);
+    if (v < 4) v = 4;
+    if (v > 64) v = 64;
+    return v;
+  }
+
+  [toggleEspeciales, toggleNotificaciones].forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      setToggle(btn, !toggleChecked(btn));
+    });
+  });
+
+  minLengthMinus.addEventListener('click', function () {
+    minLengthInput.value = clampMinLength(Number(minLengthInput.value) - 1);
+  });
+  minLengthPlus.addEventListener('click', function () {
+    minLengthInput.value = clampMinLength(Number(minLengthInput.value) + 1);
+  });
+  minLengthInput.addEventListener('change', function () {
+    minLengthInput.value = clampMinLength(minLengthInput.value);
+  });
+
+  function cargarConfiguracion() {
+    api.apiFetch('/configuracion').then(function (cfg) {
+      minLengthInput.value = clampMinLength(cfg.password_min_length);
+      setToggle(toggleEspeciales, !!cfg.password_requiere_especiales);
+      idiomaSelect.value = cfg.idioma_default || 'es';
+      setToggle(toggleNotificaciones, !!cfg.notificaciones_email);
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo cargar la configuración.');
+    });
+  }
+
+  guardarBtn.addEventListener('click', function () {
+    clearMsgs();
+    guardarBtn.disabled = true;
+    api.apiFetch('/configuracion', {
+      method: 'PUT',
+      body: JSON.stringify({
+        password_min_length: clampMinLength(minLengthInput.value),
+        password_requiere_especiales: toggleChecked(toggleEspeciales),
+        idioma_default: idiomaSelect.value,
+        notificaciones_email: toggleChecked(toggleNotificaciones),
+      }),
+    }).then(function () {
+      showSuccess('Configuración guardada correctamente.');
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo guardar la configuración.');
+    }).finally(function () {
+      guardarBtn.disabled = false;
+    });
+  });
+
+  cargarConfiguracion();
+})();
 </script>
 </body></html>
