@@ -216,8 +216,9 @@ if ('serviceWorker' in navigator) {
           '<td class="p-4 text-text-light-secondary dark:text-text-dark-secondary">' + api.escapeHtml(c.telefono || '—') + '</td>' +
           '<td class="p-4 text-text-light-secondary dark:text-text-dark-secondary">' + api.escapeHtml(c.direccion || '—') + '</td>' +
           '<td class="p-4 text-right"><div class="inline-flex items-center gap-2">' +
-          '<a href="Creacion_proveedor.html?id=' + c.id + '"><button class="p-2 rounded-md hover:bg-primary/20"><span class="material-symbols-outlined text-xl">edit</span></button></a>' +
-          '<button class="p-2 rounded-md hover:bg-red-500/20 text-red-500" data-delete="' + c.id + '"><span class="material-symbols-outlined text-xl">delete</span></button>' +
+          '<a href="Historial_Proveedor.html?id=' + c.id + '"><button class="p-2 rounded-md hover:bg-primary/20" title="Ver historial"><span class="material-symbols-outlined text-xl">history</span></button></a>' +
+          '<a href="Creacion_proveedor.html?id=' + c.id + '"><button class="p-2 rounded-md hover:bg-primary/20" title="Editar"><span class="material-symbols-outlined text-xl">edit</span></button></a>' +
+          '<button class="p-2 rounded-md hover:bg-red-500/20 text-red-500" data-delete="' + c.id + '" title="Eliminar"><span class="material-symbols-outlined text-xl">delete</span></button>' +
           '</div></td></tr>';
       }).join('');
       tbody.querySelectorAll('[data-delete]').forEach(function (btn) {

@@ -9,7 +9,7 @@ router.use(verificarToken);
 
 // GET /api/compras — Listar compras con filtro de fecha
 router.get('/', async (req, res) => {
-  const { fecha, estado } = req.query;
+  const { fecha, estado, proveedor_id } = req.query;
   let query = `
     SELECT c.*, u.nombre_usuario AS operador
     FROM compras c
@@ -25,6 +25,10 @@ router.get('/', async (req, res) => {
   if (estado) {
     params.push(estado);
     query += ` AND c.estado = $${params.length}`;
+  }
+  if (proveedor_id) {
+    params.push(proveedor_id);
+    query += ` AND c.proveedor_id = $${params.length}`;
   }
   query += ' ORDER BY c.fecha DESC';
 

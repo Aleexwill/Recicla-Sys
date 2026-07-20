@@ -65,10 +65,26 @@
 <h2 class="text-[#0e1b13] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-5">Añadir Material</h2>
 <p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 mb-4" id="form-error"></p>
 <div class="flex flex-col gap-4">
-<label class="flex flex-col w-full">
+<div class="flex flex-col w-full">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Proveedor (opcional)</p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="proveedor-input" placeholder="Nombre del proveedor" type="text"/>
+<div class="flex gap-4 pb-2">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="text-primary focus:ring-primary/50" id="proveedor-modo-guardado" name="proveedor-modo" type="radio" value="guardado"/>
+<span class="text-sm text-[#0e1b13] dark:text-gray-200">Proveedor guardado</span>
 </label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="text-primary focus:ring-primary/50" id="proveedor-modo-libre" name="proveedor-modo" type="radio" value="libre"/>
+<span class="text-sm text-[#0e1b13] dark:text-gray-200">Proveedor libre</span>
+</label>
+</div>
+<div class="flex flex-col gap-2" id="proveedor-guardado-wrap">
+<select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="proveedor-select">
+<option value="">Cargando proveedores…</option>
+</select>
+<a class="text-sm text-primary hover:underline w-fit" href="Creacion_proveedor.html" target="_blank">+ Agregar proveedor nuevo</a>
+</div>
+<input class="hidden form-input w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="proveedor-input" placeholder="Nombre del proveedor" type="text"/>
+</div>
 <label class="flex flex-col w-full">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Material</p>
 <select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal appearance-none bg-[url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724px%27 height=%2724px%27 fill=%27rgb(80,149,108)%27 viewBox=%270 0 256 256%27%3e%3cpath d=%27M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z%27%3e%3c/path%3e%3c/svg%3e')] bg-no-repeat bg-right-4" id="material-select">
@@ -175,6 +191,11 @@ if ('serviceWorker' in navigator) {
   var errorBox = document.getElementById('form-error');
   var siguienteBtn = document.getElementById('siguiente-btn');
   var proveedorInput = document.getElementById('proveedor-input');
+  var proveedorSelect = document.getElementById('proveedor-select');
+  var proveedorGuardadoWrap = document.getElementById('proveedor-guardado-wrap');
+  var proveedorModoGuardado = document.getElementById('proveedor-modo-guardado');
+  var proveedorModoLibre = document.getElementById('proveedor-modo-libre');
+  var proveedores = [];
 
   function showError(msg) {
     errorBox.textContent = msg;
@@ -199,6 +220,28 @@ if ('serviceWorker' in navigator) {
     tipoCambio = null;
     sinTipoCambioMsg.classList.remove('hidden');
   });
+
+  api.apiFetch('/proveedores').then(function (data) {
+    proveedores = data;
+    if (proveedores.length === 0) {
+      proveedorSelect.innerHTML = '<option value="">No hay proveedores guardados todavía</option>';
+      proveedorModoLibre.checked = true;
+      actualizarModoProveedor();
+      return;
+    }
+    proveedorSelect.innerHTML = '<option value="">Selecciona un proveedor</option>' +
+      proveedores.map(function (p) { return '<option value="' + p.id + '">' + api.escapeHtml(p.nombre) + '</option>'; }).join('');
+  }).catch(function () {
+    proveedorSelect.innerHTML = '<option value="">No se pudieron cargar los proveedores</option>';
+  });
+
+  function actualizarModoProveedor() {
+    var guardado = proveedorModoGuardado.checked;
+    proveedorGuardadoWrap.classList.toggle('hidden', !guardado);
+    proveedorInput.classList.toggle('hidden', guardado);
+  }
+  proveedorModoGuardado.addEventListener('change', actualizarModoProveedor);
+  proveedorModoLibre.addEventListener('change', actualizarModoProveedor);
 
   function precioSugerido() {
     var material = materiales.find(function (m) { return String(m.id) === String(select.value); });
@@ -285,13 +328,26 @@ if ('serviceWorker' in navigator) {
     clearError();
     if (cart.length === 0) return showError('Añadí al menos un material antes de continuar.');
 
+    var proveedorId = null;
+    var proveedorNombre = null;
+    if (proveedorModoGuardado.checked) {
+      if (proveedorSelect.value) {
+        var proveedor = proveedores.find(function (p) { return String(p.id) === proveedorSelect.value; });
+        proveedorId = proveedorSelect.value;
+        proveedorNombre = proveedor ? proveedor.nombre : null;
+      }
+    } else {
+      proveedorNombre = proveedorInput.value.trim() || null;
+    }
+
     siguienteBtn.disabled = true;
     siguienteBtn.querySelector('.truncate').textContent = 'Guardando…';
 
     api.apiFetch('/compras', {
       method: 'POST',
       body: JSON.stringify({
-        proveedor_nombre: proveedorInput.value.trim() || null,
+        proveedor_nombre: proveedorNombre,
+        proveedor_id: proveedorId,
         items: cart.map(function (i) {
           return {
             material_id: i.material_id, peso_kg: i.peso_kg, descuento_pct: i.descuento_pct,
