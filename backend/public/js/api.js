@@ -80,11 +80,17 @@
   }
 
   // Monto en USD junto a su equivalente en Gs. (si hay tipo de cambio disponible).
+  // Si monedaPrincipal es 'PYG', se muestran los Guaraníes como cifra principal
+  // y el USD como equivalente entre paréntesis (según Configuración General).
   // Devuelve HTML — usar con innerHTML, no textContent.
-  function moneyDual(usd, tipoCambio) {
+  function moneyDual(usd, tipoCambio, monedaPrincipal) {
     const usdTxt = escapeHtml(money(usd));
     const tc = Number(tipoCambio) || 0;
     if (!tc) return usdTxt;
+    if (monedaPrincipal === 'PYG') {
+      const gsTxt = escapeHtml(moneyGs(usdToGs(usd, tc)));
+      return gsTxt + ' <span class="text-sm font-normal opacity-70">(≈ ' + usdTxt + ')</span>';
+    }
     return usdTxt + ' <span class="text-sm font-normal opacity-70">(≈ ' + escapeHtml(moneyGs(usdToGs(usd, tc))) + ')</span>';
   }
 

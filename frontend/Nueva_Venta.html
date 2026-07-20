@@ -147,13 +147,29 @@
 <h2 class="text-text-light dark:text-text-dark text-xl font-bold leading-tight tracking-tight mb-5">Datos de la Venta</h2>
 <p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 mb-4" id="form-error"></p>
 <div class="grid grid-cols-1 gap-x-6 gap-y-4">
-<label class="flex flex-col min-w-40 flex-1">
+<div class="flex flex-col min-w-40 flex-1">
 <p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal pb-2">Cliente</p>
-<div class="relative flex-1">
+<div class="flex gap-4 pb-2">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="text-primary focus:ring-primary/50" id="cliente-modo-guardado" name="cliente-modo" type="radio" value="guardado"/>
+<span class="text-sm text-text-light dark:text-text-dark">Cliente guardado</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="text-primary focus:ring-primary/50" id="cliente-modo-libre" name="cliente-modo" type="radio" value="libre"/>
+<span class="text-sm text-text-light dark:text-text-dark">Cliente libre</span>
+</label>
+</div>
+<div class="flex flex-col gap-2" id="cliente-guardado-wrap">
+<select class="form-select flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-12 px-4 py-3 text-base font-normal leading-normal" id="cliente-select">
+<option value="">Cargando clientes…</option>
+</select>
+<a class="text-sm text-primary hover:underline w-fit" href="Creacion_cliente.html" target="_blank">+ Agregar cliente nuevo</a>
+</div>
+<div class="hidden relative flex-1" id="cliente-libre-wrap">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-light/50 dark:text-text-dark/50" style="font-size: 20px;">search</span>
 <input class="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-12 placeholder:text-text-light/50 dark:placeholder:text-text-dark/50 pl-10 pr-4 py-3 text-base font-normal leading-normal" id="cliente-input" placeholder="Nombre del cliente..." value=""/>
 </div>
-</label>
+</div>
 </div>
 </div>
 <!-- Materials Card -->
@@ -255,6 +271,7 @@ if ('serviceWorker' in navigator) {
   var cart = [];
   var IMPUESTO_PCT = 18;
   var tipoCambio = null;
+  var monedaPrincipal = 'USD';
 
   var select = document.getElementById('material-select');
   var cantidadInput = document.getElementById('cantidad-input');
@@ -266,10 +283,38 @@ if ('serviceWorker' in navigator) {
   var emptyRow = document.getElementById('items-empty-row');
   var errorBox = document.getElementById('form-error');
   var clienteInput = document.getElementById('cliente-input');
+  var clienteSelect = document.getElementById('cliente-select');
+  var clienteGuardadoWrap = document.getElementById('cliente-guardado-wrap');
+  var clienteLibreWrap = document.getElementById('cliente-libre-wrap');
+  var clienteModoGuardado = document.getElementById('cliente-modo-guardado');
+  var clienteModoLibre = document.getElementById('cliente-modo-libre');
   var confirmarBtn = document.getElementById('confirmar-venta-btn');
+  var clientes = [];
 
   function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
   function clearError() { errorBox.classList.add('hidden'); }
+
+  api.apiFetch('/clientes').then(function (data) {
+    clientes = data;
+    if (clientes.length === 0) {
+      clienteSelect.innerHTML = '<option value="">No hay clientes guardados todavía</option>';
+      clienteModoLibre.checked = true;
+      actualizarModoCliente();
+      return;
+    }
+    clienteSelect.innerHTML = '<option value="">Selecciona un cliente</option>' +
+      clientes.map(function (c) { return '<option value="' + c.id + '">' + api.escapeHtml(c.nombre) + '</option>'; }).join('');
+  }).catch(function () {
+    clienteSelect.innerHTML = '<option value="">No se pudieron cargar los clientes</option>';
+  });
+
+  function actualizarModoCliente() {
+    var guardado = clienteModoGuardado.checked;
+    clienteGuardadoWrap.classList.toggle('hidden', !guardado);
+    clienteLibreWrap.classList.toggle('hidden', guardado);
+  }
+  clienteModoGuardado.addEventListener('change', actualizarModoCliente);
+  clienteModoLibre.addEventListener('change', actualizarModoCliente);
 
   api.apiFetch('/materiales').then(function (data) {
     materiales = data;
@@ -280,12 +325,24 @@ if ('serviceWorker' in navigator) {
     showError(err.message || 'Error al cargar materiales.');
   });
 
-  api.apiFetch('/tipos-cambio/actual').then(function (data) {
+  var tipoCambioPromise = api.apiFetch('/tipos-cambio/actual').then(function (data) {
     tipoCambio = Number(data.valor);
   }).catch(function () {
     tipoCambio = null;
     sinTipoCambioMsg.classList.remove('hidden');
   });
+
+  api.apiFetch('/configuracion').then(function (cfg) {
+    monedaPrincipal = cfg.moneda_principal === 'PYG' ? 'PYG' : 'USD';
+    return tipoCambioPromise.then(function () {
+      if (monedaPrincipal === 'PYG' && tipoCambio) {
+        monedaSelect.value = 'PYG';
+        precioInput.step = '1';
+        actualizarPrecioSugerido();
+      }
+      renderTotals();
+    });
+  }).catch(function () {});
 
   function actualizarPrecioSugerido() {
     var material = materiales.find(function (m) { return String(m.id) === String(select.value); });
@@ -308,9 +365,9 @@ if ('serviceWorker' in navigator) {
   function renderTotals() {
     var subtotal = cart.reduce(function (s, i) { return s + i.cantidad_kg * i.precio_unitario; }, 0);
     var impuesto = subtotal * (IMPUESTO_PCT / 100);
-    document.getElementById('resumen-subtotal').innerHTML = api.moneyDual(subtotal, tipoCambio);
-    document.getElementById('resumen-impuesto').innerHTML = api.moneyDual(impuesto, tipoCambio);
-    document.getElementById('resumen-total').innerHTML = api.moneyDual(subtotal + impuesto, tipoCambio);
+    document.getElementById('resumen-subtotal').innerHTML = api.moneyDual(subtotal, tipoCambio, monedaPrincipal);
+    document.getElementById('resumen-impuesto').innerHTML = api.moneyDual(impuesto, tipoCambio, monedaPrincipal);
+    document.getElementById('resumen-total').innerHTML = api.moneyDual(subtotal + impuesto, tipoCambio, monedaPrincipal);
   }
 
   function renderItems() {
@@ -376,12 +433,25 @@ if ('serviceWorker' in navigator) {
     clearError();
     if (cart.length === 0) return showError('Añadí al menos un material a la venta.');
 
+    var clienteId = null;
+    var clienteNombre = null;
+    if (clienteModoGuardado.checked) {
+      if (clienteSelect.value) {
+        var cliente = clientes.find(function (c) { return String(c.id) === clienteSelect.value; });
+        clienteId = clienteSelect.value;
+        clienteNombre = cliente ? cliente.nombre : null;
+      }
+    } else {
+      clienteNombre = clienteInput.value.trim() || null;
+    }
+
     confirmarBtn.disabled = true;
 
     api.apiFetch('/ventas', {
       method: 'POST',
       body: JSON.stringify({
-        cliente_nombre: clienteInput.value.trim() || null,
+        cliente_nombre: clienteNombre,
+        cliente_id: clienteId,
         items: cart.map(function (i) {
           return {
             material_id: i.material_id, cantidad_kg: i.cantidad_kg,

@@ -210,20 +210,25 @@ if ('serviceWorker' in navigator) {
   var table = tbody.closest('table');
   var emptyState = document.getElementById('empty-state');
   var tipoCambio = null;
+  var monedaPrincipal = 'USD';
 
   api.apiFetch('/tipos-cambio/actual').then(function (data) {
     tipoCambio = Number(data.valor);
   }).catch(function () { tipoCambio = null; });
+
+  api.apiFetch('/configuracion').then(function (cfg) {
+    monedaPrincipal = cfg.moneda_principal === 'PYG' ? 'PYG' : 'USD';
+  }).catch(function () {});
 
   function load(fecha) {
     fechaLabel.textContent = api.fmtDate(fecha);
     tbody.innerHTML = '<tr><td class="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark" colspan="5">Cargando…</td></tr>';
     api.apiFetch('/compras/resumen-dia?fecha=' + encodeURIComponent(fecha)).then(function (data) {
       var totales = data.totales || {};
-      document.getElementById('stat-monto').innerHTML = api.moneyDual(totales.total_monto, tipoCambio);
+      document.getElementById('stat-monto').innerHTML = api.moneyDual(totales.total_monto, tipoCambio, monedaPrincipal);
       document.getElementById('stat-peso').textContent = api.kg(totales.total_kg);
       document.getElementById('stat-transacciones').textContent = String(totales.total_transacciones || 0);
-      document.getElementById('footer-monto').innerHTML = api.moneyDual(totales.total_monto, tipoCambio);
+      document.getElementById('footer-monto').innerHTML = api.moneyDual(totales.total_monto, tipoCambio, monedaPrincipal);
       document.getElementById('footer-peso').textContent = (Number(totales.total_kg) || 0).toLocaleString('es-AR', { maximumFractionDigits: 2 });
 
       if (!data.detalle || data.detalle.length === 0) {

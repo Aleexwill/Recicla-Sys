@@ -299,11 +299,16 @@ if ('serviceWorker' in navigator) {
   var materialFiltro = document.getElementById('material-filtro');
   var errorBox = document.getElementById('page-error');
   var tipoCambio = null;
+  var monedaPrincipal = 'USD';
   var inventarioRows = [];
 
   api.apiFetch('/tipos-cambio/actual').then(function (data) {
     tipoCambio = Number(data.valor);
   }).catch(function () { tipoCambio = null; });
+
+  api.apiFetch('/configuracion').then(function (cfg) {
+    monedaPrincipal = cfg.moneda_principal === 'PYG' ? 'PYG' : 'USD';
+  }).catch(function () {});
 
   function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
   function clearError() { errorBox.classList.add('hidden'); }
@@ -371,7 +376,7 @@ if ('serviceWorker' in navigator) {
         }).join('');
 
         var topMaterial = Object.keys(porMaterial).sort(function (a, b) { return porMaterial[b] - porMaterial[a]; })[0];
-        document.getElementById('kpi-ingresos').innerHTML = api.moneyDual(ingresoTotal, tipoCambio);
+        document.getElementById('kpi-ingresos').innerHTML = api.moneyDual(ingresoTotal, tipoCambio, monedaPrincipal);
         document.getElementById('kpi-volumen').textContent = api.kg(volumenTotal);
         document.getElementById('kpi-material').textContent = topMaterial || '—';
         return porMaterial;
@@ -424,7 +429,7 @@ if ('serviceWorker' in navigator) {
         }).join('');
 
         var topMaterial = Object.keys(porMaterial).sort(function (a, b) { return porMaterial[b] - porMaterial[a]; })[0];
-        document.getElementById('kpi-compras-monto').innerHTML = api.moneyDual(montoTotal, tipoCambio);
+        document.getElementById('kpi-compras-monto').innerHTML = api.moneyDual(montoTotal, tipoCambio, monedaPrincipal);
         document.getElementById('kpi-compras-volumen').textContent = api.kg(volumenTotal);
         document.getElementById('kpi-compras-material').textContent = topMaterial || '—';
         return porMaterial;
