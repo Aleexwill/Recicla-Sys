@@ -98,12 +98,22 @@
 <input class="h-4 w-4 rounded border-border-light dark:border-border-dark text-primary focus:ring-primary bg-background-light dark:bg-background-dark" id="remember-me" name="remember-me" type="checkbox"/>
 <label class="text-sm text-text-secondary-light dark:text-text-secondary-dark" for="remember-me">Recordarme</label>
 </div>
-<a class="text-sm font-medium text-primary hover:underline" href="#">¿Olvidaste tu contraseña?</a>
+<a class="text-sm font-medium text-primary hover:underline" href="#" id="forgot-password-link">¿Olvidaste tu contraseña?</a>
 </div>
 <button class="flex items-center justify-center whitespace-nowrap h-14 w-full rounded-lg bg-primary text-white text-base font-bold leading-normal transition-all duration-300 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark disabled:opacity-60" id="login-submit" type="submit">
                                     Iniciar Sesión
                                 </button>
 </form>
+<div class="hidden flex-col gap-3 rounded-lg border border-border-light dark:border-border-dark p-4" id="forgot-password-panel">
+<p class="text-sm text-text-light dark:text-text-dark">Ingresá tu correo y le avisamos a un administrador para que te restablezca la contraseña.</p>
+<p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="forgot-password-error"></p>
+<p class="hidden rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-primary" id="forgot-password-success"></p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-12 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-3.5 text-base font-normal leading-normal" id="forgot-password-email" placeholder="tu-correo@ejemplo.com" type="email"/>
+<div class="flex gap-3">
+<button class="flex-1 flex items-center justify-center h-11 rounded-lg bg-primary text-white text-sm font-bold disabled:opacity-60" id="forgot-password-submit" type="button">Enviar solicitud</button>
+<button class="flex items-center justify-center h-11 px-4 rounded-lg border border-border-light dark:border-border-dark text-text-secondary-light dark:text-text-secondary-dark text-sm font-medium" id="forgot-password-cancel" type="button">Cancelar</button>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -142,6 +152,55 @@ if ('serviceWorker' in navigator) {
     var showing = passwordInput.type === 'text';
     passwordInput.type = showing ? 'password' : 'text';
     toggleBtn.querySelector('.material-symbols-outlined').textContent = showing ? 'visibility' : 'visibility_off';
+  });
+
+  var forgotLink = document.getElementById('forgot-password-link');
+  var forgotPanel = document.getElementById('forgot-password-panel');
+  var forgotEmailInput = document.getElementById('forgot-password-email');
+  var forgotSubmitBtn = document.getElementById('forgot-password-submit');
+  var forgotCancelBtn = document.getElementById('forgot-password-cancel');
+  var forgotErrorBox = document.getElementById('forgot-password-error');
+  var forgotSuccessBox = document.getElementById('forgot-password-success');
+
+  forgotLink.addEventListener('click', function (e) {
+    e.preventDefault();
+    forgotPanel.classList.remove('hidden');
+    forgotPanel.classList.add('flex');
+    forgotEmailInput.value = document.getElementById('email-input').value.trim();
+    forgotEmailInput.focus();
+  });
+
+  forgotCancelBtn.addEventListener('click', function () {
+    forgotPanel.classList.add('hidden');
+    forgotPanel.classList.remove('flex');
+    forgotErrorBox.classList.add('hidden');
+    forgotSuccessBox.classList.add('hidden');
+  });
+
+  forgotSubmitBtn.addEventListener('click', function () {
+    forgotErrorBox.classList.add('hidden');
+    var email = forgotEmailInput.value.trim();
+    if (!email) {
+      forgotErrorBox.textContent = 'Ingresá tu correo.';
+      forgotErrorBox.classList.remove('hidden');
+      return;
+    }
+    forgotSubmitBtn.disabled = true;
+    forgotSubmitBtn.textContent = 'Enviando…';
+    window.ReciclaAPI.apiFetch('/auth/solicitar-reset', {
+      method: 'POST',
+      body: JSON.stringify({ email: email }),
+    }).then(function (data) {
+      forgotSuccessBox.textContent = data.mensaje || 'Solicitud enviada.';
+      forgotSuccessBox.classList.remove('hidden');
+      forgotEmailInput.value = '';
+    }).catch(function (err) {
+      forgotErrorBox.textContent = err.message || 'No se pudo enviar la solicitud.';
+      forgotErrorBox.classList.remove('hidden');
+    }).finally(function () {
+      forgotSubmitBtn.disabled = false;
+      forgotSubmitBtn.textContent = 'Enviar solicitud';
+    });
   });
 
   form.addEventListener('submit', function (e) {
