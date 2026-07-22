@@ -131,6 +131,32 @@
     });
   }
 
+  // Paleta fija de colores de avatar — el admin elige uno por usuario en
+  // Gestión de Usuarios. Si un usuario no tiene uno asignado, se elige
+  // un color determinístico según su id para que sea siempre el mismo.
+  var AVATAR_COLORS = ['#1dc962', '#2563eb', '#db2777', '#ea580c', '#7c3aed', '#0891b2', '#ca8a04', '#dc2626'];
+
+  function avatarInitials(nombre) {
+    var partes = String(nombre || '').trim().split(/\s+/).filter(Boolean);
+    if (partes.length === 0) return '?';
+    if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+    return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+  }
+
+  function avatarColorFor(usuario) {
+    if (usuario && usuario.avatar_color) return usuario.avatar_color;
+    var id = (usuario && usuario.id) || 0;
+    return AVATAR_COLORS[id % AVATAR_COLORS.length];
+  }
+
+  // Devuelve HTML de un badge circular con las iniciales del usuario —
+  // usar con innerHTML, no textContent.
+  function avatarBadgeHtml(nombre, color) {
+    var iniciales = escapeHtml(avatarInitials(nombre));
+    var bg = escapeHtml(color || AVATAR_COLORS[0]);
+    return '<div class="flex items-center justify-center rounded-full size-10 text-white font-bold text-sm" style="background-color: ' + bg + '">' + iniciales + '</div>';
+  }
+
   global.ReciclaAPI = {
     apiFetch: apiFetch,
     getToken: getToken,
@@ -147,5 +173,9 @@
     fmtDateTime: fmtDateTime,
     todayISO: todayISO,
     escapeHtml: escapeHtml,
+    AVATAR_COLORS: AVATAR_COLORS,
+    avatarInitials: avatarInitials,
+    avatarColorFor: avatarColorFor,
+    avatarBadgeHtml: avatarBadgeHtml,
   };
 })(window);

@@ -18,6 +18,9 @@
     document.querySelectorAll('[data-user-role]').forEach(function (el) {
       el.textContent = user.rol || '—';
     });
+    document.querySelectorAll('[data-user-avatar]').forEach(function (el) {
+      el.innerHTML = window.ReciclaAPI.avatarBadgeHtml(user.nombre || user.email, window.ReciclaAPI.avatarColorFor(user));
+    });
     document.querySelectorAll('[data-logout]').forEach(function (el) {
       el.addEventListener('click', function (e) {
         e.preventDefault();

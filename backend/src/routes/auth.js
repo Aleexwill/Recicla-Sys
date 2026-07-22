@@ -66,6 +66,7 @@ router.post('/login', loginLimiter, async (req, res) => {
         nombre:  usuario.nombre_usuario,
         rol:     usuario.rol_nombre,
         permiso: usuario.permiso,
+        avatar_color: usuario.avatar_color,
       },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
@@ -80,6 +81,7 @@ router.post('/login', loginLimiter, async (req, res) => {
         email:   usuario.email,
         rol:     usuario.rol_nombre,
         permiso: usuario.permiso,
+        avatar_color: usuario.avatar_color,
       }
     });
 

@@ -96,6 +96,10 @@
 </label>
 </div>
 </div>
+<div class="flex flex-col md:col-span-2">
+<h2 class="text-[#0e1b13] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] text-left pb-2 pt-4">Color de Avatar</h2>
+<div class="flex flex-wrap gap-3 mt-2" id="avatar-color-picker"></div>
+</div>
 <div class="flex flex-col">
 <label class="flex flex-col">
 <p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2" id="password-label">Contraseña</p>
@@ -152,8 +156,33 @@ if ('serviceWorker' in navigator) {
   var passwordLabel = document.getElementById('password-label');
   var nombreInput = document.getElementById('nombre-input');
   var emailInput = document.getElementById('email-input');
+  var avatarColorPicker = document.getElementById('avatar-color-picker');
+  var avatarColorSeleccionado = api.AVATAR_COLORS[0];
 
   function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
+
+  function renderAvatarColorPicker() {
+    avatarColorPicker.innerHTML = api.AVATAR_COLORS.map(function (color) {
+      return '<button class="size-10 rounded-full border-2 avatar-color-swatch" data-color="' + color + '" style="background-color: ' + color + '" type="button" aria-label="' + color + '"></button>';
+    }).join('');
+    updateAvatarColorSelection();
+    avatarColorPicker.querySelectorAll('[data-color]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        avatarColorSeleccionado = btn.getAttribute('data-color');
+        updateAvatarColorSelection();
+      });
+    });
+  }
+
+  function updateAvatarColorSelection() {
+    avatarColorPicker.querySelectorAll('[data-color]').forEach(function (btn) {
+      var selected = btn.getAttribute('data-color') === avatarColorSeleccionado;
+      btn.classList.toggle('border-zinc-900', selected);
+      btn.classList.toggle('dark:border-white', selected);
+      btn.classList.toggle('border-transparent', !selected);
+    });
+  }
+  renderAvatarColorPicker();
 
   function wireToggle(btnId, inputId) {
     var btn = document.getElementById(btnId);
@@ -190,6 +219,8 @@ if ('serviceWorker' in navigator) {
       rolSelect.value = u.rol_id || '';
       var permisoRadio = document.querySelector('input[name="permission"][value="' + u.permiso + '"]');
       if (permisoRadio) permisoRadio.checked = true;
+      avatarColorSeleccionado = u.avatar_color || api.avatarColorFor(u);
+      updateAvatarColorSelection();
     }).catch(function (err) {
       showError(err.message || 'No se pudo cargar el usuario.');
     });
@@ -215,6 +246,7 @@ if ('serviceWorker' in navigator) {
       email: email,
       rol_id: rolSelect.value || null,
       permiso: permisoInput ? permisoInput.value : 'view',
+      avatar_color: avatarColorSeleccionado,
     };
     if (password) body.password = password;
 
