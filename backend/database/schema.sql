@@ -218,6 +218,21 @@ CREATE TABLE IF NOT EXISTS configuracion (
 INSERT INTO configuracion (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
 
 -- =============================================
+-- TABLA: solicitudes_reset_password
+-- Un usuario que olvidó su contraseña deja una solicitud acá; no hay envío
+-- de email (no hay servicio configurado), un administrador la ve en
+-- Gestión de Usuarios y restablece la contraseña manualmente.
+-- =============================================
+CREATE TABLE IF NOT EXISTS solicitudes_reset_password (
+  id           SERIAL PRIMARY KEY,
+  email        VARCHAR(150) NOT NULL,
+  atendida     BOOLEAN NOT NULL DEFAULT FALSE,
+  creado_en    TIMESTAMP DEFAULT NOW(),
+  atendida_en  TIMESTAMP,
+  atendida_por INTEGER REFERENCES usuarios(id)
+);
+
+-- =============================================
 -- USUARIO ADMINISTRADOR POR DEFECTO
 -- password: Admin1234! (cambiar en producción)
 -- hash generado con bcrypt rounds=10

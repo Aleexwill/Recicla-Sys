@@ -7,7 +7,7 @@ const bcrypt  = require('bcryptjs');
 const jwt     = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
 const db      = require('../config/database');
-const { verificarToken } = require('../middleware/auth');
+const { verificarToken, verificarPermiso } = require('../middleware/auth');
 const { getPolicy, validatePassword } = require('../utils/passwordPolicy');
 
 // Límite de intentos de login por IP, para frenar fuerza bruta contra contraseñas.
@@ -17,6 +17,15 @@ const loginLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Demasiados intentos de inicio de sesión. Probá de nuevo en unos minutos.' },
+});
+
+// Límite de solicitudes de "olvidé mi contraseña" por IP, para evitar spam.
+const resetRequestLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Demasiadas solicitudes. Probá de nuevo en unos minutos.' },
 });
 
 // POST /api/auth/login
@@ -119,6 +128,56 @@ router.put('/password', verificarToken, async (req, res) => {
   } catch (err) {
     console.error('Error al cambiar contraseña:', err);
     res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
+
+// POST /api/auth/solicitar-reset — El usuario que olvidó su contraseña deja
+// una solicitud para que un administrador se la restablezca manualmente.
+// Responde siempre el mismo mensaje, exista o no el email, para no filtrar
+// qué correos están registrados en el sistema.
+router.post('/solicitar-reset', resetRequestLimiter, async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: 'El correo es requerido.' });
+  }
+
+  try {
+    const usuario = await db.query('SELECT id FROM usuarios WHERE email = $1 AND activo = TRUE', [email]);
+    if (usuario.rows.length > 0) {
+      await db.query('INSERT INTO solicitudes_reset_password (email) VALUES ($1)', [email]);
+    }
+    res.json({ mensaje: 'Si el correo está registrado, un administrador va a ver tu solicitud y te va a restablecer la contraseña.' });
+  } catch (err) {
+    console.error('Error al registrar solicitud de reset:', err);
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
+
+// GET /api/auth/solicitudes-reset — Listar solicitudes pendientes (solo admins)
+router.get('/solicitudes-reset', verificarToken, verificarPermiso('full'), async (req, res) => {
+  try {
+    const { rows } = await db.query(
+      'SELECT * FROM solicitudes_reset_password WHERE atendida = FALSE ORDER BY creado_en DESC'
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH /api/auth/solicitudes-reset/:id/atender — Marcar una solicitud como atendida (solo admins)
+router.patch('/solicitudes-reset/:id/atender', verificarToken, verificarPermiso('full'), async (req, res) => {
+  try {
+    const { rows } = await db.query(
+      `UPDATE solicitudes_reset_password
+       SET atendida = TRUE, atendida_en = NOW(), atendida_por = $1
+       WHERE id = $2 RETURNING *`,
+      [req.usuario.id, req.params.id]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Solicitud no encontrada.' });
+    res.json({ mensaje: 'Solicitud marcada como atendida.', solicitud: rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

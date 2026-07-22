@@ -144,6 +144,11 @@
 </div>
 <p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="page-error"></p>
 </div>
+<!-- Solicitudes de reset de contraseña -->
+<div class="hidden rounded-lg border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-4" id="solicitudes-reset-panel">
+<h3 class="text-sm font-bold text-amber-800 dark:text-amber-300 mb-2">Solicitudes de restablecimiento de contraseña</h3>
+<div class="flex flex-col gap-2" id="solicitudes-reset-list"></div>
+</div>
 <!-- Users Table -->
 <div class="overflow-x-auto bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark">
 <table class="w-full text-left">
@@ -251,7 +256,36 @@ if ('serviceWorker' in navigator) {
     });
   }
 
+  var solicitudesPanel = document.getElementById('solicitudes-reset-panel');
+  var solicitudesList = document.getElementById('solicitudes-reset-list');
+
+  function loadSolicitudesReset() {
+    api.apiFetch('/auth/solicitudes-reset').then(function (solicitudes) {
+      if (solicitudes.length === 0) {
+        solicitudesPanel.classList.add('hidden');
+        return;
+      }
+      solicitudesPanel.classList.remove('hidden');
+      solicitudesList.innerHTML = solicitudes.map(function (s) {
+        return '<div class="flex items-center justify-between gap-4 rounded-lg bg-white dark:bg-black/20 px-4 py-2">' +
+          '<span class="text-sm text-amber-900 dark:text-amber-200">' + api.escapeHtml(s.email) + ' — ' + api.fmtDateTime(s.creado_en) + '</span>' +
+          '<button class="text-xs font-semibold text-primary hover:underline" data-atender="' + s.id + '">Marcar como atendida</button>' +
+          '</div>';
+      }).join('');
+      solicitudesList.querySelectorAll('[data-atender]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          api.apiFetch('/auth/solicitudes-reset/' + btn.getAttribute('data-atender') + '/atender', { method: 'PATCH' })
+            .then(loadSolicitudesReset)
+            .catch(function (err) { showError(err.message || 'No se pudo actualizar la solicitud.'); });
+        });
+      });
+    }).catch(function () {
+      solicitudesPanel.classList.add('hidden');
+    });
+  }
+
   searchInput.addEventListener('input', render);
+  loadSolicitudesReset();
   load();
 })();
 </script>
