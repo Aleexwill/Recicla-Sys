@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
   password_hash  VARCHAR(255) NOT NULL,
   rol_id         INTEGER REFERENCES roles(id) ON DELETE SET NULL,
   permiso        VARCHAR(20) CHECK (permiso IN ('full', 'edit', 'view')) DEFAULT 'view',
+  avatar_color   VARCHAR(7),
   activo         BOOLEAN DEFAULT TRUE,
   creado_en      TIMESTAMP DEFAULT NOW(),
   actualizado_en TIMESTAMP DEFAULT NOW()
