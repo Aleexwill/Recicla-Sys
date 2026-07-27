@@ -272,13 +272,13 @@ Login
 
 ## 👨‍💻 Autor
 
-**[Tu Nombre Completo]**  
-Estudiante de [Carrera] — [Universidad]  
-[tu.email@universidad.edu]
+**Alexander Wilber Gonzalez Bernal**  
+Estudiante de Ingeniería Informatica — UPAP(Universidad Politecnica y Artistica del Paraguay)  
+wilber.gonzalezbernal@gmail.com
 
 ---
 
 ## 📄 Licencia
 
 Proyecto desarrollado con fines académicos como trabajo final de tesis.  
-© [Año] — [Tu Nombre]
+© 2026 — Alexander Gonzalez.
