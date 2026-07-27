@@ -5,6 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Reportes - ReciclaS</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
@@ -170,14 +171,14 @@
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
 <div class="xl:col-span-2 p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
 <h4 class="text-lg font-bold mb-4">Tendencias de Venta</h4>
-<div class="w-full h-64 flex items-center justify-center bg-background-light dark:bg-background-dark rounded-lg">
-<img class="w-full h-full object-contain" data-alt="A line chart showing sales trends over the selected period, with dates on the x-axis and revenue on the y-axis." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEVdvpS5iYFgBHMmfxtrZjP3eRB5M0GnuLAdPBKgUY2fewNI3CpJDEjfNqpOp9a80klsGwuoXgbmfmVccm7jRPmMEQDLXxlRPhrnJJ9MbFcC_fTWxFOY623Ffw3_dgApNuWFdKYJDPYAaRklffNtQFS7lu0xwU4apkQRy15_FNpq9N5NNT3e4kCzZ4bCKf1Yux-wyZfWZP0o2FSwBQcDTVe9r7sEGvx2Z-JNk6jfQWq0HxZxdSIjbZU9Hlk3L0-w5v9zbx3PgMoA"/>
+<div class="w-full h-64 bg-background-light dark:bg-background-dark rounded-lg p-2" id="chart-tendencia-wrap">
+<canvas id="chart-tendencia"></canvas>
 </div>
 </div>
 <div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
 <h4 class="text-lg font-bold mb-4">Ventas por Material</h4>
-<div class="w-full h-64 flex items-center justify-center bg-background-light dark:bg-background-dark rounded-lg">
-<img class="w-full h-full object-contain" data-alt="A donut chart showing the breakdown of sales by material type, with segments for PET, Cardboard, and Aluminum." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKfdHhFh82928NKbflGPJPG3LUDxEB6dTYtoJ-sxBcjqavr0E_AjQRJ2c69wMibCa22UdFqn0Z29soMEx_nub1F_v_fxspFuUR_dboBXvP4OBixtiuaQG5fuCew4Y5DFsFjXEFrR_Rg6jpfz9dlQrzsYE9XSj9RMEOldV4VSeYyJwgYho_nsJPa9kEnEoTS9LqG119_BOlpSx1bRy3xrAB9h2gE8Gu31auvuCSmEJb2iAsu1QAs99O8ZEbEV9lkmDQ24QqIcCifg"/>
+<div class="w-full h-64 bg-background-light dark:bg-background-dark rounded-lg p-2" id="chart-material-wrap">
+<canvas id="chart-material"></canvas>
 </div>
 </div>
 </div>
@@ -298,6 +299,64 @@ if ('serviceWorker' in navigator) {
   var tipoCambio = null;
   var monedaPrincipal = 'USD';
   var inventarioRows = [];
+  var chartTendencia = null;
+  var chartMaterial = null;
+  var MATERIAL_COLORS = ['#1dc962', '#2563eb', '#db2777', '#ea580c', '#7c3aed', '#0891b2', '#ca8a04', '#dc2626'];
+
+  function diasEntre(start, end) {
+    var dias = [];
+    var d = new Date(start + 'T00:00:00');
+    var fin = new Date(end + 'T00:00:00');
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    while (d <= fin) {
+      dias.push(d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()));
+      d.setDate(d.getDate() + 1);
+    }
+    return dias;
+  }
+
+  function renderChartTendencia(porDia, start, end) {
+    var dias = diasEntre(start, end);
+    var labels = dias.map(function (d) { return api.fmtDate(d); });
+    var data = dias.map(function (d) { return porDia[d] || 0; });
+
+    if (chartTendencia) {
+      chartTendencia.data.labels = labels;
+      chartTendencia.data.datasets[0].data = data;
+      chartTendencia.update();
+      return;
+    }
+    if (typeof Chart === 'undefined') return;
+    chartTendencia = new Chart(document.getElementById('chart-tendencia'), {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{ label: 'Ingresos', data: data, borderColor: '#1dc962', backgroundColor: 'rgba(29, 201, 98, 0.15)', fill: true, tension: 0.3 }],
+      },
+      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } },
+    });
+  }
+
+  function renderChartMaterial(porMaterial) {
+    var nombres = Object.keys(porMaterial);
+    var labels = nombres;
+    var data = nombres.map(function (n) { return porMaterial[n]; });
+    var colors = nombres.map(function (n, i) { return MATERIAL_COLORS[i % MATERIAL_COLORS.length]; });
+
+    if (chartMaterial) {
+      chartMaterial.data.labels = labels;
+      chartMaterial.data.datasets[0].data = data;
+      chartMaterial.data.datasets[0].backgroundColor = colors;
+      chartMaterial.update();
+      return;
+    }
+    if (typeof Chart === 'undefined') return;
+    chartMaterial = new Chart(document.getElementById('chart-material'), {
+      type: 'doughnut',
+      data: { labels: labels, datasets: [{ data: data, backgroundColor: colors }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } } },
+    });
+  }
 
   api.apiFetch('/tipos-cambio/actual').then(function (data) {
     tipoCambio = Number(data.valor);
@@ -335,6 +394,8 @@ if ('serviceWorker' in navigator) {
         document.getElementById('kpi-ingresos').textContent = api.money(0);
         document.getElementById('kpi-volumen').textContent = api.kg(0);
         document.getElementById('kpi-material').textContent = '—';
+        renderChartTendencia({}, start, end);
+        renderChartMaterial({});
         return {};
       }
       // Traemos el detalle de cada venta del período para desglosar por material.
@@ -342,11 +403,14 @@ if ('serviceWorker' in navigator) {
       return Promise.all(enRango.map(function (v) { return api.apiFetch('/ventas/' + v.id); })).then(function (detalles) {
         var filas = [];
         var porMaterial = {};
+        var porDia = {};
         var ingresoTotal = 0;
         var volumenTotal = 0;
 
         detalles.forEach(function (venta) {
           ingresoTotal += Number(venta.total || 0);
+          var dia = (venta.fecha || '').slice(0, 10);
+          porDia[dia] = (porDia[dia] || 0) + Number(venta.total || 0);
           (venta.items || []).forEach(function (item) {
             volumenTotal += Number(item.cantidad_kg || 0);
             porMaterial[item.material_nombre] = (porMaterial[item.material_nombre] || 0) + Number(item.cantidad_kg || 0);
@@ -376,6 +440,8 @@ if ('serviceWorker' in navigator) {
         document.getElementById('kpi-ingresos').innerHTML = api.moneyDual(ingresoTotal, tipoCambio, monedaPrincipal);
         document.getElementById('kpi-volumen').textContent = api.kg(volumenTotal);
         document.getElementById('kpi-material').textContent = topMaterial || '—';
+        renderChartTendencia(porDia, start, end);
+        renderChartMaterial(porMaterial);
         return porMaterial;
       });
     });

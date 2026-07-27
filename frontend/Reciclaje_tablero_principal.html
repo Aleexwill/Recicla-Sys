@@ -5,6 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Dashboard - ReciclaS</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
@@ -187,14 +188,14 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 <div class="lg:col-span-2 bg-white dark:bg-black/20 p-6 rounded-lg border border-gray-200 dark:border-white/10">
 <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Comparativa de Compras y Ventas</h3>
-<div class="h-64 flex items-center justify-center">
-<img class="w-full h-full object-contain" data-alt="Gráfico de barras mostrando la comparativa de compras y ventas en los últimos 30 días, con barras verdes para compras y verdes claras para ventas." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3xonOBy7Tkp9NerarVrRW8C7r30DXg-F3wY6EclUB0QD7E9iTN9p8SUerMgIJDEQQi871oMJogUkCrUMrMZyp0CyqHLBKnCU0orCkFA5H1H0v1NITO8MrebX-ZC1oi9MLGxMAcNMyHypPsIxOKR43S9gevoqGtdA_5ATXaFfGePQpAV7vEbQyvppoFb2NfNf9aX2G21IXdPhHjbAE4s4QGOKZaSDd8n1DwFtdzC4IO4TYzGLYQFV2UnbnNDsxN1EuaSiMccHZ6g"/>
+<div class="h-64" id="chart-comparativa-wrap">
+<canvas id="chart-comparativa"></canvas>
 </div>
 </div>
 <div class="bg-white dark:bg-black/20 p-6 rounded-lg border border-gray-200 dark:border-white/10">
 <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Distribución de Inventario</h3>
-<div class="h-64 flex items-center justify-center">
-<img class="w-full h-full object-contain" data-alt="Gráfico de dona mostrando la distribución del inventario por material: 45% Plástico, 30% Papel, 15% Metal, 10% Vidrio." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfcPfF4jQBG5xL3nO_UzmYIfPSqKDxY2MXACIYooxlxc-NRGfOy-afO0PjdafeUt_wKQC18K8OIbrU7S17IsUhmdmHEr9YL1n-n4M5c-VIzoq2TbFc8xZsm7934Ksh7PYK79ke1jSXZwbPSMdAWi_nkVJ6vcuQ49ASQGWO7v4afx4EdXMv4jI1r6zJwg6dYziG4MIPI6jRTxfh3MiFBpYfY29xbMlfYczg7C75OV3oLnE_0y_wnxWplaLJgBgPKEq2QbZOea1u4g"/>
+<div class="h-64" id="chart-inventario-wrap">
+<canvas id="chart-inventario"></canvas>
 </div>
 </div>
 </div>
@@ -265,6 +266,74 @@ if ('serviceWorker' in navigator) {
   var compras = [];
   var ventas = [];
   var currentRange = 'mes';
+  var chartComparativa = null;
+  var chartInventario = null;
+  var MATERIAL_COLORS = ['#1dc962', '#2563eb', '#db2777', '#ea580c', '#7c3aed', '#0891b2', '#ca8a04', '#dc2626'];
+
+  function diasEntre(start, end) {
+    var dias = [];
+    var d = new Date(start + 'T00:00:00');
+    var fin = new Date(end + 'T00:00:00');
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    while (d <= fin) {
+      dias.push(d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()));
+      d.setDate(d.getDate() + 1);
+    }
+    return dias;
+  }
+
+  function renderChartComparativa(comprasF, ventasF, start, end) {
+    var dias = diasEntre(start, end);
+    var porDiaCompras = {};
+    var porDiaVentas = {};
+    comprasF.forEach(function (c) { var d = (c.fecha || '').slice(0, 10); porDiaCompras[d] = (porDiaCompras[d] || 0) + Number(c.total || 0); });
+    ventasF.forEach(function (v) { var d = (v.fecha || '').slice(0, 10); porDiaVentas[d] = (porDiaVentas[d] || 0) + Number(v.total || 0); });
+
+    var labels = dias.map(function (d) { return api.fmtDate(d); });
+    var dataCompras = dias.map(function (d) { return porDiaCompras[d] || 0; });
+    var dataVentas = dias.map(function (d) { return porDiaVentas[d] || 0; });
+
+    if (chartComparativa) {
+      chartComparativa.data.labels = labels;
+      chartComparativa.data.datasets[0].data = dataCompras;
+      chartComparativa.data.datasets[1].data = dataVentas;
+      chartComparativa.update();
+      return;
+    }
+    if (typeof Chart === 'undefined') return;
+    chartComparativa = new Chart(document.getElementById('chart-comparativa'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Compras', data: dataCompras, backgroundColor: '#1dc962' },
+          { label: 'Ventas', data: dataVentas, backgroundColor: 'rgba(29, 201, 98, 0.4)' },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true } },
+      },
+    });
+  }
+
+  function renderChartInventario(materiales) {
+    var labels = materiales.map(function (m) { return m.nombre; });
+    var data = materiales.map(function (m) { return Number(m.stock_actual) || 0; });
+    var colors = materiales.map(function (m, i) { return MATERIAL_COLORS[i % MATERIAL_COLORS.length]; });
+
+    if (typeof Chart === 'undefined') return;
+    chartInventario = new Chart(document.getElementById('chart-inventario'), {
+      type: 'doughnut',
+      data: { labels: labels, datasets: [{ data: data, backgroundColor: colors }] },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } },
+      },
+    });
+  }
 
   function activarBoton(range) {
     filtroBtns.forEach(function (btn) {
@@ -356,6 +425,7 @@ if ('serviceWorker' in navigator) {
     document.getElementById('stat-ventas-mes-sub').textContent = ventasF.length + ' venta(s) en el período';
 
     renderActividad(comprasF, ventasF);
+    renderChartComparativa(comprasF, ventasF, rango.start, rango.end);
   }
 
   filtroBtns.forEach(function (btn) {
@@ -388,6 +458,7 @@ if ('serviceWorker' in navigator) {
     document.getElementById('stat-stock-total').textContent = api.kg(stockTotal);
     document.getElementById('stat-stock-total-sub').textContent = materiales.length + ' materiales en inventario';
 
+    renderChartInventario(materiales);
     aplicarFiltro(currentRange);
   }).catch(function (err) {
     document.getElementById('actividad-tbody').innerHTML =
