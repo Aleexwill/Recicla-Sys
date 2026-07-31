@@ -178,6 +178,10 @@
 <div class="bg-white dark:bg-black/20 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
 <h2 class="text-text-dark dark:text-white text-lg font-bold leading-tight px-6 pt-5 pb-3 border-b border-gray-200 dark:border-gray-800">Acciones</h2>
 <div class="p-6 flex flex-col gap-4" id="actions-panel">
+<button class="w-full flex items-center justify-center gap-2 text-text-dark dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 dark:focus:ring-offset-background-dark" id="btn-imprimir" type="button">
+<span class="material-symbols-outlined">print</span>
+                                    Imprimir Comprobante
+                                </button>
 <button class="w-full flex items-center justify-center gap-2 text-white bg-blue-secondary hover:bg-blue-600 transition-colors font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-background-dark disabled:opacity-60" data-estado="en_transito" id="btn-en-transito">
 <span class="material-symbols-outlined">local_shipping</span>
                                     Marcar como En Tránsito
@@ -292,6 +296,32 @@ if ('serviceWorker' in navigator) {
       document.getElementById('fin-impuesto-label').textContent = 'Impuestos (' + impuestoPct + '%)';
       document.getElementById('fin-impuesto').innerHTML = api.moneyDual(venta.total - venta.subtotal, tipoCambio, monedaPrincipal);
       document.getElementById('fin-total').innerHTML = api.moneyDual(venta.total, tipoCambio, monedaPrincipal);
+
+      document.getElementById('btn-imprimir').onclick = function () {
+        api.printComprobante({
+          tipo: 'Venta',
+          numero: venta.id,
+          contraparteLabel: 'Cliente',
+          contraparteNombre: venta.cliente_nombre,
+          fecha: api.fmtDateTime(venta.fecha),
+          estado: info.label,
+          items: venta.items.map(function (item) {
+            var precioTxt = item.moneda === 'PYG'
+              ? api.moneyGs(item.precio_original) + ' (cambio ' + api.moneyGs(item.tipo_cambio) + ')'
+              : api.money(item.precio_unitario);
+            return {
+              nombre: item.material_nombre,
+              cantidad: Number(item.cantidad_kg).toFixed(2) + ' kg',
+              precioTxt: precioTxt,
+              subtotalTxt: api.moneyDual(item.subtotal, tipoCambio, monedaPrincipal),
+            };
+          }),
+          subtotalTxt: api.moneyDual(venta.subtotal, tipoCambio, monedaPrincipal),
+          impuestoLabel: 'Impuestos (' + impuestoPct + '%)',
+          impuestoTxt: api.moneyDual(venta.total - venta.subtotal, tipoCambio, monedaPrincipal),
+          totalTxt: api.moneyDual(venta.total, tipoCambio, monedaPrincipal),
+        });
+      };
 
       var siguientes = SIGUIENTES[venta.estado] || [];
       ['en_transito', 'completada', 'cancelada'].forEach(function (estado) {

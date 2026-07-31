@@ -128,7 +128,7 @@
 <h1 class="text-3xl lg:text-4xl font-black leading-tight tracking-tight text-text-light dark:text-text-dark">Reportes</h1>
 <p class="text-base font-normal leading-normal text-text-muted-light dark:text-text-muted-dark">Ventas, compras e inventario por material, filtrados por período.</p>
 </div>
-<button class="flex items-center justify-center gap-2 min-w-[84px] cursor-pointer overflow-hidden rounded-lg h-11 px-5 bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark text-sm font-bold leading-normal tracking-[0.015em] border border-border-light dark:border-border-dark shadow-sm hover:bg-background-light dark:hover:bg-gray-800">
+<button class="flex items-center justify-center gap-2 min-w-[84px] cursor-pointer overflow-hidden rounded-lg h-11 px-5 bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark text-sm font-bold leading-normal tracking-[0.015em] border border-border-light dark:border-border-dark shadow-sm hover:bg-background-light dark:hover:bg-gray-800" id="exportar-btn" type="button">
 <span class="material-symbols-outlined">download</span>
 <span class="truncate">Exportar</span>
 </button>
@@ -301,6 +301,8 @@ if ('serviceWorker' in navigator) {
   var inventarioRows = [];
   var chartTendencia = null;
   var chartMaterial = null;
+  var ultimasFilasVentas = [];
+  var ultimasFilasCompras = [];
   var MATERIAL_COLORS = ['#1dc962', '#2563eb', '#db2777', '#ea580c', '#7c3aed', '#0891b2', '#ca8a04', '#dc2626'];
 
   function diasEntre(start, end) {
@@ -390,6 +392,7 @@ if ('serviceWorker' in navigator) {
     return api.apiFetch('/ventas').then(function (ventas) {
       var enRango = enRangoPorFecha(ventas, start, end);
       if (enRango.length === 0) {
+        ultimasFilasVentas = [];
         ventasTbody.innerHTML = '<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="5">No hay ventas en el período seleccionado.</td></tr>';
         document.getElementById('kpi-ingresos').textContent = api.money(0);
         document.getElementById('kpi-volumen').textContent = api.kg(0);
@@ -425,6 +428,7 @@ if ('serviceWorker' in navigator) {
         });
 
         filas.sort(function (a, b) { return new Date(b.fecha) - new Date(a.fecha); });
+        ultimasFilasVentas = filas;
 
         ventasTbody.innerHTML = filas.map(function (f) {
           return '<tr class="border-b border-border-light dark:border-border-dark">' +
@@ -452,6 +456,7 @@ if ('serviceWorker' in navigator) {
     return api.apiFetch('/compras').then(function (compras) {
       var enRango = enRangoPorFecha(compras, start, end).filter(function (c) { return c.estado === 'confirmada'; });
       if (enRango.length === 0) {
+        ultimasFilasCompras = [];
         comprasTbody.innerHTML = '<tr><td class="px-6 py-4 text-text-muted-light dark:text-text-muted-dark" colspan="5">No hay compras confirmadas en el período seleccionado.</td></tr>';
         document.getElementById('kpi-compras-monto').textContent = api.money(0);
         document.getElementById('kpi-compras-volumen').textContent = api.kg(0);
@@ -480,6 +485,7 @@ if ('serviceWorker' in navigator) {
         });
 
         filas.sort(function (a, b) { return new Date(b.fecha) - new Date(a.fecha); });
+        ultimasFilasCompras = filas;
 
         comprasTbody.innerHTML = filas.map(function (f) {
           return '<tr class="border-b border-border-light dark:border-border-dark">' +
@@ -559,6 +565,36 @@ if ('serviceWorker' in navigator) {
 
   materialFiltro.addEventListener('input', function () { renderInventario(materialFiltro.value); });
   generarBtn.addEventListener('click', generar);
+
+  var exportarBtn = document.getElementById('exportar-btn');
+  exportarBtn.addEventListener('click', function () {
+    var start = inicioInput.value;
+    var end = finInput.value;
+    api.downloadCsv('reportes_' + start + '_a_' + end + '.csv', [
+      {
+        titulo: 'Ventas (' + start + ' a ' + end + ')',
+        columnas: ['Fecha', 'Cliente', 'Material', 'Cantidad (kg)', 'Ingreso'],
+        filas: ultimasFilasVentas.map(function (f) {
+          return [api.fmtDate(f.fecha), f.cliente, f.material, f.cantidad.toFixed(2), f.ingreso.toFixed(2)];
+        }),
+      },
+      {
+        titulo: 'Compras (' + start + ' a ' + end + ')',
+        columnas: ['Fecha', 'Proveedor', 'Material', 'Cantidad (kg)', 'Monto'],
+        filas: ultimasFilasCompras.map(function (f) {
+          return [api.fmtDate(f.fecha), f.proveedor, f.material, f.cantidad.toFixed(2), f.monto.toFixed(2)];
+        }),
+      },
+      {
+        titulo: 'Inventario por material',
+        columnas: ['Material', 'Stock actual (kg)', 'Comprado en el período (kg)', 'Vendido en el período (kg)'],
+        filas: inventarioRows.map(function (r) {
+          return [r.nombre, r.stockActual.toFixed(2), r.comprado.toFixed(2), r.vendido.toFixed(2)];
+        }),
+      },
+    ]);
+  });
+
   defaultRange();
   generar();
 })();
