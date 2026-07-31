@@ -64,6 +64,7 @@
 <div class="p-6 rounded-xl bg-white dark:bg-background-dark/50 border border-[#d1e6d9] dark:border-gray-700">
 <h2 class="text-[#0e1b13] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-5">Añadir Material</h2>
 <p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 mb-4" id="form-error"></p>
+<p class="hidden rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-[#0e1b13] dark:text-primary mb-4" id="form-success"></p>
 <div class="flex flex-col gap-4">
 <div class="flex flex-col w-full">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Proveedor (opcional)</p>
@@ -189,6 +190,7 @@ if ('serviceWorker' in navigator) {
   var itemsList = document.getElementById('items-list');
   var itemsEmpty = document.getElementById('items-empty');
   var errorBox = document.getElementById('form-error');
+  var successBox = document.getElementById('form-success');
   var siguienteBtn = document.getElementById('siguiente-btn');
   var proveedorInput = document.getElementById('proveedor-input');
   var proveedorSelect = document.getElementById('proveedor-select');
@@ -203,6 +205,13 @@ if ('serviceWorker' in navigator) {
   }
   function clearError() {
     errorBox.classList.add('hidden');
+  }
+  function showSuccess(msg) {
+    successBox.textContent = msg;
+    successBox.classList.remove('hidden');
+  }
+  function clearSuccess() {
+    successBox.classList.add('hidden');
   }
 
   api.apiFetch('/materiales').then(function (data) {
@@ -336,6 +345,7 @@ if ('serviceWorker' in navigator) {
 
   siguienteBtn.addEventListener('click', function () {
     clearError();
+    clearSuccess();
     if (cart.length === 0) return showError('Añadí al menos un material antes de continuar.');
 
     var proveedorId = null;
@@ -355,6 +365,7 @@ if ('serviceWorker' in navigator) {
 
     api.apiFetch('/compras', {
       method: 'POST',
+      queueIfOffline: true,
       body: JSON.stringify({
         proveedor_nombre: proveedorNombre,
         proveedor_id: proveedorId,
@@ -366,6 +377,14 @@ if ('serviceWorker' in navigator) {
         }),
       }),
     }).then(function (data) {
+      if (data && data.queued) {
+        showSuccess('No hay conexión: la compra se guardó en este dispositivo y se va a enviar sola cuando vuelva la señal.');
+        cart = [];
+        renderItems();
+        siguienteBtn.disabled = false;
+        siguienteBtn.querySelector('.truncate').textContent = 'Siguiente';
+        return;
+      }
       window.location.href = 'Resumen_Compras.html?id=' + data.compra_id;
     }).catch(function (err) {
       showError(err.message || 'No se pudo registrar la compra.');
