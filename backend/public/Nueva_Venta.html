@@ -143,6 +143,7 @@
 <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-border-light/20 dark:border-border-dark/20">
 <h2 class="text-text-light dark:text-text-dark text-xl font-bold leading-tight tracking-tight mb-5">Datos de la Venta</h2>
 <p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 mb-4" id="form-error"></p>
+<p class="hidden rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-primary mb-4" id="form-success"></p>
 <div class="grid grid-cols-1 gap-x-6 gap-y-4">
 <div class="flex flex-col min-w-40 flex-1">
 <p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal pb-2">Cliente</p>
@@ -279,6 +280,7 @@ if ('serviceWorker' in navigator) {
   var tbody = document.getElementById('items-tbody');
   var emptyRow = document.getElementById('items-empty-row');
   var errorBox = document.getElementById('form-error');
+  var successBox = document.getElementById('form-success');
   var clienteInput = document.getElementById('cliente-input');
   var clienteSelect = document.getElementById('cliente-select');
   var clienteGuardadoWrap = document.getElementById('cliente-guardado-wrap');
@@ -290,6 +292,8 @@ if ('serviceWorker' in navigator) {
 
   function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
   function clearError() { errorBox.classList.add('hidden'); }
+  function showSuccess(msg) { successBox.textContent = msg; successBox.classList.remove('hidden'); }
+  function clearSuccess() { successBox.classList.add('hidden'); }
 
   api.apiFetch('/clientes').then(function (data) {
     clientes = data;
@@ -428,6 +432,7 @@ if ('serviceWorker' in navigator) {
 
   confirmarBtn.addEventListener('click', function () {
     clearError();
+    clearSuccess();
     if (cart.length === 0) return showError('Añadí al menos un material a la venta.');
 
     var clienteId = null;
@@ -446,6 +451,7 @@ if ('serviceWorker' in navigator) {
 
     api.apiFetch('/ventas', {
       method: 'POST',
+      queueIfOffline: true,
       body: JSON.stringify({
         cliente_nombre: clienteNombre,
         cliente_id: clienteId,
@@ -457,6 +463,13 @@ if ('serviceWorker' in navigator) {
         }),
       }),
     }).then(function (data) {
+      if (data && data.queued) {
+        showSuccess('No hay conexión: la venta se guardó en este dispositivo y se va a enviar sola cuando vuelva la señal.');
+        cart = [];
+        renderItems();
+        confirmarBtn.disabled = false;
+        return;
+      }
       window.location.href = 'Detalle_venta.html?id=' + data.venta_id;
     }).catch(function (err) {
       showError(err.message || 'No se pudo registrar la venta.');
