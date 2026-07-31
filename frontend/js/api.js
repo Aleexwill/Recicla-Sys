@@ -236,6 +236,93 @@
     return '<div class="flex items-center justify-center rounded-full size-10 text-white font-bold text-sm" style="background-color: ' + bg + '">' + iniciales + '</div>';
   }
 
+  // Descarga un archivo CSV a partir de una lista de "secciones": cada
+  // sección es { titulo, columnas: [...], filas: [[...], ...] }. Sin
+  // dependencias externas — arma el CSV a mano y dispara la descarga con
+  // un <a href="blob:..."> temporal.
+  function csvEscape(value) {
+    var s = value == null ? '' : String(value);
+    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+  function downloadCsv(filename, secciones) {
+    var lineas = [];
+    secciones.forEach(function (sec, idx) {
+      if (idx > 0) lineas.push('');
+      if (sec.titulo) lineas.push(csvEscape(sec.titulo));
+      if (sec.columnas) lineas.push(sec.columnas.map(csvEscape).join(','));
+      (sec.filas || []).forEach(function (fila) {
+        lineas.push(fila.map(csvEscape).join(','));
+      });
+    });
+    var blob = new Blob(['﻿' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Comprobante imprimible de una compra o venta. Arma una vista de solo
+  // impresión dentro de la misma página (oculta el resto con CSS de
+  // @media print) y dispara window.print(), para que el usuario elija
+  // imprimir en papel o "Guardar como PDF" desde el diálogo del
+  // navegador — sin depender de ninguna librería externa.
+  //
+  // cfg = { tipo, numero, contraparteLabel, contraparteNombre, fecha,
+  //   estado, items: [{ nombre, cantidad, precioTxt, subtotalTxt }],
+  //   subtotalTxt, impuestoLabel, impuestoTxt, totalTxt }
+  // precioTxt/subtotalTxt/impuestoTxt/totalTxt ya vienen formateados con
+  // money()/moneyDual() (HTML seguro) — el resto de los campos es texto
+  // plano y se escapa acá.
+  function printComprobante(cfg) {
+    var area = document.getElementById('reciclasys-print-area');
+    if (!area) {
+      area = document.createElement('div');
+      area.id = 'reciclasys-print-area';
+      area.style.display = 'none';
+      document.body.appendChild(area);
+
+      var style = document.createElement('style');
+      style.textContent =
+        '@media print {' +
+        '  body > *:not(#reciclasys-print-area) { display: none !important; }' +
+        '  #reciclasys-print-area { display: block !important; }' +
+        '}' +
+        '#reciclasys-print-area { font-family: Arial, Helvetica, sans-serif; color: #111; max-width: 480px; margin: 0 auto; }' +
+        '#reciclasys-print-area h1 { font-size: 18px; margin: 0 0 2px; }' +
+        '#reciclasys-print-area p { font-size: 13px; margin: 2px 0; }' +
+        '#reciclasys-print-area .rc-sub { color: #555; margin: 0 0 16px; }' +
+        '#reciclasys-print-area table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }' +
+        '#reciclasys-print-area th, #reciclasys-print-area td { padding: 6px 4px; text-align: left; border-bottom: 1px solid #ddd; }' +
+        '#reciclasys-print-area th:last-child, #reciclasys-print-area td:last-child { text-align: right; }' +
+        '#reciclasys-print-area .rc-totales td { border: none; padding: 3px 4px; }' +
+        '#reciclasys-print-area .rc-total-final td { font-weight: bold; font-size: 15px; border-top: 2px solid #111; }';
+      document.head.appendChild(style);
+    }
+
+    var filasItems = cfg.items.map(function (it) {
+      return '<tr><td>' + escapeHtml(it.nombre) + '</td><td>' + escapeHtml(it.cantidad) + '</td><td>' + it.precioTxt + '</td><td>' + it.subtotalTxt + '</td></tr>';
+    }).join('');
+
+    area.innerHTML =
+      '<h1>ReciclaS</h1>' +
+      '<p class="rc-sub">Comprobante de ' + escapeHtml(cfg.tipo) + ' #' + escapeHtml(String(cfg.numero).padStart(5, '0')) + '</p>' +
+      '<p>' + escapeHtml(cfg.contraparteLabel) + ': <strong>' + escapeHtml(cfg.contraparteNombre || '—') + '</strong></p>' +
+      '<p>Fecha: ' + escapeHtml(cfg.fecha) + (cfg.estado ? ' &middot; Estado: ' + escapeHtml(cfg.estado) : '') + '</p>' +
+      '<table><thead><tr><th>Material</th><th>Cant.</th><th>P/u</th><th>Subtotal</th></tr></thead><tbody>' + filasItems + '</tbody></table>' +
+      '<table class="rc-totales">' +
+      (cfg.subtotalTxt ? '<tr><td>Subtotal</td><td style="text-align:right">' + cfg.subtotalTxt + '</td></tr>' : '') +
+      (cfg.impuestoLabel ? '<tr><td>' + escapeHtml(cfg.impuestoLabel) + '</td><td style="text-align:right">' + cfg.impuestoTxt + '</td></tr>' : '') +
+      '<tr class="rc-total-final"><td>TOTAL</td><td style="text-align:right">' + cfg.totalTxt + '</td></tr>' +
+      '</table>';
+
+    window.print();
+  }
+
   global.ReciclaAPI = {
     apiFetch: apiFetch,
     getToken: getToken,
@@ -256,6 +343,8 @@
     avatarInitials: avatarInitials,
     avatarColorFor: avatarColorFor,
     avatarBadgeHtml: avatarBadgeHtml,
+    printComprobante: printComprobante,
+    downloadCsv: downloadCsv,
   };
 
   // Banner de conectividad — estilos inline a propósito: si no hay
