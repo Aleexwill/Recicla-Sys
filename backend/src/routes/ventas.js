@@ -3,9 +3,9 @@
 const express = require('express');
 const router  = express.Router();
 const db      = require('../config/database');
-const { verificarToken, verificarPermiso } = require('../middleware/auth');
+const { verificarToken, verificarPermiso, verificarEmpresaAsignada } = require('../middleware/auth');
 
-router.use(verificarToken);
+router.use(verificarToken, verificarEmpresaAsignada);
 
 // GET /api/ventas
 router.get('/', async (req, res) => {
@@ -14,9 +14,9 @@ router.get('/', async (req, res) => {
     SELECT v.*, u.nombre_usuario AS vendedor
     FROM ventas v
     LEFT JOIN usuarios u ON u.id = v.usuario_id
-    WHERE 1=1
+    WHERE v.empresa_id = $1
   `;
-  const params = [];
+  const params = [req.usuario.empresa_id];
   if (estado) { params.push(estado); query += ` AND v.estado = $${params.length}`; }
   query += ' ORDER BY v.fecha DESC';
   try {
@@ -34,8 +34,8 @@ router.get('/:id', async (req, res) => {
       `SELECT v.*, u.nombre_usuario AS vendedor
        FROM ventas v
        LEFT JOIN usuarios u ON u.id = v.usuario_id
-       WHERE v.id = $1`,
-      [req.params.id]
+       WHERE v.id = $1 AND v.empresa_id = $2`,
+      [req.params.id, req.usuario.empresa_id]
     );
     if (venta.rows.length === 0) return res.status(404).json({ error: 'Venta no encontrada.' });
     const items = await db.query(
@@ -62,14 +62,21 @@ router.get('/:id', async (req, res) => {
 router.post('/', verificarPermiso('edit'), async (req, res) => {
   const { cliente_nombre, cliente_id, items, impuesto_pct = 18 } = req.body;
   if (!items || items.length === 0) return res.status(400).json({ error: 'Items requeridos.' });
+  const empresaId = req.usuario.empresa_id;
 
   const client = await db.connect();
   try {
     await client.query('BEGIN');
+
+    if (cliente_id) {
+      const cliente = await client.query('SELECT id FROM clientes WHERE id = $1 AND empresa_id = $2', [cliente_id, empresaId]);
+      if (cliente.rows.length === 0) throw new Error('Cliente no encontrado.');
+    }
+
     let subtotal = 0;
     const itemsConPrecio = [];
     for (const item of items) {
-      const mat = await client.query('SELECT precio_venta, stock_actual FROM materiales WHERE id = $1', [item.material_id]);
+      const mat = await client.query('SELECT precio_venta, stock_actual FROM materiales WHERE id = $1 AND empresa_id = $2', [item.material_id, empresaId]);
       if (mat.rows.length === 0) throw new Error(`Material ${item.material_id} no existe`);
       if (mat.rows[0].stock_actual < item.cantidad_kg) throw new Error(`Stock insuficiente para material ${item.material_id}`);
       const precioEnviado = Number(item.precio_unitario);
@@ -89,9 +96,9 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
     const total = subtotal * (1 + impuesto_pct / 100);
 
     const venta = await client.query(
-      `INSERT INTO ventas (cliente_nombre, cliente_id, usuario_id, subtotal, impuesto_pct, total)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [cliente_nombre, cliente_id || null, req.usuario.id, subtotal, impuesto_pct, total]
+      `INSERT INTO ventas (empresa_id, cliente_nombre, cliente_id, usuario_id, subtotal, impuesto_pct, total)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [empresaId, cliente_nombre, cliente_id || null, req.usuario.id, subtotal, impuesto_pct, total]
     );
     const ventaId = venta.rows[0].id;
 
@@ -132,7 +139,7 @@ router.patch('/:id/estado', verificarPermiso('edit'), async (req, res) => {
   if (!estadosValidos.includes(estado)) return res.status(400).json({ error: 'Estado inválido.' });
   try {
     const { rows } = await db.query(
-      'UPDATE ventas SET estado = $1 WHERE id = $2 RETURNING *', [estado, req.params.id]
+      'UPDATE ventas SET estado = $1 WHERE id = $2 AND empresa_id = $3 RETURNING *', [estado, req.params.id, req.usuario.empresa_id]
     );
     if (rows.length === 0) return res.status(404).json({ error: 'Venta no encontrada.' });
     await db.query(

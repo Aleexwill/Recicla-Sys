@@ -1,20 +1,21 @@
 // src/routes/configuracion.js
 // Ajustes generales del sistema (política de contraseñas, idioma, notificaciones).
+// Una fila por empresa — cada empresa tiene su propia configuración.
 
 const express = require('express');
 const router  = express.Router();
 const db      = require('../config/database');
-const { verificarToken, verificarPermiso } = require('../middleware/auth');
+const { verificarToken, verificarPermiso, verificarEmpresaAsignada } = require('../middleware/auth');
 
-router.use(verificarToken);
+router.use(verificarToken, verificarEmpresaAsignada);
 
 // GET /api/configuracion — cualquier usuario autenticado puede leerla
 // (por ejemplo, para mostrar los requisitos de contraseña en un formulario).
 router.get('/', async (req, res) => {
   try {
-    const { rows } = await db.query('SELECT * FROM configuracion WHERE id = 1');
+    const { rows } = await db.query('SELECT * FROM configuracion WHERE empresa_id = $1', [req.usuario.empresa_id]);
     if (rows.length === 0) {
-      const inserted = await db.query('INSERT INTO configuracion (id) VALUES (1) RETURNING *');
+      const inserted = await db.query('INSERT INTO configuracion (empresa_id) VALUES ($1) RETURNING *', [req.usuario.empresa_id]);
       return res.json(inserted.rows[0]);
     }
     res.json(rows[0]);
@@ -43,8 +44,8 @@ router.put('/', verificarPermiso('full'), async (req, res) => {
          moneda_principal = $5,
          actualizado_en = NOW(),
          actualizado_por = $6
-       WHERE id = 1 RETURNING *`,
-      [minLength, !!password_requiere_especiales, idioma_default || 'es', !!notificaciones_email, monedaPrincipal, req.usuario.id]
+       WHERE empresa_id = $7 RETURNING *`,
+      [minLength, !!password_requiere_especiales, idioma_default || 'es', !!notificaciones_email, monedaPrincipal, req.usuario.id, req.usuario.empresa_id]
     );
     if (rows.length === 0) return res.status(404).json({ error: 'No se encontró la configuración.' });
     res.json({ mensaje: 'Configuración guardada.', configuracion: rows[0] });

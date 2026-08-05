@@ -14,11 +14,22 @@ const verificarToken = (req, res, next) => {
 
   try {
     const usuario = jwt.verify(token, process.env.JWT_SECRET);
-    req.usuario = usuario; // { id, email, rol, permiso }
+    req.usuario = usuario; // { id, email, rol, permiso, empresa_id, super_admin }
     next();
   } catch (err) {
     return res.status(401).json({ error: 'Token inválido o expirado.' });
   }
+};
+
+// Middleware para rutas exclusivas del Super Admin (gestión de empresas).
+// El Super Admin no pertenece a ninguna empresa (empresa_id NULL) y por
+// eso queda afuera de todas las rutas de datos operativos (materiales,
+// compras, ventas, etc.), que siempre filtran por empresa_id.
+const verificarSuperAdmin = (req, res, next) => {
+  if (!req.usuario?.super_admin) {
+    return res.status(403).json({ error: 'Esta acción es exclusiva del Super Admin.' });
+  }
+  next();
 };
 
 // Middleware para verificar permisos (uso: verificarPermiso('full') o ('edit'))
@@ -34,4 +45,16 @@ const verificarPermiso = (permisoRequerido) => {
   };
 };
 
-module.exports = { verificarToken, verificarPermiso };
+// Middleware para las rutas de datos operativos de una empresa
+// (materiales, compras, ventas, clientes, proveedores, tipo de cambio,
+// configuración). El Super Admin no tiene empresa asignada, así que sin
+// este chequeo terminaría con listas vacías o errores confusos de la
+// base de datos en vez de un mensaje claro.
+const verificarEmpresaAsignada = (req, res, next) => {
+  if (!req.usuario?.empresa_id) {
+    return res.status(403).json({ error: 'El Super Admin no opera datos de una empresa en particular.' });
+  }
+  next();
+};
+
+module.exports = { verificarToken, verificarPermiso, verificarSuperAdmin, verificarEmpresaAsignada };

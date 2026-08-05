@@ -37,11 +37,12 @@ router.post('/login', loginLimiter, async (req, res) => {
   }
 
   try {
-    // Buscar usuario con su rol
+    // Buscar usuario con su rol y su empresa
     const result = await db.query(
-      `SELECT u.*, r.nombre AS rol_nombre
+      `SELECT u.*, r.nombre AS rol_nombre, e.nombre AS empresa_nombre, e.logo_url AS empresa_logo_url
        FROM usuarios u
        LEFT JOIN roles r ON r.id = u.rol_id
+       LEFT JOIN empresas e ON e.id = u.empresa_id
        WHERE u.email = $1 AND u.activo = TRUE`,
       [email]
     );
@@ -67,6 +68,10 @@ router.post('/login', loginLimiter, async (req, res) => {
         rol:     usuario.rol_nombre,
         permiso: usuario.permiso,
         avatar_color: usuario.avatar_color,
+        empresa_id: usuario.empresa_id,
+        empresa_nombre: usuario.empresa_nombre,
+        empresa_logo_url: usuario.empresa_logo_url,
+        super_admin: usuario.super_admin,
       },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
@@ -82,6 +87,10 @@ router.post('/login', loginLimiter, async (req, res) => {
         rol:     usuario.rol_nombre,
         permiso: usuario.permiso,
         avatar_color: usuario.avatar_color,
+        empresa_id: usuario.empresa_id,
+        empresa_nombre: usuario.empresa_nombre,
+        empresa_logo_url: usuario.empresa_logo_url,
+        super_admin: usuario.super_admin,
       }
     });
 
@@ -103,7 +112,7 @@ router.put('/password', verificarToken, async (req, res) => {
   if (!password_actual || !password_nueva) {
     return res.status(400).json({ error: 'La contraseña actual y la nueva son requeridas.' });
   }
-  const policy = await getPolicy();
+  const policy = await getPolicy(req.usuario.empresa_id);
   const policyError = validatePassword(password_nueva, policy);
   if (policyError) {
     return res.status(400).json({ error: policyError });
@@ -144,9 +153,12 @@ router.post('/solicitar-reset', resetRequestLimiter, async (req, res) => {
   }
 
   try {
-    const usuario = await db.query('SELECT id FROM usuarios WHERE email = $1 AND activo = TRUE', [email]);
+    const usuario = await db.query('SELECT id, empresa_id FROM usuarios WHERE email = $1 AND activo = TRUE', [email]);
     if (usuario.rows.length > 0) {
-      await db.query('INSERT INTO solicitudes_reset_password (email) VALUES ($1)', [email]);
+      await db.query(
+        'INSERT INTO solicitudes_reset_password (email, empresa_id) VALUES ($1, $2)',
+        [email, usuario.rows[0].empresa_id]
+      );
     }
     res.json({ mensaje: 'Si el correo está registrado, un administrador va a ver tu solicitud y te va a restablecer la contraseña.' });
   } catch (err) {
@@ -155,12 +167,17 @@ router.post('/solicitar-reset', resetRequestLimiter, async (req, res) => {
   }
 });
 
-// GET /api/auth/solicitudes-reset — Listar solicitudes pendientes (solo admins)
+// GET /api/auth/solicitudes-reset — Listar solicitudes pendientes (solo admins).
+// El Super Admin ve las de todas las empresas; un admin de empresa solo ve
+// las de la suya.
 router.get('/solicitudes-reset', verificarToken, verificarPermiso('full'), async (req, res) => {
   try {
-    const { rows } = await db.query(
-      'SELECT * FROM solicitudes_reset_password WHERE atendida = FALSE ORDER BY creado_en DESC'
-    );
+    const { rows } = req.usuario.super_admin
+      ? await db.query('SELECT * FROM solicitudes_reset_password WHERE atendida = FALSE ORDER BY creado_en DESC')
+      : await db.query(
+          'SELECT * FROM solicitudes_reset_password WHERE atendida = FALSE AND empresa_id = $1 ORDER BY creado_en DESC',
+          [req.usuario.empresa_id]
+        );
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -170,12 +187,19 @@ router.get('/solicitudes-reset', verificarToken, verificarPermiso('full'), async
 // PATCH /api/auth/solicitudes-reset/:id/atender — Marcar una solicitud como atendida (solo admins)
 router.patch('/solicitudes-reset/:id/atender', verificarToken, verificarPermiso('full'), async (req, res) => {
   try {
-    const { rows } = await db.query(
-      `UPDATE solicitudes_reset_password
-       SET atendida = TRUE, atendida_en = NOW(), atendida_por = $1
-       WHERE id = $2 RETURNING *`,
-      [req.usuario.id, req.params.id]
-    );
+    const { rows } = req.usuario.super_admin
+      ? await db.query(
+          `UPDATE solicitudes_reset_password
+           SET atendida = TRUE, atendida_en = NOW(), atendida_por = $1
+           WHERE id = $2 RETURNING *`,
+          [req.usuario.id, req.params.id]
+        )
+      : await db.query(
+          `UPDATE solicitudes_reset_password
+           SET atendida = TRUE, atendida_en = NOW(), atendida_por = $1
+           WHERE id = $2 AND empresa_id = $3 RETURNING *`,
+          [req.usuario.id, req.params.id, req.usuario.empresa_id]
+        );
     if (rows.length === 0) return res.status(404).json({ error: 'Solicitud no encontrada.' });
     res.json({ mensaje: 'Solicitud marcada como atendida.', solicitud: rows[0] });
   } catch (err) {

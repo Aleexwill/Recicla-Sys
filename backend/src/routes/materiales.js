@@ -3,16 +3,17 @@
 const express = require('express');
 const router  = express.Router();
 const db      = require('../config/database');
-const { verificarToken, verificarPermiso } = require('../middleware/auth');
+const { verificarToken, verificarPermiso, verificarEmpresaAsignada } = require('../middleware/auth');
 
-// Todas las rutas requieren estar autenticado
-router.use(verificarToken);
+// Todas las rutas requieren estar autenticado y pertenecer a una empresa
+router.use(verificarToken, verificarEmpresaAsignada);
 
 // GET /api/materiales — Listar todos
 router.get('/', async (req, res) => {
   try {
     const { rows } = await db.query(
-      'SELECT * FROM materiales WHERE activo = TRUE ORDER BY nombre'
+      'SELECT * FROM materiales WHERE activo = TRUE AND empresa_id = $1 ORDER BY nombre',
+      [req.usuario.empresa_id]
     );
     res.json(rows);
   } catch (err) {
@@ -24,8 +25,8 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { rows } = await db.query(
-      'SELECT * FROM materiales WHERE id = $1 AND activo = TRUE',
-      [req.params.id]
+      'SELECT * FROM materiales WHERE id = $1 AND activo = TRUE AND empresa_id = $2',
+      [req.params.id, req.usuario.empresa_id]
     );
     if (rows.length === 0) return res.status(404).json({ error: 'Material no encontrado.' });
     res.json(rows[0]);
@@ -48,11 +49,11 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
   try {
     const { rows } = await db.query(
       `INSERT INTO materiales
-         (nombre, descripcion, unidad_medida, precio_compra, precio_venta, stock_minimo,
+         (empresa_id, nombre, descripcion, unidad_medida, precio_compra, precio_venta, stock_minimo,
           moneda, tipo_cambio, precio_compra_original, precio_venta_original)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
       [
-        nombre, descripcion, unidad_medida || 'kg', precio_compra || 0, precio_venta || 0, stock_minimo || 0,
+        req.usuario.empresa_id, nombre, descripcion, unidad_medida || 'kg', precio_compra || 0, precio_venta || 0, stock_minimo || 0,
         monedaFinal, monedaFinal === 'PYG' ? Number(tipo_cambio) || null : null,
         precio_compra_original != null ? Number(precio_compra_original) : (precio_compra || 0),
         precio_venta_original != null ? Number(precio_venta_original) : (precio_venta || 0),
@@ -83,13 +84,13 @@ router.put('/:id', verificarPermiso('edit'), async (req, res) => {
          tipo_cambio   = $7,
          precio_compra_original = COALESCE($8, precio_compra, precio_compra_original),
          precio_venta_original  = COALESCE($9, precio_venta, precio_venta_original)
-       WHERE id = $10 RETURNING *`,
+       WHERE id = $10 AND empresa_id = $11 RETURNING *`,
       [
         nombre, descripcion, precio_compra, precio_venta, stock_minimo,
         monedaFinal, monedaFinal === 'PYG' ? Number(tipo_cambio) || null : null,
         precio_compra_original != null ? Number(precio_compra_original) : null,
         precio_venta_original != null ? Number(precio_venta_original) : null,
-        req.params.id,
+        req.params.id, req.usuario.empresa_id,
       ]
     );
     if (rows.length === 0) return res.status(404).json({ error: 'Material no encontrado.' });
@@ -102,7 +103,7 @@ router.put('/:id', verificarPermiso('edit'), async (req, res) => {
 // DELETE /api/materiales/:id — Borrado lógico (solo admin)
 router.delete('/:id', verificarPermiso('full'), async (req, res) => {
   try {
-    await db.query('UPDATE materiales SET activo = FALSE WHERE id = $1', [req.params.id]);
+    await db.query('UPDATE materiales SET activo = FALSE WHERE id = $1 AND empresa_id = $2', [req.params.id, req.usuario.empresa_id]);
     res.json({ mensaje: 'Material desactivado correctamente.' });
   } catch (err) {
     res.status(500).json({ error: err.message });

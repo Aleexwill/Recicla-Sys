@@ -3,9 +3,9 @@
 const express = require('express');
 const router  = express.Router();
 const db      = require('../config/database');
-const { verificarToken, verificarPermiso } = require('../middleware/auth');
+const { verificarToken, verificarPermiso, verificarEmpresaAsignada } = require('../middleware/auth');
 
-router.use(verificarToken);
+router.use(verificarToken, verificarEmpresaAsignada);
 
 // GET /api/compras — Listar compras con filtro de fecha
 router.get('/', async (req, res) => {
@@ -14,9 +14,9 @@ router.get('/', async (req, res) => {
     SELECT c.*, u.nombre_usuario AS operador
     FROM compras c
     LEFT JOIN usuarios u ON u.id = c.usuario_id
-    WHERE 1=1
+    WHERE c.empresa_id = $1
   `;
-  const params = [];
+  const params = [req.usuario.empresa_id];
 
   if (fecha) {
     params.push(fecha);
@@ -55,10 +55,10 @@ router.get('/resumen-dia', async (req, res) => {
        FROM compras c
        JOIN compra_items ci ON ci.compra_id = c.id
        JOIN materiales m ON m.id = ci.material_id
-       WHERE DATE(c.fecha) = $1 AND c.estado != 'cancelada'
+       WHERE DATE(c.fecha) = $1 AND c.estado != 'cancelada' AND c.empresa_id = $2
        GROUP BY m.nombre, TO_CHAR(c.fecha, 'HH24:MI')
        ORDER BY m.nombre`,
-      [fecha]
+      [fecha, req.usuario.empresa_id]
     );
     const totales = await db.query(
       `SELECT
@@ -67,8 +67,8 @@ router.get('/resumen-dia', async (req, res) => {
          COUNT(DISTINCT c.id) AS total_transacciones
        FROM compras c
        JOIN compra_items ci ON ci.compra_id = c.id
-       WHERE DATE(c.fecha) = $1 AND c.estado != 'cancelada'`,
-      [fecha]
+       WHERE DATE(c.fecha) = $1 AND c.estado != 'cancelada' AND c.empresa_id = $2`,
+      [fecha, req.usuario.empresa_id]
     );
     res.json({ fecha, detalle: rows, totales: totales.rows[0] });
   } catch (err) {
@@ -79,7 +79,7 @@ router.get('/resumen-dia', async (req, res) => {
 // GET /api/compras/:id — Ver detalle de una compra
 router.get('/:id', async (req, res) => {
   try {
-    const compra = await db.query('SELECT * FROM compras WHERE id = $1', [req.params.id]);
+    const compra = await db.query('SELECT * FROM compras WHERE id = $1 AND empresa_id = $2', [req.params.id, req.usuario.empresa_id]);
     if (compra.rows.length === 0) return res.status(404).json({ error: 'Compra no encontrada.' });
     const items = await db.query(
       `SELECT ci.*, m.nombre AS material_nombre
@@ -104,10 +104,16 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
   if (!items || items.length === 0) {
     return res.status(400).json({ error: 'Debe incluir al menos un material.' });
   }
+  const empresaId = req.usuario.empresa_id;
 
   const client = await db.connect(); // transacción
   try {
     await client.query('BEGIN');
+
+    if (proveedor_id) {
+      const proveedor = await client.query('SELECT id FROM proveedores WHERE id = $1 AND empresa_id = $2', [proveedor_id, empresaId]);
+      if (proveedor.rows.length === 0) throw new Error('Proveedor no encontrado.');
+    }
 
     // Calcular subtotales; usa el precio enviado por el cliente si vino uno válido,
     // o si no el precio de compra actual del material.
@@ -115,7 +121,7 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
     const itemsConPrecio = [];
     for (const item of items) {
       const mat = await client.query(
-        'SELECT precio_compra FROM materiales WHERE id = $1', [item.material_id]
+        'SELECT precio_compra FROM materiales WHERE id = $1 AND empresa_id = $2', [item.material_id, empresaId]
       );
       if (mat.rows.length === 0) throw new Error(`Material ${item.material_id} no encontrado`);
       const precioEnviado = Number(item.precio_unitario);
@@ -136,9 +142,9 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
 
     // Insertar cabecera
     const compra = await client.query(
-      `INSERT INTO compras (proveedor_nombre, proveedor_id, usuario_id, total)
-       VALUES ($1, $2, $3, $4) RETURNING *`,
-      [proveedor_nombre, proveedor_id || null, req.usuario.id, total]
+      `INSERT INTO compras (empresa_id, proveedor_nombre, proveedor_id, usuario_id, total)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [empresaId, proveedor_nombre, proveedor_id || null, req.usuario.id, total]
     );
     const compraId = compra.rows[0].id;
 
@@ -167,8 +173,8 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
 router.patch('/:id/confirmar', verificarPermiso('edit'), async (req, res) => {
   try {
     const { rows } = await db.query(
-      `UPDATE compras SET estado = 'confirmada' WHERE id = $1 AND estado = 'pendiente' RETURNING *`,
-      [req.params.id]
+      `UPDATE compras SET estado = 'confirmada' WHERE id = $1 AND estado = 'pendiente' AND empresa_id = $2 RETURNING *`,
+      [req.params.id, req.usuario.empresa_id]
     );
     if (rows.length === 0) return res.status(400).json({ error: 'Compra no encontrada o ya procesada.' });
     res.json({ mensaje: 'Compra confirmada. Stock actualizado.', compra: rows[0] });
@@ -181,8 +187,8 @@ router.patch('/:id/confirmar', verificarPermiso('edit'), async (req, res) => {
 router.patch('/:id/cancelar', verificarPermiso('edit'), async (req, res) => {
   try {
     const { rows } = await db.query(
-      `UPDATE compras SET estado = 'cancelada' WHERE id = $1 AND estado = 'pendiente' RETURNING *`,
-      [req.params.id]
+      `UPDATE compras SET estado = 'cancelada' WHERE id = $1 AND estado = 'pendiente' AND empresa_id = $2 RETURNING *`,
+      [req.params.id, req.usuario.empresa_id]
     );
     if (rows.length === 0) return res.status(400).json({ error: 'Compra no encontrada o ya procesada.' });
     res.json({ mensaje: 'Compra cancelada.', compra: rows[0] });
