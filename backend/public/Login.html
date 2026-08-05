@@ -138,7 +138,8 @@ if ('serviceWorker' in navigator) {
 (function () {
   // Ya hay una sesión activa: no tiene sentido mostrar el login de nuevo.
   if (window.ReciclaAPI.getToken()) {
-    window.location.href = 'Reciclaje_tablero_principal.html';
+    var usuarioActivo = window.ReciclaAPI.getUser();
+    window.location.href = (usuarioActivo && usuarioActivo.super_admin) ? 'Gestion_Empresas.html' : 'Reciclaje_tablero_principal.html';
     return;
   }
 
@@ -217,7 +218,7 @@ if ('serviceWorker' in navigator) {
       body: JSON.stringify({ email: email, password: password }),
     }).then(function (data) {
       window.ReciclaAPI.setSession(data.token, data.usuario);
-      window.location.href = 'Reciclaje_tablero_principal.html';
+      window.location.href = data.usuario.super_admin ? 'Gestion_Empresas.html' : 'Reciclaje_tablero_principal.html';
     }).catch(function (err) {
       errorBox.textContent = err.message || 'No se pudo iniciar sesión.';
       errorBox.classList.remove('hidden');

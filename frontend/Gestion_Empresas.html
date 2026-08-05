@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestión de Empresas - ReciclaS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1dc962",
+            "background-light": "#f6f8f7",
+            "background-dark": "#112117",
+            "surface-light": "#ffffff",
+            "surface-dark": "#1a2c21",
+            "text-light-primary": "#0e1b13",
+            "text-dark-primary": "#e8f3ec",
+            "text-light-secondary": "#50956c",
+            "text-dark-secondary": "#a0c3b0",
+            "border-light": "#e8f3ec",
+            "border-dark": "#314b3b",
+          },
+          fontFamily: {
+            "display": ["Work Sans", "Noto Sans", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "0.75rem",
+            "xl": "1rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+<link href="manifest.json" rel="manifest"/>
+<meta content="#1dc962" name="theme-color"/>
+<link href="icons/icon-192.png" rel="icon" type="image/png"/>
+<link href="icons/icon-180.png" rel="apple-touch-icon"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light-primary dark:text-text-dark-primary overflow-x-hidden">
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+<script src="js/mobile-nav.js"></script>
+
+<div class="md:hidden sticky top-0 z-20 flex items-center justify-between border-b border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 px-4 py-3">
+<div class="flex items-center gap-2">
+<div class="bg-primary/20 p-1.5 rounded-lg text-primary flex items-center justify-center"><span class="material-symbols-outlined text-xl">recycling</span></div>
+<span class="font-bold text-gray-800 dark:text-white">ReciclaS</span>
+</div>
+<button class="rounded-lg p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10" id="mobile-menu-btn" type="button">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+
+
+<div class="relative flex h-auto min-h-screen w-full flex-col">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<div class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" id="sidebar-backdrop"></div>
+<aside class="fixed inset-y-0 left-0 z-40 h-screen -translate-x-full overflow-y-auto transition-transform duration-200 ease-in-out md:relative md:inset-y-auto md:left-auto md:z-auto md:h-auto md:translate-x-0 w-64 flex-shrink-0 bg-white dark:bg-black/20 p-4 flex flex-col justify-between border-r border-gray-200 dark:border-white/10" id="sidebar">
+<div>
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="bg-primary/20 p-2 rounded-lg text-primary overflow-hidden"><span class="material-symbols-outlined text-2xl">recycling</span></div>
+<div class="flex flex-col">
+<h1 class="text-xl font-bold text-gray-800 dark:text-white">ReciclaS</h1>
+<p class="text-xs font-medium text-primary">Super Admin</p>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-gray-900 dark:text-white dark:bg-primary/30" href="Gestion_Empresas.html">
+<span class="material-symbols-outlined">domain</span>
+<p class="text-sm font-medium leading-normal">Empresas</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300" href="Gestion_usuarios.html">
+<span class="material-symbols-outlined">group</span>
+<p class="text-sm font-medium leading-normal">Usuarios</p>
+</a>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-200 dark:border-white/10 pt-4">
+<div class="flex gap-3">
+<div data-user-avatar></div>
+<div class="flex flex-col">
+<h1 class="text-gray-800 dark:text-white text-base font-medium leading-normal" data-user-name>Usuario</h1>
+<p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal" data-user-email></p>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-subtle-light dark:text-text-subtle-dark transition-colors hover:bg-red-500/10 hover:text-red-500" data-logout href="Login.html">
+<span class="material-symbols-outlined">logout</span>
+<p class="text-sm font-medium">Cerrar Sesión</p>
+</a>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 min-w-0 p-6 lg:p-8 overflow-y-auto">
+<div class="w-full max-w-5xl mx-auto flex flex-col gap-6">
+<!-- PageHeading -->
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div class="flex flex-col gap-1">
+<h2 class="text-4xl font-black tracking-tight">Gestión de Empresas</h2>
+<p class="text-text-light-secondary dark:text-text-dark-secondary text-sm">Cada empresa es un espacio de trabajo aislado: sus propios materiales, compras, ventas y usuarios.</p>
+</div>
+</div>
+<p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="page-error"></p>
+<p class="hidden rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-primary" id="page-success"></p>
+<!-- Formulario crear/editar -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark p-6">
+<h3 class="text-lg font-bold mb-4" id="form-title">Nueva Empresa</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<label class="flex flex-col gap-1">
+<span class="text-sm font-medium">Nombre</span>
+<input class="form-input rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-11 px-3 focus:outline-0 focus:ring-2 focus:ring-primary/50" id="empresa-nombre" placeholder="Ej: Recicladora del Norte" type="text"/>
+</label>
+<label class="flex flex-col gap-1">
+<span class="text-sm font-medium">Logo (link a una imagen)</span>
+<input class="form-input rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-11 px-3 focus:outline-0 focus:ring-2 focus:ring-primary/50" id="empresa-logo" placeholder="https://..." type="text"/>
+</label>
+</div>
+<label class="flex items-center gap-2 mt-4 cursor-pointer" id="empresa-activa-wrap">
+<input checked="" class="text-primary focus:ring-primary/50" id="empresa-activa" type="checkbox"/>
+<span class="text-sm">Empresa activa</span>
+</label>
+<div class="flex gap-3 mt-5">
+<button class="flex items-center justify-center h-11 px-6 rounded-lg bg-primary text-white text-sm font-bold hover:bg-primary/90" id="guardar-btn" type="button">Crear Empresa</button>
+<button class="hidden items-center justify-center h-11 px-6 rounded-lg border border-border-light dark:border-border-dark text-sm font-medium" id="cancelar-btn" type="button">Cancelar edición</button>
+</div>
+</div>
+<!-- Tabla -->
+<div class="overflow-x-auto bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark">
+<table class="w-full text-left">
+<thead class="border-b border-border-light dark:border-border-dark">
+<tr>
+<th class="p-4 text-sm font-semibold text-text-light-secondary dark:text-text-dark-secondary">Empresa</th>
+<th class="p-4 text-sm font-semibold text-text-light-secondary dark:text-text-dark-secondary text-center">Estado</th>
+<th class="p-4 text-sm font-semibold text-text-light-secondary dark:text-text-dark-secondary text-right">Acciones</th>
+</tr>
+</thead>
+<tbody id="empresas-tbody">
+<tr><td class="p-4 text-text-light-secondary dark:text-text-dark-secondary" colspan="3">Cargando…</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+</div>
+<!-- Sello corporativo -->
+<footer class="w-full border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 py-3 px-4 sm:px-6">
+<p class="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-sm text-primary">verified</span>
+<span>Desarrollado por <span class="font-semibold text-gray-700 dark:text-gray-200">ALMN Tech &amp; Solutions</span></span>
+</p>
+</footer>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
+<script>
+(function () {
+  var api = window.ReciclaAPI;
+  var user = api.getUser();
+  if (!user || !user.super_admin) {
+    window.location.href = 'Reciclaje_tablero_principal.html';
+    return;
+  }
+
+  var tbody = document.getElementById('empresas-tbody');
+  var errorBox = document.getElementById('page-error');
+  var successBox = document.getElementById('page-success');
+  var formTitle = document.getElementById('form-title');
+  var nombreInput = document.getElementById('empresa-nombre');
+  var logoInput = document.getElementById('empresa-logo');
+  var activaInput = document.getElementById('empresa-activa');
+  var activaWrap = document.getElementById('empresa-activa-wrap');
+  var guardarBtn = document.getElementById('guardar-btn');
+  var cancelarBtn = document.getElementById('cancelar-btn');
+  var empresas = [];
+  var editandoId = null;
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
+  function clearError() { errorBox.classList.add('hidden'); }
+  function showSuccess(msg) { successBox.textContent = msg; successBox.classList.remove('hidden'); }
+  function clearSuccess() { successBox.classList.add('hidden'); }
+
+  function resetForm() {
+    editandoId = null;
+    formTitle.textContent = 'Nueva Empresa';
+    guardarBtn.textContent = 'Crear Empresa';
+    cancelarBtn.classList.add('hidden');
+    activaWrap.classList.add('hidden');
+    nombreInput.value = '';
+    logoInput.value = '';
+    activaInput.checked = true;
+  }
+
+  function editar(empresa) {
+    editandoId = empresa.id;
+    formTitle.textContent = 'Editar "' + empresa.nombre + '"';
+    guardarBtn.textContent = 'Guardar Cambios';
+    cancelarBtn.classList.remove('hidden');
+    activaWrap.classList.remove('hidden');
+    nombreInput.value = empresa.nombre;
+    logoInput.value = empresa.logo_url || '';
+    activaInput.checked = empresa.activa;
+    nombreInput.focus();
+  }
+
+  function render() {
+    if (empresas.length === 0) {
+      tbody.innerHTML = '<tr><td class="p-4 text-text-light-secondary dark:text-text-dark-secondary" colspan="3">Todavía no hay empresas creadas.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = empresas.map(function (e) {
+      var logo = e.logo_url
+        ? '<img class="size-8 rounded-full object-cover" src="' + api.escapeHtml(e.logo_url) + '"/>'
+        : '<div class="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-base">domain</span></div>';
+      var badge = e.activa
+        ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300">Activa</span>'
+        : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">Inactiva</span>';
+      return '<tr class="border-b border-border-light dark:border-border-dark last:border-b-0">' +
+        '<td class="p-4"><div class="flex items-center gap-3">' + logo + '<span class="font-medium">' + api.escapeHtml(e.nombre) + '</span></div></td>' +
+        '<td class="p-4 text-center">' + badge + '</td>' +
+        '<td class="p-4 text-right"><button class="p-2 rounded-md hover:bg-primary/20" data-editar="' + e.id + '"><span class="material-symbols-outlined text-xl">edit</span></button></td>' +
+        '</tr>';
+    }).join('');
+    tbody.querySelectorAll('[data-editar]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-editar');
+        var empresa = empresas.find(function (e) { return String(e.id) === id; });
+        if (empresa) editar(empresa);
+      });
+    });
+  }
+
+  function load() {
+    api.apiFetch('/empresas').then(function (data) {
+      empresas = data;
+      render();
+    }).catch(function (err) {
+      showError(err.message || 'No se pudieron cargar las empresas.');
+      tbody.innerHTML = '';
+    });
+  }
+
+  guardarBtn.addEventListener('click', function () {
+    clearError();
+    clearSuccess();
+    var nombre = nombreInput.value.trim();
+    if (!nombre) return showError('Ingresá el nombre de la empresa.');
+
+    var body = { nombre: nombre, logo_url: logoInput.value.trim() || null };
+    guardarBtn.disabled = true;
+
+    var promesa = editandoId
+      ? api.apiFetch('/empresas/' + editandoId, { method: 'PUT', body: JSON.stringify(Object.assign(body, { activa: activaInput.checked })) })
+      : api.apiFetch('/empresas', { method: 'POST', body: JSON.stringify(body) });
+
+    promesa.then(function () {
+      showSuccess(editandoId ? 'Empresa actualizada.' : 'Empresa creada. Ahora podés crear un usuario administrador para ella desde Gestión de Usuarios.');
+      resetForm();
+      load();
+    }).catch(function (err) {
+      showError(err.message || 'No se pudo guardar la empresa.');
+    }).finally(function () {
+      guardarBtn.disabled = false;
+    });
+  });
+
+  cancelarBtn.addEventListener('click', resetForm);
+
+  resetForm();
+  load();
+})();
+</script>
+</body></html>
