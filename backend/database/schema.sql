@@ -29,21 +29,26 @@ SELECT setval('empresas_id_seq', GREATEST((SELECT MAX(id) FROM empresas), 1));
 
 -- =============================================
 -- TABLA: roles
+-- empresa_id NULL = rol global, visible para todas las empresas (los 4
+-- de siempre). Con empresa_id = rol propio, creado por un admin de esa
+-- empresa — solo lo ve y lo puede asignar esa empresa.
 -- =============================================
 CREATE TABLE IF NOT EXISTS roles (
   id          SERIAL PRIMARY KEY,
-  nombre      VARCHAR(50) NOT NULL UNIQUE,
+  empresa_id  INTEGER REFERENCES empresas(id),
+  nombre      VARCHAR(50) NOT NULL,
   descripcion TEXT,
   creado_en   TIMESTAMP DEFAULT NOW()
 );
+CREATE UNIQUE INDEX IF NOT EXISTS roles_nombre_global_unique ON roles (nombre) WHERE empresa_id IS NULL;
 
--- Roles por defecto
+-- Roles por defecto (globales)
 INSERT INTO roles (nombre, descripcion) VALUES
   ('Administrador',      'Control total del sistema'),
   ('Operador de Báscula','Registra compras de materiales'),
   ('Vendedor',           'Gestiona ventas'),
   ('Contador',           'Solo lectura, acceso a reportes')
-ON CONFLICT (nombre) DO NOTHING;
+ON CONFLICT (nombre) WHERE empresa_id IS NULL DO NOTHING;
 
 -- =============================================
 -- TABLA: usuarios

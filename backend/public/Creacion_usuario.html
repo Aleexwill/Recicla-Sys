@@ -73,11 +73,18 @@
 </div>
 <div class="flex flex-col">
 <label class="flex flex-col">
-<p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Puesto</p>
+<div class="flex items-center justify-between pb-2">
+<p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal">Puesto</p>
+<button class="hidden text-sm font-medium text-primary hover:underline" id="nuevo-puesto-toggle" type="button">+ Crear puesto nuevo</button>
+</div>
 <select class="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 px-[15px] py-0 text-base font-normal leading-normal transition-all" id="rol-select">
 <option value="">Cargando roles…</option>
 </select>
 </label>
+<div class="hidden flex-col sm:flex-row gap-2 mt-2" id="nuevo-puesto-wrap">
+<input class="form-input flex-1 min-w-0 rounded-lg text-[#0e1b13] dark:text-white border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-11 px-3 text-sm focus:outline-0 focus:ring-2 focus:ring-primary/50" id="nuevo-puesto-nombre" placeholder="Nombre del puesto nuevo" type="text"/>
+<button class="flex items-center justify-center h-11 px-4 rounded-lg bg-primary text-white text-sm font-bold" id="nuevo-puesto-agregar" type="button">Agregar</button>
+</div>
 </div>
 <div class="hidden flex-col md:col-span-2" id="empresa-selector-wrap">
 <h2 class="text-[#0e1b13] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] text-left pb-2 pt-4">Empresa</h2>
@@ -231,12 +238,49 @@ if ('serviceWorker' in navigator) {
     });
   }
 
-  var rolesPromise = api.apiFetch('/usuarios/roles').then(function (roles) {
-    rolSelect.innerHTML = '<option value="">Sin rol asignado</option>' +
-      roles.map(function (r) { return '<option value="' + r.id + '">' + api.escapeHtml(r.nombre) + '</option>'; }).join('');
-  }).catch(function () {
-    rolSelect.innerHTML = '<option value="">No se pudieron cargar los roles</option>';
-  });
+  function cargarRoles(seleccionarId) {
+    return api.apiFetch('/usuarios/roles').then(function (roles) {
+      rolSelect.innerHTML = '<option value="">Sin rol asignado</option>' +
+        roles.map(function (r) { return '<option value="' + r.id + '">' + api.escapeHtml(r.nombre) + '</option>'; }).join('');
+      if (seleccionarId) rolSelect.value = seleccionarId;
+    }).catch(function () {
+      rolSelect.innerHTML = '<option value="">No se pudieron cargar los roles</option>';
+    });
+  }
+  var rolesPromise = cargarRoles();
+
+  var nuevoPuestoToggle = document.getElementById('nuevo-puesto-toggle');
+  var nuevoPuestoWrap = document.getElementById('nuevo-puesto-wrap');
+  var nuevoPuestoNombre = document.getElementById('nuevo-puesto-nombre');
+  var nuevoPuestoAgregar = document.getElementById('nuevo-puesto-agregar');
+
+  if (currentUser && currentUser.permiso === 'full') {
+    nuevoPuestoToggle.classList.remove('hidden');
+    nuevoPuestoToggle.addEventListener('click', function () {
+      nuevoPuestoWrap.classList.remove('hidden');
+      nuevoPuestoWrap.classList.add('flex');
+      nuevoPuestoToggle.classList.add('hidden');
+      nuevoPuestoNombre.focus();
+    });
+    nuevoPuestoAgregar.addEventListener('click', function () {
+      var nombre = nuevoPuestoNombre.value.trim();
+      if (!nombre) return;
+      nuevoPuestoAgregar.disabled = true;
+      api.apiFetch('/usuarios/roles', { method: 'POST', body: JSON.stringify({ nombre: nombre }) })
+        .then(function (rol) {
+          return cargarRoles(rol.id);
+        }).then(function () {
+          nuevoPuestoNombre.value = '';
+          nuevoPuestoWrap.classList.add('hidden');
+          nuevoPuestoWrap.classList.remove('flex');
+          nuevoPuestoToggle.classList.remove('hidden');
+        }).catch(function (err) {
+          showError(err.message || 'No se pudo crear el puesto.');
+        }).finally(function () {
+          nuevoPuestoAgregar.disabled = false;
+        });
+    });
+  }
 
   if (id) {
     // Modo edición
