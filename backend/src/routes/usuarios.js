@@ -87,12 +87,35 @@ router.post('/', verificarPermiso('full'), async (req, res) => {
   }
 });
 
-// GET /api/usuarios/roles
+// GET /api/usuarios/roles — Roles globales (empresa_id NULL) + los propios
+// de la empresa del usuario logueado. Un admin de empresa no ve los
+// roles propios de otra empresa.
 // Declarada antes de /:id para que "roles" no se interprete como un id.
 router.get('/roles', async (req, res) => {
   try {
-    const { rows } = await db.query('SELECT * FROM roles ORDER BY nombre');
+    const { rows } = await db.query(
+      'SELECT * FROM roles WHERE empresa_id IS NULL OR empresa_id = $1 ORDER BY nombre',
+      [req.usuario.empresa_id]
+    );
     res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/usuarios/roles — Crear un puesto propio de la empresa (solo admins)
+router.post('/roles', verificarPermiso('full'), async (req, res) => {
+  const { nombre, descripcion } = req.body;
+  if (!nombre) return res.status(400).json({ error: 'El nombre del puesto es requerido.' });
+  if (!req.usuario.empresa_id) {
+    return res.status(403).json({ error: 'El Super Admin no opera puestos de una empresa en particular.' });
+  }
+  try {
+    const { rows } = await db.query(
+      'INSERT INTO roles (empresa_id, nombre, descripcion) VALUES ($1, $2, $3) RETURNING *',
+      [req.usuario.empresa_id, nombre, descripcion || null]
+    );
+    res.status(201).json(rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
