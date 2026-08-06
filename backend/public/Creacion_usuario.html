@@ -79,6 +79,21 @@
 </select>
 </label>
 </div>
+<div class="hidden flex-col md:col-span-2" id="empresa-selector-wrap">
+<h2 class="text-[#0e1b13] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] text-left pb-2 pt-4">Empresa</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 items-end">
+<label class="flex flex-col">
+<span class="text-[#0e1b13] dark:text-zinc-200 text-sm font-medium pb-2">Empresa asignada</span>
+<select class="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 px-[15px] py-0 text-base font-normal leading-normal transition-all" id="empresa-select">
+<option value="">Cargando empresas…</option>
+</select>
+</label>
+<label class="flex items-center gap-3 p-4 h-14 rounded-lg border border-zinc-300 dark:border-zinc-700 has-[:checked]:border-primary has-[:checked]:bg-primary/10 dark:has-[:checked]:bg-primary/20 cursor-pointer transition-all">
+<input class="form-checkbox text-primary focus:ring-primary/50" id="super-admin-check" type="checkbox"/>
+<span class="text-[#0e1b13] dark:text-zinc-200 font-medium">Es Super Admin (sin empresa)</span>
+</label>
+</div>
+</div>
 <div class="flex flex-col md:col-span-2">
 <h2 class="text-[#0e1b13] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] text-left pb-2 pt-4">Permiso Asignado</h2>
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
@@ -158,6 +173,10 @@ if ('serviceWorker' in navigator) {
   var emailInput = document.getElementById('email-input');
   var avatarColorPicker = document.getElementById('avatar-color-picker');
   var avatarColorSeleccionado = api.AVATAR_COLORS[0];
+  var currentUser = api.getUser();
+  var empresaSelectorWrap = document.getElementById('empresa-selector-wrap');
+  var empresaSelect = document.getElementById('empresa-select');
+  var superAdminCheck = document.getElementById('super-admin-check');
 
   function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
 
@@ -196,6 +215,22 @@ if ('serviceWorker' in navigator) {
   wireToggle('toggle-password', 'password-input');
   wireToggle('toggle-password-confirm', 'password-confirm-input');
 
+  var empresasPromise = Promise.resolve();
+  if (currentUser && currentUser.super_admin) {
+    empresaSelectorWrap.classList.remove('hidden');
+    empresaSelectorWrap.classList.add('flex');
+    empresasPromise = api.apiFetch('/empresas').then(function (empresas) {
+      empresaSelect.innerHTML = '<option value="">Elegí una empresa…</option>' +
+        empresas.map(function (e) { return '<option value="' + e.id + '">' + api.escapeHtml(e.nombre) + '</option>'; }).join('');
+    }).catch(function () {
+      empresaSelect.innerHTML = '<option value="">No se pudieron cargar las empresas</option>';
+    });
+    superAdminCheck.addEventListener('change', function () {
+      empresaSelect.disabled = superAdminCheck.checked;
+      if (superAdminCheck.checked) empresaSelect.value = '';
+    });
+  }
+
   var rolesPromise = api.apiFetch('/usuarios/roles').then(function (roles) {
     rolSelect.innerHTML = '<option value="">Sin rol asignado</option>' +
       roles.map(function (r) { return '<option value="' + r.id + '">' + api.escapeHtml(r.nombre) + '</option>'; }).join('');
@@ -212,7 +247,7 @@ if ('serviceWorker' in navigator) {
     passwordConfirmInput.placeholder = 'Repetir solo si cambiaste la contraseña';
     saveBtn.textContent = 'Guardar Cambios';
 
-    Promise.all([rolesPromise, api.apiFetch('/usuarios/' + id)]).then(function (results) {
+    Promise.all([rolesPromise, api.apiFetch('/usuarios/' + id), empresasPromise]).then(function (results) {
       var u = results[1];
       nombreInput.value = u.nombre_usuario;
       emailInput.value = u.email;
@@ -221,6 +256,11 @@ if ('serviceWorker' in navigator) {
       if (permisoRadio) permisoRadio.checked = true;
       avatarColorSeleccionado = u.avatar_color || api.avatarColorFor(u);
       updateAvatarColorSelection();
+      if (currentUser && currentUser.super_admin) {
+        superAdminCheck.checked = !!u.super_admin;
+        empresaSelect.disabled = superAdminCheck.checked;
+        if (u.empresa_id) empresaSelect.value = u.empresa_id;
+      }
     }).catch(function (err) {
       showError(err.message || 'No se pudo cargar el usuario.');
     });
@@ -237,6 +277,9 @@ if ('serviceWorker' in navigator) {
     if (!id && !password) return showError('La contraseña es requerida.');
     if (password && password.length < 8) return showError('La contraseña debe tener al menos 8 caracteres.');
     if (password && password !== passwordConfirmInput.value) return showError('Las contraseñas no coinciden.');
+    if (currentUser && currentUser.super_admin && !superAdminCheck.checked && !empresaSelect.value) {
+      return showError('Elegí a qué empresa pertenece el usuario (o marcá "Es Super Admin").');
+    }
 
     saveBtn.disabled = true;
     saveBtn.textContent = 'Guardando…';
@@ -249,6 +292,10 @@ if ('serviceWorker' in navigator) {
       avatar_color: avatarColorSeleccionado,
     };
     if (password) body.password = password;
+    if (currentUser && currentUser.super_admin) {
+      body.super_admin = superAdminCheck.checked;
+      body.empresa_id = superAdminCheck.checked ? null : (empresaSelect.value || null);
+    }
 
     var request = id
       ? api.apiFetch('/usuarios/' + id, { method: 'PUT', body: JSON.stringify(body) })

@@ -5,10 +5,14 @@ const db = require('../config/database');
 
 const DEFAULT_POLICY = { password_min_length: 8, password_requiere_especiales: false };
 
-async function getPolicy() {
+// empresaId puede venir null (ej: un Super Admin, que no pertenece a
+// ninguna empresa) — en ese caso se usa la política por defecto.
+async function getPolicy(empresaId) {
+  if (!empresaId) return DEFAULT_POLICY;
   try {
     const { rows } = await db.query(
-      'SELECT password_min_length, password_requiere_especiales FROM configuracion WHERE id = 1'
+      'SELECT password_min_length, password_requiere_especiales FROM configuracion WHERE empresa_id = $1',
+      [empresaId]
     );
     if (rows.length === 0) return DEFAULT_POLICY;
     return rows[0];
