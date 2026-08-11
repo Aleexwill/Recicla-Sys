@@ -21,6 +21,9 @@
     document.querySelectorAll('[data-user-avatar]').forEach(function (el) {
       el.innerHTML = window.ReciclaAPI.avatarBadgeHtml(user.nombre || user.email, window.ReciclaAPI.avatarColorFor(user));
     });
+    window.ReciclaAPI.applyEmpresaBranding(
+      user.empresa_nombre ? { nombre: user.empresa_nombre, logo_url: user.empresa_logo_url } : null
+    );
     document.querySelectorAll('[data-logout]').forEach(function (el) {
       el.addEventListener('click', function (e) {
         e.preventDefault();

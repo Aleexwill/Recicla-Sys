@@ -2,6 +2,11 @@
 (function (global) {
   const TOKEN_KEY = 'reciclasys_token';
   const USER_KEY = 'reciclasys_user';
+  // Guarda el nombre/logo de la última empresa que inició sesión en este
+  // dispositivo, en una clave aparte de la sesión: así Login.html puede
+  // mostrar la marca de esa empresa incluso después de un logout (que
+  // borra USER_KEY pero no esta).
+  const LAST_EMPRESA_KEY = 'reciclasys_last_empresa';
 
   function getToken() {
     return localStorage.getItem(TOKEN_KEY);
@@ -18,6 +23,22 @@
   function setSession(token, usuario) {
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_KEY, JSON.stringify(usuario));
+    if (usuario && usuario.empresa_nombre) {
+      try {
+        localStorage.setItem(LAST_EMPRESA_KEY, JSON.stringify({
+          nombre: usuario.empresa_nombre,
+          logo_url: usuario.empresa_logo_url || null,
+        }));
+      } catch (e) { /* no crítico */ }
+    }
+  }
+
+  function getLastEmpresa() {
+    try {
+      return JSON.parse(localStorage.getItem(LAST_EMPRESA_KEY) || 'null');
+    } catch (e) {
+      return null;
+    }
   }
 
   function clearSession() {
@@ -236,6 +257,30 @@
     return '<div class="flex items-center justify-center rounded-full size-10 text-white font-bold text-sm" style="background-color: ' + bg + '">' + iniciales + '</div>';
   }
 
+  // Pinta la marca (nombre + logo) en los elementos [data-empresa-nombre]
+  // y [data-empresa-logo] de la página. `empresa` es { nombre, logo_url }
+  // o null/undefined para volver al branding genérico de ReciclaS (el
+  // ícono de reciclaje que ya trae cada página como contenido por
+  // defecto, así que si no hay logo no tocamos el HTML del badge).
+  function applyEmpresaBranding(empresa) {
+    var nombre = (empresa && empresa.nombre) || 'ReciclaS';
+    var logoUrl = empresa && empresa.logo_url;
+    document.querySelectorAll('[data-empresa-nombre]').forEach(function (el) {
+      el.textContent = nombre;
+    });
+    if (!logoUrl) return;
+    document.querySelectorAll('[data-empresa-logo]').forEach(function (el) {
+      var original = el.innerHTML;
+      var img = document.createElement('img');
+      img.src = logoUrl;
+      img.alt = nombre;
+      img.className = 'h-full w-full object-cover';
+      img.onerror = function () { el.innerHTML = original; };
+      el.innerHTML = '';
+      el.appendChild(img);
+    });
+  }
+
   // Descarga un archivo CSV a partir de una lista de "secciones": cada
   // sección es { titulo, columnas: [...], filas: [[...], ...] }. Sin
   // dependencias externas — arma el CSV a mano y dispara la descarga con
@@ -345,6 +390,8 @@
     avatarBadgeHtml: avatarBadgeHtml,
     printComprobante: printComprobante,
     downloadCsv: downloadCsv,
+    getLastEmpresa: getLastEmpresa,
+    applyEmpresaBranding: applyEmpresaBranding,
   };
 
   // Banner de conectividad — estilos inline a propósito: si no hay
