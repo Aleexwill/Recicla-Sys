@@ -64,8 +64,8 @@
 <div class="flex flex-col max-w-md w-full gap-8">
 <div class="flex flex-col gap-4 text-center">
 <div class="flex flex-col items-center gap-2">
-<div class="h-16 w-16 rounded-full bg-primary/15 flex items-center justify-center text-primary overflow-hidden"><span class="material-symbols-outlined" style="font-size: 40px;">recycling</span></div>
-<h2 class="text-xl font-black text-text-light dark:text-text-dark tracking-tight">ReciclaS</h2>
+<div class="h-16 w-16 rounded-full bg-primary/15 flex items-center justify-center text-primary overflow-hidden" data-empresa-logo><span class="material-symbols-outlined" style="font-size: 40px;">recycling</span></div>
+<h2 class="text-xl font-black text-text-light dark:text-text-dark tracking-tight"><span data-empresa-nombre>ReciclaS</span></h2>
 </div>
 <div class="flex flex-col gap-2">
 <h1 class="text-text-light dark:text-text-dark text-4xl font-black leading-tight tracking-[-0.033em]">Bienvenido de Nuevo</h1>
@@ -142,6 +142,10 @@ if ('serviceWorker' in navigator) {
     window.location.href = (usuarioActivo && usuarioActivo.super_admin) ? 'Gestion_Empresas.html' : 'Reciclaje_tablero_principal.html';
     return;
   }
+
+  // Sin sesión todavía: si en este dispositivo ya inició sesión alguien
+  // de una empresa antes, mostramos su marca en la pantalla de login.
+  window.ReciclaAPI.applyEmpresaBranding(window.ReciclaAPI.getLastEmpresa());
 
   var form = document.getElementById('login-form');
   var errorBox = document.getElementById('login-error');
