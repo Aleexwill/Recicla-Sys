@@ -259,23 +259,43 @@
 
   // Pinta la marca (nombre + logo) en los elementos [data-empresa-nombre]
   // y [data-empresa-logo] de la página. `empresa` es { nombre, logo_url }
-  // o null/undefined para volver al branding genérico de ReciclaS (el
+  // o null/undefined para volver al branding genérico de ALMNET-ONE (el
   // ícono de reciclaje que ya trae cada página como contenido por
   // defecto, así que si no hay logo no tocamos el HTML del badge).
   function applyEmpresaBranding(empresa) {
-    var nombre = (empresa && empresa.nombre) || 'ReciclaS';
+    var nombre = (empresa && empresa.nombre) || 'ALMNET-ONE';
     var logoUrl = empresa && empresa.logo_url;
     document.querySelectorAll('[data-empresa-nombre]').forEach(function (el) {
       el.textContent = nombre;
     });
     if (!logoUrl) return;
     document.querySelectorAll('[data-empresa-logo]').forEach(function (el) {
+      // Varios badges de ícono (los del topbar mobile) no tienen ancho/alto
+      // fijo: su tamaño lo define el ícono de texto que envuelven. Si se
+      // reemplaza ese contenido por una imagen sin fijar antes el tamaño
+      // renderizado, la imagen queda sin una caja de referencia y cada
+      // pantalla termina mostrando el logo con una proporción distinta.
+      // Por eso medimos el tamaño actual del badge y lo fijamos en el
+      // elemento antes de insertar el <img>.
+      var rect = el.getBoundingClientRect();
+      var size = Math.round(Math.max(rect.width, rect.height)) || 40;
       var original = el.innerHTML;
+      var prevWidth = el.style.width;
+      var prevHeight = el.style.height;
+      var prevOverflow = el.style.overflow;
+      el.style.width = size + 'px';
+      el.style.height = size + 'px';
+      el.style.overflow = 'hidden';
       var img = document.createElement('img');
       img.src = logoUrl;
       img.alt = nombre;
       img.className = 'h-full w-full object-cover';
-      img.onerror = function () { el.innerHTML = original; };
+      img.onerror = function () {
+        el.innerHTML = original;
+        el.style.width = prevWidth;
+        el.style.height = prevHeight;
+        el.style.overflow = prevOverflow;
+      };
       el.innerHTML = '';
       el.appendChild(img);
     });
