@@ -1,6 +1,6 @@
 {
-  "name": "ReciclaS - Sistema de Gestión de Reciclaje",
-  "short_name": "ReciclaS",
+  "name": "ALMNET-ONE - Sistema de Gestión de Reciclaje",
+  "short_name": "ALMNET-ONE",
   "description": "Aplicación para la gestión integral de operaciones en una empresa recicladora: compras, ventas, inventario y usuarios.",
   "start_url": "./Login.html",
   "scope": "./",
