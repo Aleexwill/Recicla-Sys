@@ -143,10 +143,6 @@ if ('serviceWorker' in navigator) {
     return;
   }
 
-  // Sin sesión todavía: si en este dispositivo ya inició sesión alguien
-  // de una empresa antes, mostramos su marca en la pantalla de login.
-  window.ReciclaAPI.applyEmpresaBranding(window.ReciclaAPI.getLastEmpresa());
-
   var form = document.getElementById('login-form');
   var errorBox = document.getElementById('login-error');
   var submitBtn = document.getElementById('login-submit');
