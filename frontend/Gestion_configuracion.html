@@ -54,17 +54,23 @@
             'opsz' 24
         }
     </style>
+<link href="css/glass.css" rel="stylesheet"/>
 <link href="manifest.json" rel="manifest"/>
 <meta content="#1dc962" name="theme-color"/>
 <link href="icons/icon-192.png" rel="icon" type="image/png"/>
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark overflow-x-hidden">
+<body class="font-display text-text-light dark:text-text-dark overflow-x-hidden">
+<div class="app-bg" aria-hidden="true">
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+</div>
+
 <script src="js/api.js"></script>
 <script src="js/auth-guard.js"></script>
 <script src="js/mobile-nav.js"></script>
 
-<div class="md:hidden sticky top-0 z-20 flex items-center justify-between border-b border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 px-4 py-3">
+<div class="md:hidden sticky top-0 z-20 flex items-center justify-between glass-card rounded-none px-4 py-3">
 <div class="flex items-center gap-2">
 <div class="bg-primary/20 p-1.5 rounded-lg text-primary flex items-center justify-center" data-empresa-logo><span class="material-symbols-outlined text-xl">recycling</span></div>
 <span class="font-bold text-text-light dark:text-text-dark"><span data-empresa-nombre>ALMNET-ONE</span></span>
@@ -78,7 +84,7 @@
 <div class="relative flex min-h-screen w-full flex-col">
 <div class="flex h-full grow flex-row">
 <div class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" id="sidebar-backdrop"></div>
-<aside class="fixed inset-y-0 left-0 z-40 h-screen -translate-x-full overflow-y-auto transition-transform duration-200 ease-in-out md:relative md:inset-y-auto md:left-auto md:z-auto md:h-auto md:translate-x-0 flex w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4" id="sidebar">
+<aside class="fixed inset-y-0 left-0 z-40 h-screen -translate-x-full overflow-y-auto transition-transform duration-200 ease-in-out md:relative md:inset-y-auto md:left-auto md:z-auto md:h-auto md:translate-x-0 flex w-64 flex-col glass-card rounded-none p-4" id="sidebar">
 <div class="flex h-full flex-col justify-between">
 <div class="flex flex-col gap-6">
 <div class="flex items-center gap-3 px-2">
@@ -130,7 +136,7 @@
 <p class="text-base text-text-subtle-light dark:text-text-subtle-dark">Selecciona una categoría para gestionar sus ajustes.</p>
 </header>
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-<a class="group flex flex-col gap-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-6 shadow-sm transition-all hover:border-primary/50 hover:shadow-lg dark:hover:border-primary/50" href="Resumen_ventas.html">
+<a class="group flex flex-col gap-4 rounded-xl glass-card p-6 transition-all hover:shadow-lg" href="Resumen_ventas.html">
 <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
 <span class="material-symbols-outlined !text-3xl">bar_chart</span>
 </div>
@@ -148,7 +154,7 @@
 <p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Gestionar cuentas y perfiles</p>
 </div>
 </a>
-<a class="group flex flex-col gap-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-6 shadow-sm transition-all hover:border-primary/50 hover:shadow-lg dark:hover:border-primary/50" href="Inventario_Materiales.html">
+<a class="group flex flex-col gap-4 rounded-xl glass-card p-6 transition-all hover:shadow-lg" href="Inventario_Materiales.html">
 <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
 <span class="material-symbols-outlined !text-3xl">inventory_2</span>
 </div>
@@ -157,7 +163,7 @@
 <p class="text-sm text-text-subtle-light dark:text-text-subtle-dark">Configurar opciones de materiales</p>
 </div>
 </a>
-<a class="group flex flex-col gap-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-6 shadow-sm transition-all hover:border-primary/50 hover:shadow-lg dark:hover:border-primary/50" href="Tipos_Cambio.html">
+<a class="group flex flex-col gap-4 rounded-xl glass-card p-6 transition-all hover:shadow-lg" href="Tipos_Cambio.html">
 <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
 <span class="material-symbols-outlined !text-3xl">currency_exchange</span>
 </div>
@@ -174,14 +180,14 @@
 <p class="text-base text-text-subtle-light dark:text-text-subtle-dark">Gestiona ajustes de cuentas y perfiles de los usuarios del sistema.</p>
 </div>
 <div class="flex gap-2">
-<a href="Configuracion_usuario.html"><button class="flex h-10 items-center justify-center rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-4 text-sm font-medium text-text-light dark:text-text-dark shadow-sm transition-colors hover:bg-gray-100 dark:hover:bg-white/5">Ir a Configuración</button></a>
+<a href="Configuracion_usuario.html"><button class="flex h-10 items-center justify-center rounded-lg glass-card px-4 text-sm font-medium text-text-light dark:text-text-dark transition-colors">Ir a Configuración</button></a>
 <button class="flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50" id="guardar-config-btn" type="button">Guardar Cambios</button>
 </div>
 </header>
 <p class="hidden mb-4 rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="config-error"></p>
 <p class="hidden mb-4 rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-primary" id="config-success"></p>
 <div class="flex flex-col gap-8">
-<section class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
+<section class="rounded-xl glass-card">
 <h4 class="border-b border-border-light dark:border-border-dark px-6 py-4 text-lg font-bold text-text-light dark:text-text-dark">Políticas de Contraseña</h4>
 <div class="divide-y divide-border-light dark:divide-border-dark p-2">
 <div class="flex min-h-[72px] items-center justify-between gap-4 px-4 py-3">
@@ -220,7 +226,7 @@
 </div>
 </div>
 </section>
-<section class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
+<section class="rounded-xl glass-card">
 <h4 class="border-b border-border-light dark:border-border-dark px-6 py-4 text-lg font-bold text-text-light dark:text-text-dark">Divisa</h4>
 <div class="divide-y divide-border-light dark:divide-border-dark p-2">
 <div class="flex min-h-[72px] items-center justify-between gap-4 px-4 py-3">
@@ -234,7 +240,7 @@
 </div>
 </div>
 <div class="shrink-0">
-<select class="rounded-lg border-border-light bg-background-light dark:border-border-dark dark:bg-surface-dark text-sm focus:border-primary focus:ring-primary" id="moneda-principal-select">
+<select class="glass-input rounded-lg border text-sm focus:border-primary focus:ring-primary" id="moneda-principal-select">
 <option value="USD">Dólares (USD)</option>
 <option value="PYG">Guaraníes (Gs.)</option>
 </select>
@@ -242,7 +248,7 @@
 </div>
 </div>
 </section>
-<section class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
+<section class="rounded-xl glass-card">
 <h4 class="border-b border-border-light dark:border-border-dark px-6 py-4 text-lg font-bold text-text-light dark:text-text-dark">Preferencias de Cuenta</h4>
 <div class="divide-y divide-border-light dark:divide-border-dark p-2">
 <div class="flex min-h-[72px] items-center justify-between gap-4 px-4 py-3">
@@ -256,7 +262,7 @@
 </div>
 </div>
 <div class="shrink-0">
-<select class="rounded-lg border-border-light bg-background-light dark:border-border-dark dark:bg-surface-dark text-sm focus:border-primary focus:ring-primary" id="idioma-select">
+<select class="glass-input rounded-lg border text-sm focus:border-primary focus:ring-primary" id="idioma-select">
 <option value="es">Español</option>
 <option value="en">English</option>
 <option value="pt">Português</option>
@@ -288,7 +294,7 @@
 </div>
 </div>
 <!-- Sello corporativo -->
-<footer class="w-full border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 py-3 px-4 sm:px-6">
+<footer class="relative w-full py-6 px-4 sm:px-6">
 <p class="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500 dark:text-gray-400">
 <span class="material-symbols-outlined text-sm text-primary">verified</span>
 <span>Desarrollado por <span style="display:inline-flex;align-items:center;background:#0b1410;padding:2px 8px;border-radius:9999px;vertical-align:middle;"><img src="assets/logo-almn.png" alt="ALMN Projects" style="height:12px;width:auto;display:block;"/></span></span>

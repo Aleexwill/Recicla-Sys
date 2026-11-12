@@ -45,17 +45,23 @@
         'opsz' 24
       }
     </style>
+<link href="css/glass.css" rel="stylesheet"/>
 <link href="manifest.json" rel="manifest"/>
 <meta content="#1dc962" name="theme-color"/>
 <link href="icons/icon-192.png" rel="icon" type="image/png"/>
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
-<body class="font-display bg-background-light dark:bg-background-dark text-text-primary-light dark:text-text-primary-dark overflow-x-hidden">
+<body class="font-display text-text-primary-light dark:text-text-primary-dark overflow-x-hidden">
+<div class="app-bg" aria-hidden="true">
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+</div>
+
 <script src="js/api.js"></script>
 <script src="js/auth-guard.js"></script>
 <script src="js/mobile-nav.js"></script>
 
-<div class="md:hidden sticky top-0 z-20 flex items-center justify-between border-b border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 px-4 py-3">
+<div class="md:hidden sticky top-0 z-20 flex items-center justify-between glass-card rounded-none px-4 py-3">
 <div class="flex items-center gap-2">
 <div class="bg-primary/20 p-1.5 rounded-lg text-primary flex items-center justify-center" data-empresa-logo><span class="material-symbols-outlined text-xl">recycling</span></div>
 <span class="font-bold text-text-primary-light dark:text-text-primary-dark"><span data-empresa-nombre>ALMNET-ONE</span></span>
@@ -69,7 +75,7 @@
 <div class="flex min-h-screen">
 <!-- SideNavBar -->
 <div class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" id="sidebar-backdrop"></div>
-<aside class="fixed inset-y-0 left-0 z-40 h-screen -translate-x-full overflow-y-auto transition-transform duration-200 ease-in-out md:relative md:inset-y-auto md:left-auto md:z-auto md:h-auto md:translate-x-0 w-64 flex-shrink-0 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex flex-col" id="sidebar">
+<aside class="fixed inset-y-0 left-0 z-40 h-screen -translate-x-full overflow-y-auto transition-transform duration-200 ease-in-out md:relative md:inset-y-auto md:left-auto md:z-auto md:h-auto md:translate-x-0 w-64 flex-shrink-0 glass-card rounded-none flex flex-col" id="sidebar">
 <div class="flex h-full flex-col justify-between p-4">
 <div class="flex flex-col gap-4">
 <div class="flex items-center gap-3 px-3 py-2">
@@ -127,7 +133,7 @@
 <label class="flex flex-col w-64">
 <p class="text-sm font-medium pb-2">Seleccionar fecha</p>
 <div class="relative flex w-full items-stretch rounded-lg">
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg bg-surface-light dark:bg-surface-dark text-text-primary-light dark:text-text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark h-11 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark px-3 text-base" id="fecha-input" type="date"/>
+<input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-primary-light dark:text-text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 border h-11 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark px-3 text-base" id="fecha-input" type="date"/>
 <div class="absolute right-0 top-0 bottom-0 text-text-secondary-light dark:text-text-secondary-dark flex items-center justify-center pr-3">
 <span class="material-symbols-outlined text-xl">calendar_today</span>
 </div>
@@ -137,21 +143,21 @@
 </div>
 <!-- Stats -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-<div class="flex flex-col gap-2 rounded-xl p-6 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
+<div class="flex flex-col gap-2 rounded-xl p-6 glass-card">
 <p class="text-base font-medium text-text-secondary-light dark:text-text-secondary-dark">Total de Compras</p>
 <p class="text-3xl font-bold tracking-tight" id="stat-monto">$ 0.00</p>
 </div>
-<div class="flex flex-col gap-2 rounded-xl p-6 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
+<div class="flex flex-col gap-2 rounded-xl p-6 glass-card">
 <p class="text-base font-medium text-text-secondary-light dark:text-text-secondary-dark">Peso Total (Kg)</p>
 <p class="text-3xl font-bold tracking-tight" id="stat-peso">0 kg</p>
 </div>
-<div class="flex flex-col gap-2 rounded-xl p-6 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
+<div class="flex flex-col gap-2 rounded-xl p-6 glass-card">
 <p class="text-base font-medium text-text-secondary-light dark:text-text-secondary-dark">Nº de Transacciones</p>
 <p class="text-3xl font-bold tracking-tight" id="stat-transacciones">0</p>
 </div>
 </div>
 <!-- Table -->
-<div class="overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
+<div class="overflow-hidden rounded-xl glass-table">
 <div class="overflow-x-auto">
 <table class="w-full text-sm">
 <thead class="bg-background-light dark:bg-background-dark">
@@ -186,7 +192,7 @@
 </main>
 </div>
 <!-- Sello corporativo -->
-<footer class="w-full border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 py-3 px-4 sm:px-6">
+<footer class="relative w-full py-6 px-4 sm:px-6">
 <p class="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500 dark:text-gray-400">
 <span class="material-symbols-outlined text-sm text-primary">verified</span>
 <span>Desarrollado por <span style="display:inline-flex;align-items:center;background:#0b1410;padding:2px 8px;border-radius:9999px;vertical-align:middle;"><img src="assets/logo-almn.png" alt="ALMN Projects" style="height:12px;width:auto;display:block;"/></span></span>
