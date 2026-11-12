@@ -2,6 +2,20 @@
    Arrancó en Login.html; esto es lo mismo extraído para reusar en el
    resto de las pantallas en vez de reinventarlo por página. */
 
+/* Sin esto, los controles nativos del navegador (el popup de <select>,
+   la barra de scroll, los selectores de fecha) se siguen pintando con
+   el tema claro del sistema operativo aunque la página esté en modo
+   oscuro — el texto (heredado de nuestro CSS) queda claro, pero el
+   fondo del popup nativo queda blanco por defecto: texto claro sobre
+   blanco, invisible. color-scheme le avisa al navegador qué tema nativo
+   usar para esas partes que nuestro CSS no puede pintar directamente. */
+html.dark {
+    color-scheme: dark;
+}
+html:not(.dark) {
+    color-scheme: light;
+}
+
 /* Fondo tipo "mesh gradient" para el lienzo de la app (detrás del
    sidebar/contenido). Más tenue que el de Login: acá se mira por
    sesiones largas de trabajo, no es un momento único como el login. */
