@@ -40,7 +40,7 @@
 <link href="icons/icon-192.png" rel="icon" type="image/png"/>
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200 overflow-x-hidden">
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark overflow-x-hidden">
 <script src="js/api.js"></script>
 <script src="js/auth-guard.js"></script>
 
@@ -55,7 +55,7 @@
 <span class="text-gray-400 dark:text-gray-500 text-sm font-medium leading-normal">/</span>
 <a class="text-primary/80 dark:text-primary/70 hover:text-primary text-sm font-medium leading-normal" href="Inventario_Materiales.html">Materiales</a>
 <span class="text-gray-400 dark:text-gray-500 text-sm font-medium leading-normal">/</span>
-<span class="text-gray-800 dark:text-gray-200 text-sm font-medium leading-normal" id="breadcrumb-current">Nuevo Material</span>
+<span class="text-text-light dark:text-text-dark text-sm font-medium leading-normal" id="breadcrumb-current">Nuevo Material</span>
 </div>
 <p class="hidden mx-4 rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="page-error"></p>
 <main class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 p-4">
@@ -75,7 +75,7 @@
 </div>
 <div class="mt-8">
 <div class="flex items-center gap-4">
-<input class="text-gray-900 dark:text-white tracking-tight text-3xl font-bold leading-tight bg-transparent border-b-2 border-transparent focus:border-primary focus:outline-none w-full" id="nombre-input" placeholder="Nombre del material" type="text"/>
+<input class="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight bg-transparent border-b-2 border-transparent focus:border-primary focus:outline-none w-full" id="nombre-input" placeholder="Nombre del material" type="text"/>
 <div class="hidden h-7 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/20 px-3" id="stock-badge">
 <p class="text-primary-darker dark:text-primary-lighter text-sm font-medium leading-normal">En Stock</p>
 </div>
@@ -85,20 +85,20 @@
 <div class="lg:col-span-2">
 <div class="bg-white dark:bg-background-dark/50 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 sticky top-8">
 <div class="flex justify-between items-baseline">
-<h2 class="text-xl font-semibold text-gray-900 dark:text-white">Gestión de Precios</h2>
+<h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Gestión de Precios</h2>
 <p class="text-sm text-gray-500 dark:text-gray-400" id="stock-label"></p>
 </div>
 <div class="mt-6 space-y-4">
 <div>
 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="unit">Unidad de Medida</label>
 <div class="relative mt-1">
-<input class="block w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="unit" placeholder="kg" type="text" value="kg"/>
+<input class="block w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-text-dark shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="unit" placeholder="kg" type="text" value="kg"/>
 </div>
 </div>
 <div>
 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="moneda-select">Moneda de los precios</label>
 <div class="relative mt-1">
-<select class="block w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="moneda-select">
+<select class="block w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-text-dark shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="moneda-select">
 <option value="USD">Dólares (USD)</option>
 <option value="PYG">Guaraníes (Gs.)</option>
 </select>
@@ -111,7 +111,7 @@
 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
 <span class="text-gray-500 sm:text-sm" id="purchase-price-prefix">$</span>
 </div>
-<input class="block w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white pl-7 pr-3 focus:border-primary focus:ring-primary sm:text-sm" id="purchase-price" placeholder="0.00" step="0.01" type="number"/>
+<input class="block w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-text-dark pl-7 pr-3 focus:border-primary focus:ring-primary sm:text-sm" id="purchase-price" placeholder="0.00" step="0.01" type="number"/>
 </div>
 </div>
 <div>
@@ -120,18 +120,18 @@
 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
 <span class="text-gray-500 sm:text-sm" id="sale-price-prefix">$</span>
 </div>
-<input class="block w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white pl-7 pr-3 focus:border-primary focus:ring-primary sm:text-sm" id="sale-price" placeholder="0.00" step="0.01" type="number"/>
+<input class="block w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-text-dark pl-7 pr-3 focus:border-primary focus:ring-primary sm:text-sm" id="sale-price" placeholder="0.00" step="0.01" type="number"/>
 </div>
 </div>
 <div>
 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="stock-minimo">Stock Mínimo</label>
 <div class="relative mt-1">
-<input class="block w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="stock-minimo" placeholder="0" step="0.01" type="number"/>
+<input class="block w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-text-dark shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="stock-minimo" placeholder="0" step="0.01" type="number"/>
 </div>
 </div>
 </div>
 <div class="mt-8 flex justify-between items-center bg-primary/10 dark:bg-primary/20 rounded-lg p-4">
-<span class="text-base font-medium text-gray-800 dark:text-gray-200">Margen de Ganancia:</span>
+<span class="text-base font-medium text-text-light dark:text-text-dark">Margen de Ganancia:</span>
 <span class="text-2xl font-bold text-primary dark:text-primary-lighter" id="margen-label">—</span>
 </div>
 <div class="mt-8 flex flex-col gap-4">
@@ -155,7 +155,7 @@
 <footer class="w-full border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 py-3 px-4 sm:px-6">
 <p class="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500 dark:text-gray-400">
 <span class="material-symbols-outlined text-sm text-primary">verified</span>
-<span>Desarrollado por <span class="font-semibold text-gray-700 dark:text-gray-200">ALMN Tech &amp; Solutions</span></span>
+<span>Desarrollado por <span class="font-semibold text-gray-700 dark:text-text-dark">ALMN Tech &amp; Solutions</span></span>
 </p>
 </footer>
 <script>

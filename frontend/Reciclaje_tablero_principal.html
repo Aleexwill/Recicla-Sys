@@ -50,7 +50,7 @@
 <div class="md:hidden sticky top-0 z-20 flex items-center justify-between border-b border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 px-4 py-3">
 <div class="flex items-center gap-2">
 <div class="bg-primary/20 p-1.5 rounded-lg text-primary flex items-center justify-center" data-empresa-logo><span class="material-symbols-outlined text-xl">recycling</span></div>
-<span class="font-bold text-gray-800 dark:text-white"><span data-empresa-nombre>ALMNET-ONE</span></span>
+<span class="font-bold text-text-light dark:text-text-dark"><span data-empresa-nombre>ALMNET-ONE</span></span>
 </div>
 <button class="rounded-lg p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10" id="mobile-menu-btn" type="button" aria-label="Abrir menú">
 <span class="material-symbols-outlined">menu</span>
@@ -66,12 +66,12 @@
 <div>
 <div class="flex items-center gap-3 mb-8 px-2">
 <div class="bg-primary/20 p-2 rounded-lg text-primary overflow-hidden" data-empresa-logo><span class="material-symbols-outlined text-2xl">recycling</span></div>
-<h1 class="text-xl font-bold text-gray-800 dark:text-white"><span data-empresa-nombre>ALMNET-ONE</span></h1>
+<h1 class="text-xl font-bold text-text-light dark:text-text-dark"><span data-empresa-nombre>ALMNET-ONE</span></h1>
 </div>
 <div class="flex flex-col gap-4">
 <div class="flex flex-col gap-1">
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-gray-900 dark:text-white dark:bg-primary/30" href="Reciclaje_tablero_principal.html">
-<span class="material-symbols-outlined text-gray-800 dark:text-white">dashboard</span>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-text-light dark:text-text-dark dark:bg-primary/30" href="Reciclaje_tablero_principal.html">
+<span class="material-symbols-outlined text-text-light dark:text-text-dark">dashboard</span>
 <p class="text-sm font-medium leading-normal">Dashboard</p>
 </a>
 <a href="Gestion_Compras.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300">
@@ -101,7 +101,7 @@
 <div class="flex gap-3">
 <a href="Configuracion_usuario.html" class="block" title="Mi cuenta"><div data-user-avatar></div></a>
 <div class="flex flex-col">
-<h1 class="text-gray-800 dark:text-white text-base font-medium leading-normal" data-user-name>Usuario</h1>
+<h1 class="text-text-light dark:text-text-dark text-base font-medium leading-normal" data-user-name>Usuario</h1>
 <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal" data-user-email></p>
 
 <a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-subtle-light dark:text-text-subtle-dark transition-colors hover:bg-red-500/10 hover:text-red-500" data-logout href="Login.html">
@@ -118,7 +118,7 @@
 <!-- Page Heading & Actions -->
 <div class="flex flex-col sm:flex-row sm:flex-wrap justify-between sm:items-center gap-4 mb-6">
 <div class="flex flex-col gap-1">
-<p class="text-gray-800 dark:text-white text-3xl font-bold leading-tight tracking-tight">Panel de Control</p>
+<p class="text-text-light dark:text-text-dark text-3xl font-bold leading-tight tracking-tight">Panel de Control</p>
 <p class="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">Resumen general de las operaciones.</p>
 </div>
 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
@@ -128,7 +128,7 @@
 </button>
     </a>
     <a class="w-full sm:w-auto" href="Nueva_Venta.html">
-<button class="flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary/20 text-gray-800 dark:bg-primary/30 dark:text-white text-sm font-bold leading-normal tracking-[0.015em]">
+<button class="flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary/20 text-text-light dark:bg-primary/30 dark:text-text-dark text-sm font-bold leading-normal tracking-[0.015em]">
 <span class="truncate">Registrar Nueva Venta</span>
 </button>
 </a>
@@ -137,7 +137,7 @@
 <!-- Filters -->
 <div class="flex gap-2 mb-3 overflow-x-auto pb-2" id="filtros-periodo">
 <button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/20 dark:bg-primary/30 pl-3 pr-3" data-range="hoy" type="button">
-<p class="text-gray-800 dark:text-white text-sm font-medium leading-normal">Hoy</p>
+<p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal">Hoy</p>
 </button>
 <button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-black/20 pl-3 pr-3 border border-gray-200 dark:border-white/10" data-range="semana" type="button">
 <p class="text-gray-600 dark:text-gray-300 text-sm font-medium leading-normal">Esta Semana</p>
@@ -153,11 +153,11 @@
 <div class="hidden flex-col sm:flex-row items-start sm:items-end gap-3 mb-6" id="filtro-personalizado-panel">
 <label class="flex flex-col">
 <span class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Desde</span>
-<input class="rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 text-gray-800 dark:text-white text-sm h-9 px-3 focus:border-primary focus:ring-primary" id="filtro-fecha-inicio" type="date"/>
+<input class="rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 text-text-light dark:text-text-dark text-sm h-9 px-3 focus:border-primary focus:ring-primary" id="filtro-fecha-inicio" type="date"/>
 </label>
 <label class="flex flex-col">
 <span class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Hasta</span>
-<input class="rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 text-gray-800 dark:text-white text-sm h-9 px-3 focus:border-primary focus:ring-primary" id="filtro-fecha-fin" type="date"/>
+<input class="rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 text-text-light dark:text-text-dark text-sm h-9 px-3 focus:border-primary focus:ring-primary" id="filtro-fecha-fin" type="date"/>
 </label>
 <button class="flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-bold text-white" id="filtro-personalizado-aplicar" type="button">Aplicar</button>
 </div>
@@ -165,35 +165,35 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 <div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
 <p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal" id="stat-compras-label">Compras del Mes</p>
-<p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight" id="stat-compras-mes">—</p>
+<p class="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight" id="stat-compras-mes">—</p>
 <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-compras-mes-sub"></p>
 </div>
 <div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
 <p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal" id="stat-ventas-label">Ventas del Mes</p>
-<p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight" id="stat-ventas-mes">—</p>
+<p class="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight" id="stat-ventas-mes">—</p>
 <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-ventas-mes-sub"></p>
 </div>
 <div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
 <p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal">Materiales con Stock Bajo</p>
-<p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight" id="stat-stock-bajo">—</p>
+<p class="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight" id="stat-stock-bajo">—</p>
 <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-stock-bajo-sub"></p>
 </div>
 <div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
 <p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal">Stock Total</p>
-<p class="text-gray-800 dark:text-white tracking-tight text-3xl font-bold leading-tight" id="stat-stock-total">—</p>
+<p class="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight" id="stat-stock-total">—</p>
 <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-stock-total-sub"></p>
 </div>
 </div>
 <!-- Charts -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 <div class="lg:col-span-2 bg-white dark:bg-black/20 p-6 rounded-lg border border-gray-200 dark:border-white/10">
-<h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Comparativa de Compras y Ventas</h3>
+<h3 class="text-lg font-bold text-text-light dark:text-text-dark mb-4">Comparativa de Compras y Ventas</h3>
 <div class="h-64" id="chart-comparativa-wrap">
 <canvas id="chart-comparativa"></canvas>
 </div>
 </div>
 <div class="bg-white dark:bg-black/20 p-6 rounded-lg border border-gray-200 dark:border-white/10">
-<h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Distribución de Inventario</h3>
+<h3 class="text-lg font-bold text-text-light dark:text-text-dark mb-4">Distribución de Inventario</h3>
 <div class="h-64" id="chart-inventario-wrap">
 <canvas id="chart-inventario"></canvas>
 </div>
@@ -201,7 +201,7 @@
 </div>
 <!-- Recent Activity Table -->
 <div class="bg-white dark:bg-black/20 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-white/10">
-<h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Actividad Reciente</h3>
+<h3 class="text-lg font-bold text-text-light dark:text-text-dark mb-4">Actividad Reciente</h3>
 <div class="overflow-x-auto">
 <table class="w-full text-left text-sm">
 <thead class="text-xs text-gray-500 dark:text-gray-400 uppercase bg-gray-50 dark:bg-white/5">
@@ -343,11 +343,11 @@ if ('serviceWorker' in navigator) {
         btn.classList.remove('bg-white', 'dark:bg-black/20', 'border', 'border-gray-200', 'dark:border-white/10');
         btn.classList.add('bg-primary/20', 'dark:bg-primary/30');
         p.classList.remove('text-gray-600', 'dark:text-gray-300');
-        p.classList.add('text-gray-800', 'dark:text-white');
+        p.classList.add('text-text-light', 'dark:text-text-dark');
       } else {
         btn.classList.remove('bg-primary/20', 'dark:bg-primary/30');
         btn.classList.add('bg-white', 'dark:bg-black/20', 'border', 'border-gray-200', 'dark:border-white/10');
-        p.classList.remove('text-gray-800', 'dark:text-white');
+        p.classList.remove('text-text-light', 'dark:text-text-dark');
         p.classList.add('text-gray-600', 'dark:text-gray-300');
       }
     });
@@ -397,7 +397,7 @@ if ('serviceWorker' in navigator) {
     tbody.innerHTML = actividad.map(function (a) {
       return '<tr class="border-b dark:border-white/10">' +
         '<td class="px-6 py-4 text-gray-700 dark:text-gray-200">' + api.fmtDate(a.fecha) + '</td>' +
-        '<td class="px-6 py-4 font-medium text-gray-800 dark:text-white">' + a.tipo + '</td>' +
+        '<td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">' + a.tipo + '</td>' +
         '<td class="px-6 py-4 text-gray-700 dark:text-gray-200">' + api.escapeHtml(a.contraparte) + '</td>' +
         '<td class="px-6 py-4 text-gray-700 dark:text-gray-200 text-right">' + api.money(a.monto) + '</td>' +
         '<td class="px-6 py-4 text-center">' + badge(a.estado) + '</td>' +
