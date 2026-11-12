@@ -38,17 +38,23 @@
       'opsz' 24
     }
   </style>
+<link href="css/glass.css" rel="stylesheet"/>
 <link href="manifest.json" rel="manifest"/>
 <meta content="#1dc962" name="theme-color"/>
 <link href="icons/icon-192.png" rel="icon" type="image/png"/>
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
-<body class="font-display bg-background-light dark:bg-background-dark overflow-x-hidden">
+<body class="font-display overflow-x-hidden">
 <script src="js/api.js"></script>
 <script src="js/auth-guard.js"></script>
 <script src="js/mobile-nav.js"></script>
 
-<div class="md:hidden sticky top-0 z-20 flex items-center justify-between border-b border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 px-4 py-3">
+<div class="app-bg" aria-hidden="true">
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+</div>
+
+<div class="md:hidden sticky top-0 z-20 flex items-center justify-between glass-card rounded-none px-4 py-3">
 <div class="flex items-center gap-2">
 <div class="bg-primary/20 p-1.5 rounded-lg text-primary flex items-center justify-center" data-empresa-logo><span class="material-symbols-outlined text-xl">recycling</span></div>
 <span class="font-bold text-text-light dark:text-text-dark"><span data-empresa-nombre>ALMNET-ONE</span></span>
@@ -63,7 +69,7 @@
 <div class="flex min-h-screen">
 <!-- SideNavBar -->
 <div class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" id="sidebar-backdrop"></div>
-<aside class="fixed inset-y-0 left-0 z-40 h-screen -translate-x-full overflow-y-auto transition-transform duration-200 ease-in-out md:relative md:inset-y-auto md:left-auto md:z-auto md:h-auto md:translate-x-0 w-64 flex-shrink-0 bg-white dark:bg-black/20 p-4 flex flex-col justify-between border-r border-gray-200 dark:border-white/10" id="sidebar">
+<aside class="fixed inset-y-0 left-0 z-40 h-screen -translate-x-full overflow-y-auto transition-transform duration-200 ease-in-out md:relative md:inset-y-auto md:left-auto md:z-auto md:h-auto md:translate-x-0 w-64 flex-shrink-0 glass-card rounded-none p-4 flex flex-col justify-between" id="sidebar">
 <div>
 <div class="flex items-center gap-3 mb-8 px-2">
 <div class="bg-primary/20 p-2 rounded-lg text-primary overflow-hidden" data-empresa-logo><span class="material-symbols-outlined text-2xl">recycling</span></div>
@@ -140,13 +146,13 @@
 <button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/20 dark:bg-primary/30 pl-3 pr-3" data-range="hoy" type="button">
 <p class="text-text-light dark:text-text-dark text-sm font-medium leading-normal">Hoy</p>
 </button>
-<button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-black/20 pl-3 pr-3 border border-gray-200 dark:border-white/10" data-range="semana" type="button">
+<button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg glass-card pl-3 pr-3" data-range="semana" type="button">
 <p class="text-gray-600 dark:text-gray-300 text-sm font-medium leading-normal">Esta Semana</p>
 </button>
-<button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-black/20 pl-3 pr-3 border border-gray-200 dark:border-white/10" data-range="mes" type="button">
+<button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg glass-card pl-3 pr-3" data-range="mes" type="button">
 <p class="text-gray-600 dark:text-gray-300 text-sm font-medium leading-normal">Este Mes</p>
 </button>
-<button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-black/20 pl-3 pr-2 border border-gray-200 dark:border-white/10" data-range="personalizado" type="button">
+<button class="filtro-btn flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg glass-card pl-3 pr-2" data-range="personalizado" type="button">
 <p class="text-gray-600 dark:text-gray-300 text-sm font-medium leading-normal">Personalizado</p>
 <span class="material-symbols-outlined text-gray-500 dark:text-gray-400 text-lg">calendar_today</span>
 </button>
@@ -154,32 +160,32 @@
 <div class="hidden flex-col sm:flex-row items-start sm:items-end gap-3 mb-6" id="filtro-personalizado-panel">
 <label class="flex flex-col">
 <span class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Desde</span>
-<input class="rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 text-text-light dark:text-text-dark text-sm h-9 px-3 focus:border-primary focus:ring-primary" id="filtro-fecha-inicio" type="date"/>
+<input class="glass-input rounded-lg border text-text-light dark:text-text-dark text-sm h-9 px-3 focus:border-primary focus:ring-primary" id="filtro-fecha-inicio" type="date"/>
 </label>
 <label class="flex flex-col">
 <span class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Hasta</span>
-<input class="rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 text-text-light dark:text-text-dark text-sm h-9 px-3 focus:border-primary focus:ring-primary" id="filtro-fecha-fin" type="date"/>
+<input class="glass-input rounded-lg border text-text-light dark:text-text-dark text-sm h-9 px-3 focus:border-primary focus:ring-primary" id="filtro-fecha-fin" type="date"/>
 </label>
 <button class="flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-bold text-white" id="filtro-personalizado-aplicar" type="button">Aplicar</button>
 </div>
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-<div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
+<div class="flex flex-col gap-2 rounded-lg p-6 glass-card">
 <p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal" id="stat-compras-label">Compras del Mes</p>
 <p class="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight" id="stat-compras-mes">—</p>
 <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-compras-mes-sub"></p>
 </div>
-<div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
+<div class="flex flex-col gap-2 rounded-lg p-6 glass-card">
 <p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal" id="stat-ventas-label">Ventas del Mes</p>
 <p class="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight" id="stat-ventas-mes">—</p>
 <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-ventas-mes-sub"></p>
 </div>
-<div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
+<div class="flex flex-col gap-2 rounded-lg p-6 glass-card">
 <p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal">Materiales con Stock Bajo</p>
 <p class="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight" id="stat-stock-bajo">—</p>
 <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-stock-bajo-sub"></p>
 </div>
-<div class="flex flex-col gap-2 rounded-lg p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10">
+<div class="flex flex-col gap-2 rounded-lg p-6 glass-card">
 <p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-normal">Stock Total</p>
 <p class="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight" id="stat-stock-total">—</p>
 <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal" id="stat-stock-total-sub"></p>
@@ -187,13 +193,13 @@
 </div>
 <!-- Charts -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-<div class="lg:col-span-2 bg-white dark:bg-black/20 p-6 rounded-lg border border-gray-200 dark:border-white/10">
+<div class="lg:col-span-2 glass-card p-6 rounded-lg">
 <h3 class="text-lg font-bold text-text-light dark:text-text-dark mb-4">Comparativa de Compras y Ventas</h3>
 <div class="h-64" id="chart-comparativa-wrap">
 <canvas id="chart-comparativa"></canvas>
 </div>
 </div>
-<div class="bg-white dark:bg-black/20 p-6 rounded-lg border border-gray-200 dark:border-white/10">
+<div class="glass-card p-6 rounded-lg">
 <h3 class="text-lg font-bold text-text-light dark:text-text-dark mb-4">Distribución de Inventario</h3>
 <div class="h-64" id="chart-inventario-wrap">
 <canvas id="chart-inventario"></canvas>
@@ -201,7 +207,7 @@
 </div>
 </div>
 <!-- Recent Activity Table -->
-<div class="bg-white dark:bg-black/20 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-white/10">
+<div class="glass-table p-4 sm:p-6 rounded-lg">
 <h3 class="text-lg font-bold text-text-light dark:text-text-dark mb-4">Actividad Reciente</h3>
 <div class="overflow-x-auto">
 <table class="w-full text-left text-sm">
@@ -225,7 +231,7 @@
 </div>
 </div>
 <!-- Sello corporativo -->
-<footer class="w-full border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 py-3 px-4 sm:px-6">
+<footer class="relative w-full py-6 px-4 sm:px-6">
 <p class="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500 dark:text-gray-400">
 <span class="material-symbols-outlined text-sm text-primary">verified</span>
 <span>Desarrollado por <span style="display:inline-flex;align-items:center;background:#0b1410;padding:2px 8px;border-radius:9999px;vertical-align:middle;"><img src="assets/logo-almn.png" alt="ALMN Projects" style="height:12px;width:auto;display:block;"/></span></span>
@@ -341,13 +347,13 @@ if ('serviceWorker' in navigator) {
       var activo = btn.getAttribute('data-range') === range;
       var p = btn.querySelector('p');
       if (activo) {
-        btn.classList.remove('bg-white', 'dark:bg-black/20', 'border', 'border-gray-200', 'dark:border-white/10');
+        btn.classList.remove('glass-card');
         btn.classList.add('bg-primary/20', 'dark:bg-primary/30');
         p.classList.remove('text-gray-600', 'dark:text-gray-300');
         p.classList.add('text-text-light', 'dark:text-text-dark');
       } else {
         btn.classList.remove('bg-primary/20', 'dark:bg-primary/30');
-        btn.classList.add('bg-white', 'dark:bg-black/20', 'border', 'border-gray-200', 'dark:border-white/10');
+        btn.classList.add('glass-card');
         p.classList.remove('text-text-light', 'dark:text-text-dark');
         p.classList.add('text-gray-600', 'dark:text-gray-300');
       }
