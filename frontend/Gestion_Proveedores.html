@@ -5,7 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Gestión de Proveedores - ALMNET-ONE</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 <script>
     tailwind.config = {
@@ -58,7 +58,7 @@
 <div class="bg-primary/20 p-1.5 rounded-lg text-primary flex items-center justify-center" data-empresa-logo><span class="material-symbols-outlined text-xl">recycling</span></div>
 <span class="font-bold text-gray-800 dark:text-white"><span data-empresa-nombre>ALMNET-ONE</span></span>
 </div>
-<button class="rounded-lg p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10" id="mobile-menu-btn" type="button">
+<button class="rounded-lg p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10" id="mobile-menu-btn" type="button" aria-label="Abrir menú">
 <span class="material-symbols-outlined">menu</span>
 </button>
 </div>
@@ -213,9 +213,9 @@ if ('serviceWorker' in navigator) {
           '<td class="p-4 text-text-light-secondary dark:text-text-dark-secondary">' + api.escapeHtml(c.telefono || '—') + '</td>' +
           '<td class="p-4 text-text-light-secondary dark:text-text-dark-secondary">' + api.escapeHtml(c.direccion || '—') + '</td>' +
           '<td class="p-4 text-right"><div class="inline-flex items-center gap-2">' +
-          '<a href="Historial_Proveedor.html?id=' + c.id + '"><button class="p-2 rounded-md hover:bg-primary/20" title="Ver historial"><span class="material-symbols-outlined text-xl">history</span></button></a>' +
-          '<a href="Creacion_proveedor.html?id=' + c.id + '"><button class="p-2 rounded-md hover:bg-primary/20" title="Editar"><span class="material-symbols-outlined text-xl">edit</span></button></a>' +
-          '<button class="p-2 rounded-md hover:bg-red-500/20 text-red-500" data-delete="' + c.id + '" title="Eliminar"><span class="material-symbols-outlined text-xl">delete</span></button>' +
+          '<a href="Historial_Proveedor.html?id=' + c.id + '"><button class="p-2 rounded hover:bg-primary/20" title="Ver historial" aria-label="Ver historial"><span class="material-symbols-outlined text-xl">history</span></button></a>' +
+          '<a href="Creacion_proveedor.html?id=' + c.id + '"><button class="p-2 rounded hover:bg-primary/20" title="Editar" aria-label="Editar"><span class="material-symbols-outlined text-xl">edit</span></button></a>' +
+          '<button class="p-2 rounded hover:bg-red-500/20 text-red-500" data-delete="' + c.id + '" title="Eliminar" aria-label="Eliminar"><span class="material-symbols-outlined text-xl">delete</span></button>' +
           '</div></td></tr>';
       }).join('');
       tbody.querySelectorAll('[data-delete]').forEach(function (btn) {
