@@ -40,12 +40,18 @@
       'opsz' 24
     }
   </style>
+<link href="css/glass.css" rel="stylesheet"/>
 <link href="manifest.json" rel="manifest"/>
 <meta content="#1dc962" name="theme-color"/>
 <link href="icons/icon-192.png" rel="icon" type="image/png"/>
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-[#0e1b13] dark:text-gray-200 overflow-x-hidden">
+<body class="font-display text-[#0e1b13] dark:text-gray-200 overflow-x-hidden">
+<div class="app-bg" aria-hidden="true">
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+</div>
+
 <script src="js/api.js"></script>
 <script src="js/auth-guard.js"></script>
 
@@ -80,40 +86,40 @@
 </label>
 </div>
 <div class="flex flex-col gap-2" id="proveedor-guardado-wrap">
-<select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="proveedor-select">
+<select class="glass-input form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="proveedor-select">
 <option value="">Cargando proveedores…</option>
 </select>
 <a class="text-sm text-primary hover:underline w-fit" href="Creacion_proveedor.html" target="_blank">+ Agregar proveedor nuevo</a>
 </div>
-<input class="hidden form-input w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="proveedor-input" placeholder="Nombre del proveedor" type="text"/>
+<input class="glass-input hidden form-input w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="proveedor-input" placeholder="Nombre del proveedor" type="text"/>
 </div>
 <label class="flex flex-col w-full">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Material</p>
-<select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal appearance-none bg-[url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724px%27 height=%2724px%27 fill=%27rgb(80,149,108)%27 viewBox=%270 0 256 256%27%3e%3cpath d=%27M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z%27%3e%3c/path%3e%3c/svg%3e')] bg-no-repeat bg-right-4" id="material-select">
+<select class="glass-input form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal appearance-none bg-[url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724px%27 height=%2724px%27 fill=%27rgb(80,149,108)%27 viewBox=%270 0 256 256%27%3e%3cpath d=%27M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z%27%3e%3c/path%3e%3c/svg%3e')] bg-no-repeat bg-right-4" id="material-select">
 <option value="">Cargando materiales…</option>
 </select>
 </label>
 <div class="flex flex-col sm:flex-row gap-4">
 <label class="flex flex-col min-w-40 flex-1">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Peso (kg)</p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="peso-input" placeholder="Ej: 25.5" step="0.1" type="number"/>
+<input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="peso-input" placeholder="Ej: 25.5" step="0.1" type="number"/>
 </label>
 <label class="flex flex-col min-w-40 flex-1">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Descuento por suciedad (%)</p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="descuento-input" placeholder="Ej: 10" step="1" type="number"/>
+<input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="descuento-input" placeholder="Ej: 10" step="1" type="number"/>
 </label>
 </div>
 <div class="flex flex-col sm:flex-row gap-4">
 <label class="flex flex-col min-w-40 flex-1">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Moneda</p>
-<select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="moneda-select">
+<select class="glass-input form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="moneda-select">
 <option value="USD">Dólares (USD)</option>
 <option value="PYG">Guaraníes (Gs.)</option>
 </select>
 </label>
 <label class="flex flex-col min-w-40 flex-1">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Precio por kg</p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="precio-input" placeholder="0.00" step="0.01" type="number"/>
+<input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="precio-input" placeholder="0.00" step="0.01" type="number"/>
 </label>
 </div>
 <p class="hidden text-xs text-amber-600 dark:text-amber-400" id="sin-tipo-cambio-msg">No hay un tipo de cambio cargado todavía — <a class="underline" href="Tipos_Cambio.html">cargá uno acá</a> para poder usar Guaraníes.</p>
@@ -161,7 +167,7 @@
 </div>
 </div>
 <!-- Sello corporativo -->
-<footer class="w-full border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 py-3 px-4 sm:px-6">
+<footer class="relative w-full py-6 px-4 sm:px-6">
 <p class="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500 dark:text-gray-400">
 <span class="material-symbols-outlined text-sm text-primary">verified</span>
 <span>Desarrollado por <span style="display:inline-flex;align-items:center;background:#0b1410;padding:2px 8px;border-radius:9999px;vertical-align:middle;"><img src="assets/logo-almn.png" alt="ALMN Projects" style="height:12px;width:auto;display:block;"/></span></span>

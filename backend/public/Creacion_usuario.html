@@ -42,17 +42,23 @@
             'opsz' 24
         }
     </style>
+<link href="css/glass.css" rel="stylesheet"/>
 <link href="manifest.json" rel="manifest"/>
 <meta content="#1dc962" name="theme-color"/>
 <link href="icons/icon-192.png" rel="icon" type="image/png"/>
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
-<body class="font-display bg-background-light dark:bg-background-dark overflow-x-hidden">
+<body class="font-display overflow-x-hidden">
+<div class="app-bg" aria-hidden="true">
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+</div>
+
 <script src="js/api.js"></script>
 <script src="js/auth-guard.js"></script>
 
 <div class="relative flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 md:p-8">
-<div class="w-full max-w-4xl rounded-xl border border-zinc-200/50 dark:border-zinc-800/50 bg-white/50 dark:bg-background-dark/50 shadow-lg backdrop-blur-sm">
+<div class="w-full max-w-4xl rounded-xl glass-card">
 <div class="flex flex-col p-6 sm:p-8 md:p-10">
 <div class="mb-8">
 <p class="text-[#0e1b13] dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]" id="page-title">Crear Nuevo Usuario</p>
@@ -63,13 +69,13 @@
 <div class="flex flex-col">
 <label class="flex flex-col">
 <p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Nombre de Usuario</p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" id="nombre-input" placeholder="Ingrese el nombre de usuario" value=""/>
+<input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" id="nombre-input" placeholder="Ingrese el nombre de usuario" value=""/>
 </label>
 </div>
 <div class="flex flex-col">
 <label class="flex flex-col">
 <p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Correo Electrónico</p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" id="email-input" placeholder="ejemplo@correo.com" type="email" value=""/>
+<input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] text-base font-normal leading-normal transition-all" id="email-input" placeholder="ejemplo@correo.com" type="email" value=""/>
 </label>
 </div>
 <div class="flex flex-col">
@@ -78,12 +84,12 @@
 <p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal">Puesto</p>
 <button class="hidden text-sm font-medium text-primary hover:underline" id="nuevo-puesto-toggle" type="button">+ Crear puesto nuevo</button>
 </div>
-<select class="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 px-[15px] py-0 text-base font-normal leading-normal transition-all" id="rol-select">
+<select class="glass-input form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 px-[15px] py-0 text-base font-normal leading-normal transition-all" id="rol-select">
 <option value="">Cargando roles…</option>
 </select>
 </label>
 <div class="hidden flex-col sm:flex-row gap-2 mt-2" id="nuevo-puesto-wrap">
-<input class="form-input flex-1 min-w-0 rounded-lg text-[#0e1b13] dark:text-white border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-11 px-3 text-sm focus:outline-0 focus:ring-2 focus:ring-primary/50" id="nuevo-puesto-nombre" placeholder="Nombre del puesto nuevo" type="text"/>
+<input class="glass-input form-input flex-1 min-w-0 rounded-lg text-[#0e1b13] dark:text-white border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-11 px-3 text-sm focus:outline-0 focus:ring-2 focus:ring-primary/50" id="nuevo-puesto-nombre" placeholder="Nombre del puesto nuevo" type="text"/>
 <button class="flex items-center justify-center h-11 px-4 rounded-lg bg-primary text-white text-sm font-bold" id="nuevo-puesto-agregar" type="button">Agregar</button>
 </div>
 </div>
@@ -92,7 +98,7 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 items-end">
 <label class="flex flex-col">
 <span class="text-[#0e1b13] dark:text-zinc-200 text-sm font-medium pb-2">Empresa asignada</span>
-<select class="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 px-[15px] py-0 text-base font-normal leading-normal transition-all" id="empresa-select">
+<select class="glass-input form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 px-[15px] py-0 text-base font-normal leading-normal transition-all" id="empresa-select">
 <option value="">Cargando empresas…</option>
 </select>
 </label>
@@ -127,7 +133,7 @@
 <label class="flex flex-col">
 <p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2" id="password-label">Contraseña</p>
 <div class="relative">
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] pr-12 text-base font-normal leading-normal transition-all" id="password-input" placeholder="Mínimo 8 caracteres" type="password"/>
+<input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] pr-12 text-base font-normal leading-normal transition-all" id="password-input" placeholder="Mínimo 8 caracteres" type="password"/>
 <button class="absolute inset-y-0 right-0 flex items-center pr-4 text-zinc-500 dark:text-zinc-400 hover:text-primary" id="toggle-password" type="button" aria-label="Mostrar contraseña">
 <span class="material-symbols-outlined">visibility</span>
 </button>
@@ -138,7 +144,7 @@
 <label class="flex flex-col">
 <p class="text-[#0e1b13] dark:text-zinc-200 text-base font-medium leading-normal pb-2">Confirmar Contraseña</p>
 <div class="relative">
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] pr-12 text-base font-normal leading-normal transition-all" id="password-confirm-input" placeholder="Repita la contraseña" type="password"/>
+<input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-zinc-300 dark:border-zinc-700 bg-background-light dark:bg-zinc-800/50 h-14 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 p-[15px] pr-12 text-base font-normal leading-normal transition-all" id="password-confirm-input" placeholder="Repita la contraseña" type="password"/>
 <button class="absolute inset-y-0 right-0 flex items-center pr-4 text-zinc-500 dark:text-zinc-400 hover:text-primary" id="toggle-password-confirm" type="button" aria-label="Ocultar contraseña">
 <span class="material-symbols-outlined">visibility_off</span>
 </button>
@@ -154,7 +160,7 @@
 </div>
 </div>
 <!-- Sello corporativo -->
-<footer class="w-full border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 py-3 px-4 sm:px-6">
+<footer class="relative w-full py-6 px-4 sm:px-6">
 <p class="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500 dark:text-gray-400">
 <span class="material-symbols-outlined text-sm text-primary">verified</span>
 <span>Desarrollado por <span style="display:inline-flex;align-items:center;background:#0b1410;padding:2px 8px;border-radius:9999px;vertical-align:middle;"><img src="assets/logo-almn.png" alt="ALMN Projects" style="height:12px;width:auto;display:block;"/></span></span>

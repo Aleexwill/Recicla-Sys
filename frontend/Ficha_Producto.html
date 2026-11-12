@@ -36,12 +36,18 @@
         'opsz' 24
       }
     </style>
+<link href="css/glass.css" rel="stylesheet"/>
 <link href="manifest.json" rel="manifest"/>
 <meta content="#1dc962" name="theme-color"/>
 <link href="icons/icon-192.png" rel="icon" type="image/png"/>
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark overflow-x-hidden">
+<body class="font-display text-text-light dark:text-text-dark overflow-x-hidden">
+<div class="app-bg" aria-hidden="true">
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+</div>
+
 <script src="js/api.js"></script>
 <script src="js/auth-guard.js"></script>
 
@@ -153,7 +159,7 @@
 </div>
 </div>
 <!-- Sello corporativo -->
-<footer class="w-full border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 py-3 px-4 sm:px-6">
+<footer class="relative w-full py-6 px-4 sm:px-6">
 <p class="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500 dark:text-gray-400">
 <span class="material-symbols-outlined text-sm text-primary">verified</span>
 <span>Desarrollado por <span style="display:inline-flex;align-items:center;background:#0b1410;padding:2px 8px;border-radius:9999px;vertical-align:middle;"><img src="assets/logo-almn.png" alt="ALMN Projects" style="height:12px;width:auto;display:block;"/></span></span>
