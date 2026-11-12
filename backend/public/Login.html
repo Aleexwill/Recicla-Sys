@@ -44,34 +44,98 @@
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+
+        /* Fondo tipo "mesh gradient": tres manchas de color grandes y
+           difuminadas, flotando muy lento. Transmite el verde de la marca
+           y el azul del logo de ALMN sin competir con la tarjeta de vidrio
+           que va encima. */
+        .auth-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            background: #eef7f1;
+            transition: background .4s ease;
+        }
+        .dark .auth-bg { background: #050b08; }
+        .auth-bg .blob {
+            position: absolute;
+            border-radius: 9999px;
+            filter: blur(90px);
+            will-change: transform;
+            animation: blob-drift 22s ease-in-out infinite;
+        }
+        .blob-1 { width: 26rem; height: 26rem; top: -8rem; left: -6rem; background: #1dc962; opacity: .35; animation-delay: 0s; }
+        .blob-2 { width: 30rem; height: 30rem; bottom: -10rem; right: -8rem; background: #2f6bff; opacity: .28; animation-delay: -7s; }
+        .blob-3 { width: 22rem; height: 22rem; top: 32%; right: 8%; background: #06d6a0; opacity: .22; animation-delay: -14s; }
+        .dark .blob-1 { opacity: .22; }
+        .dark .blob-2 { opacity: .20; }
+        .dark .blob-3 { opacity: .16; }
+        @keyframes blob-drift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(2.5%, 3%) scale(1.06); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .auth-bg .blob { animation: none; }
+        }
+
+        .glass-card {
+            background: rgba(255,255,255,0.55);
+            backdrop-filter: blur(24px) saturate(160%);
+            -webkit-backdrop-filter: blur(24px) saturate(160%);
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 8px 32px rgba(15,60,35,0.15), inset 0 1px 0 rgba(255,255,255,0.4);
+        }
+        .dark .glass-card {
+            background: rgba(14,27,19,0.55);
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        .glass-chip {
+            background: #0b1410;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 0 6px rgba(255,255,255,0.5);
+        }
+        .dark .glass-chip {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5), 0 0 0 1px rgba(29,201,98,0.35), 0 0 0 6px rgba(14,27,19,0.55);
+        }
+        .glass-input {
+            background: rgba(255,255,255,0.55) !important;
+            border-color: rgba(14,27,19,0.14) !important;
+            backdrop-filter: blur(6px);
+        }
+        .glass-input:focus { background: rgba(255,255,255,0.8) !important; }
+        .dark .glass-input {
+            background: rgba(255,255,255,0.06) !important;
+            border-color: rgba(255,255,255,0.14) !important;
+        }
+        .dark .glass-input:focus { background: rgba(255,255,255,0.1) !important; }
     </style>
 <link href="manifest.json" rel="manifest"/>
 <meta content="#1dc962" name="theme-color"/>
 <link href="icons/icon-192.png" rel="icon" type="image/png"/>
 <link href="icons/icon-180.png" rel="apple-touch-icon"/>
 </head>
-<body class="font-display bg-background-light dark:bg-background-dark overflow-x-hidden">
+<body class="font-display overflow-x-hidden">
 <script src="js/api.js"></script>
 
-<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
-<div class="layout-container flex h-full grow flex-col">
-<main class="flex-1">
-<div class="flex min-h-screen">
-<div class="hidden lg:flex lg:w-1/2 bg-center bg-no-repeat bg-cover" data-alt="Abstract illustration of a green recycling plant with clean energy symbols." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuArtGH6sNow_crB0dVTHzcfJD57rI-WI4dkHxwQWZmawjJrzimqf9SaRCm-qNguPP4raJG15IgbU3QVunqb5G3wHW3iYmQDgNlB-BsaS5Vh2FlrVU4GbunqzvgmZ2iDvKVnSyN5dTHyqrb07FSQWWNYK0mgZDDDx60uvQfVZOt-0L0yGpyE4XFd51tcoKbodYcLvt4amXx3nZ-V6JZWNvMGnDpN5GjL7iyrZlrz2uMNd_hOX96NpxgLMPv3Nk-TWDFmJDn799Xm3w");'>
+<div class="auth-bg" aria-hidden="true">
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
 </div>
-<div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8 md:p-12 bg-surface-light dark:bg-surface-dark relative">
-<img alt="Recycling symbol illustration" class="absolute top-8 left-8 w-20 h-20 opacity-10 dark:opacity-20 hidden md:block" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbk8-q-XE6ospjD_g3JCCYA6--vbrH9O7v2BRgofxFWv54nwmk6JdQdPKhKVPjb16q6jD67SVmNe8VolZ8pRTPE3juJTTi09xc9mz10E9lVxgVuKVABeefLNx4_h6HHsRc-wte-l7zjoNntLnRoIID_zbvdFgmKInqqlob_zjzdBRPDJpe_K30nqozFHVBrQHd8IssVVVslFsX4F_yaatsk4bwp9br7mnIVBv74P0-LtOxZIbny82mGB19AGpF0McZ1K6xM2Hk6g"/>
-<img alt="Recycling symbol illustration" class="absolute bottom-8 right-8 w-20 h-20 opacity-10 dark:opacity-20 hidden md:block" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHo0P9rO3i0LYsR--rfb_HnHgIbjC0IZbvJHAOx711lqIcarX6WJW5j8LbFd2G_c5sU2v0YJ1EESmIEmQewh9BYQIqoPAr27vS4IWktzrjGkJ_VSMTS9Bs4Yf8BhWn6ghwzMNv8C7RumMzhyBi7_gFLHUo6NuLL8ferbH7WvxqfNbN-qto4N2lYEvVYpeXSW4CwWBiZKwtOw3eldEbMB_mg_FAzbtelbfgTknyaS63kwhtf-0V_Z3g_VCpyHFqrsV25klmxvv69Q"/>
-<div class="flex flex-col max-w-md w-full gap-8">
-<div class="flex flex-col gap-4 text-center">
-<div class="flex flex-col items-center gap-2">
-<div style="background:#0b1410;border-radius:16px;padding:14px 20px;display:inline-flex;align-items:center;justify-content:center;"><img src="assets/logo-almn.png" alt="ALMN Projects" style="height:40px;width:auto;display:block;"/></div>
-<h2 class="text-xl font-black text-text-light dark:text-text-dark tracking-tight"><span data-empresa-nombre>ALMNET-ONE</span></h2>
+
+<div class="relative z-10 flex min-h-screen w-full flex-col items-center justify-center px-4 py-12 sm:px-6">
+<div class="w-full max-w-md">
+<div class="relative mb-10 flex justify-center">
+<div class="glass-chip rounded-2xl px-6 py-3.5" style="margin-bottom:-28px;">
+<img src="assets/logo-almn.png" alt="ALMN Projects" style="height:34px;width:auto;display:block;"/>
 </div>
-<div class="flex flex-col gap-2">
-<h1 class="text-text-light dark:text-text-dark text-4xl font-black leading-tight tracking-[-0.033em]">Bienvenido de Nuevo</h1>
+</div>
+<div class="glass-card rounded-3xl px-6 py-10 sm:px-10">
+<div class="flex flex-col gap-2 text-center mb-8">
+<h2 class="text-sm font-semibold uppercase tracking-[0.2em] text-text-secondary-light dark:text-text-secondary-dark"><span data-empresa-nombre>ALMNET-ONE</span></h2>
+<h1 class="text-text-light dark:text-text-dark text-3xl sm:text-4xl font-black leading-tight tracking-[-0.02em]">Bienvenido de nuevo</h1>
 <p class="text-text-secondary-light dark:text-text-secondary-dark text-base font-normal leading-normal">Gestionando el futuro del reciclaje</p>
-</div>
 </div>
 <form class="flex flex-col gap-6" id="login-form">
 <p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="login-error"></p>
@@ -80,14 +144,14 @@
 <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal pb-2">Usuario o Correo Electrónico</p>
 <div class="relative flex w-full items-center">
 <span class="material-symbols-outlined absolute left-4 text-text-secondary-light dark:text-text-secondary-dark">person</span>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-14 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-3.5 pl-12 text-base font-normal leading-normal" id="email-input" placeholder="Ingresa tu usuario o correo" type="email" value="" required/>
+<input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border h-14 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-3.5 pl-12 text-base font-normal leading-normal transition-colors" id="email-input" placeholder="Ingresa tu usuario o correo" type="email" value="" required/>
 </div>
 </label>
 <label class="flex flex-col w-full">
 <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal pb-2">Contraseña</p>
 <div class="relative flex w-full items-center">
 <span class="material-symbols-outlined absolute left-4 text-text-secondary-light dark:text-text-secondary-dark">lock</span>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-14 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-3.5 pl-12 pr-12 text-base font-normal leading-normal" id="password-input" placeholder="Ingresa tu contraseña" type="password" value="" required/>
+<input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border h-14 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-3.5 pl-12 pr-12 text-base font-normal leading-normal transition-colors" id="password-input" placeholder="Ingresa tu contraseña" type="password" value="" required/>
 <button aria-label="Mostrar contraseña" class="absolute right-4 text-text-secondary-light dark:text-text-secondary-dark" id="toggle-password" type="button">
 <span class="material-symbols-outlined">visibility</span>
 </button>
@@ -101,15 +165,15 @@
 </div>
 <a class="text-sm font-medium text-primary hover:underline" href="#" id="forgot-password-link">¿Olvidaste tu contraseña?</a>
 </div>
-<button class="flex items-center justify-center whitespace-nowrap h-14 w-full rounded-lg bg-primary text-white text-base font-bold leading-normal transition-all duration-300 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark disabled:opacity-60" id="login-submit" type="submit">
+<button class="flex items-center justify-center whitespace-nowrap h-14 w-full rounded-lg bg-primary text-white text-base font-bold leading-normal transition-all duration-300 hover:bg-primary/90 hover:-translate-y-0.5 shadow-lg shadow-primary/30 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60 disabled:translate-y-0" id="login-submit" type="submit">
                                     Iniciar Sesión
                                 </button>
 </form>
-<div class="hidden flex-col gap-3 rounded-lg border border-border-light dark:border-border-dark p-4" id="forgot-password-panel">
+<div class="hidden flex-col gap-3 rounded-lg border p-4" id="forgot-password-panel" style="background:rgba(29,201,98,0.07); border-color:rgba(29,201,98,0.25);">
 <p class="text-sm text-text-light dark:text-text-dark">Ingresá tu correo y le avisamos a un administrador para que te restablezca la contraseña.</p>
 <p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="forgot-password-error"></p>
 <p class="hidden rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-primary" id="forgot-password-success"></p>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark h-12 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-3.5 text-base font-normal leading-normal" id="forgot-password-email" placeholder="tu-correo@ejemplo.com" type="email"/>
+<input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border h-12 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-3.5 text-base font-normal leading-normal transition-colors" id="forgot-password-email" placeholder="tu-correo@ejemplo.com" type="email"/>
 <div class="flex gap-3">
 <button class="flex-1 flex items-center justify-center h-11 rounded-lg bg-primary text-white text-sm font-bold disabled:opacity-60" id="forgot-password-submit" type="button">Enviar solicitud</button>
 <button class="flex items-center justify-center h-11 px-4 rounded-lg border border-border-light dark:border-border-dark text-text-secondary-light dark:text-text-secondary-dark text-sm font-medium" id="forgot-password-cancel" type="button">Cancelar</button>
@@ -118,11 +182,8 @@
 </div>
 </div>
 </div>
-</main>
-</div>
-</div>
 <!-- Sello corporativo -->
-<footer class="w-full border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 py-3 px-4 sm:px-6">
+<footer class="relative z-10 w-full py-6 px-4 sm:px-6">
 <p class="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500 dark:text-gray-400">
 <span class="material-symbols-outlined text-sm text-primary">verified</span>
 <span>Desarrollado por <span style="display:inline-flex;align-items:center;background:#0b1410;padding:2px 8px;border-radius:9999px;vertical-align:middle;"><img src="assets/logo-almn.png" alt="ALMN Projects" style="height:12px;width:auto;display:block;"/></span></span>
