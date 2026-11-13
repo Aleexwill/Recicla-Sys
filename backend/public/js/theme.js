@@ -43,10 +43,29 @@
     btn.setAttribute('aria-label', dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
   }
 
+  // Chart.js no sigue el modo oscuro de la página solo: dibuja ejes y
+  // leyenda en canvas, con el color gris medio por defecto de la
+  // librería, pensado para fondos claros — apenas se lee sobre las
+  // tarjetas de vidrio oscuras. Si la página usa Chart.js, le fijamos
+  // colores de texto/grilla acordes al tema y repintamos los gráficos
+  // ya creados cada vez que cambia.
+  function paintCharts() {
+    if (typeof Chart === 'undefined') return;
+    var dark = isDark();
+    Chart.defaults.color = dark ? '#a8c9b6' : '#50956c';
+    Chart.defaults.borderColor = dark ? 'rgba(255,255,255,0.08)' : 'rgba(14,27,19,0.08)';
+    var instances = Chart.instances || {};
+    Object.keys(instances).forEach(function (id) {
+      var chart = instances[id];
+      if (chart && typeof chart.update === 'function') chart.update();
+    });
+  }
+
   function setTheme(dark) {
     try { localStorage.setItem(KEY, dark ? 'dark' : 'light'); } catch (e) { /* no crítico */ }
     applyClass(dark);
     paintButton();
+    paintCharts();
   }
 
   function injectButton() {
@@ -66,7 +85,12 @@
     document.body.appendChild(btn);
   }
 
-  document.addEventListener('DOMContentLoaded', injectButton);
+  document.addEventListener('DOMContentLoaded', function () {
+    injectButton();
+    // Fija los colores de Chart.js antes de que la página cree sus
+    // propios gráficos (eso pasa después, al llegar los datos de la API).
+    paintCharts();
+  });
 
   // Si nunca eligió manualmente, seguir los cambios de tema del sistema en vivo.
   if (window.matchMedia) {
@@ -74,6 +98,7 @@
       if (!getStored()) {
         applyClass(e.matches);
         paintButton();
+        paintCharts();
       }
     });
   }
