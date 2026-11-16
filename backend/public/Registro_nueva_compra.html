@@ -101,14 +101,19 @@
 </label>
 <div class="flex flex-col sm:flex-row gap-4">
 <label class="flex flex-col min-w-40 flex-1">
-<p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Peso (kg)</p>
+<p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Peso bruto (kg)</p>
 <input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="peso-input" placeholder="Ej: 25.5" step="0.1" type="number"/>
+</label>
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Tara por bolsa (kg, opcional)</p>
+<input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="tara-input" placeholder="Ej: 0.5" step="0.1" type="number"/>
 </label>
 <label class="flex flex-col min-w-40 flex-1">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Descuento por suciedad (%)</p>
 <input class="glass-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b13] dark:text-white focus:outline-0 focus:ring-0 border border-[#d1e6d9] dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-[#d1e6d9] dark:focus:border-primary h-14 placeholder:text-[#50956c] p-[15px] text-base font-normal leading-normal" id="descuento-input" placeholder="Ej: 10" step="1" type="number"/>
 </label>
 </div>
+<p class="text-xs text-[#50956c] dark:text-primary/70" id="peso-neto-info"></p>
 <div class="flex flex-col sm:flex-row gap-4">
 <label class="flex flex-col min-w-40 flex-1">
 <p class="text-[#0e1b13] dark:text-gray-200 text-base font-medium leading-normal pb-2">Moneda</p>
@@ -127,8 +132,9 @@
 <div class="flex pt-6 justify-start">
 <button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-[#0e1b13] gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors" id="add-material-btn" type="button">
 <span class="material-symbols-outlined">add</span>
-<span class="truncate">Añadir Material</span>
+<span class="truncate">Añadir Bolsa</span>
 </button>
+<p class="text-xs text-[#50956c] dark:text-primary/70 pt-2">Tip: tras cargar una bolsa, el material y el precio quedan seleccionados — solo cargá el siguiente peso y presioná Enter.</p>
 </div>
 </div>
 </div>
@@ -189,6 +195,8 @@ if ('serviceWorker' in navigator) {
 
   var select = document.getElementById('material-select');
   var pesoInput = document.getElementById('peso-input');
+  var taraInput = document.getElementById('tara-input');
+  var pesoNetoInfo = document.getElementById('peso-neto-info');
   var descuentoInput = document.getElementById('descuento-input');
   var monedaSelect = document.getElementById('moneda-select');
   var precioInput = document.getElementById('precio-input');
@@ -291,6 +299,29 @@ if ('serviceWorker' in navigator) {
     actualizarPrecioSugerido();
   });
 
+  // Peso neto = peso bruto - tara de la bolsa (si se cargó tara). Se muestra
+  // como ayuda en vivo para que el operador vea qué peso se va a registrar.
+  function pesoNeto() {
+    var bruto = parseFloat(pesoInput.value);
+    var tara = parseFloat(taraInput.value);
+    if (!bruto || bruto <= 0) return null;
+    if (!tara || tara <= 0) return bruto;
+    return Math.max(0, bruto - tara);
+  }
+  function actualizarPesoNetoInfo() {
+    var neto = pesoNeto();
+    var tara = parseFloat(taraInput.value);
+    if (neto !== null && tara > 0) {
+      pesoNetoInfo.textContent = 'Peso neto a registrar: ' + neto.toFixed(2) + ' kg (bruto ' + parseFloat(pesoInput.value).toFixed(2) + ' kg − tara ' + tara.toFixed(2) + ' kg)';
+    } else {
+      pesoNetoInfo.textContent = '';
+    }
+  }
+  pesoInput.addEventListener('input', actualizarPesoNetoInfo);
+  taraInput.addEventListener('input', actualizarPesoNetoInfo);
+
+  // Agrupa visualmente las bolsas por material (orden de llegada del grupo),
+  // mostrando cantidad de bolsas y peso total junto con el detalle de cada una.
   function renderItems() {
     if (cart.length === 0) {
       itemsList.innerHTML = '';
@@ -298,16 +329,39 @@ if ('serviceWorker' in navigator) {
       itemsEmpty.classList.remove('hidden');
       return;
     }
-    itemsList.innerHTML = cart.map(function (item, idx) {
-      var precioTxt = item.moneda === 'PYG'
-        ? api.moneyGs(item.precio_original) + '/kg (cambio ' + api.moneyGs(item.tipo_cambio) + ')'
-        : api.money(item.precio_original) + '/kg';
-      return '<div class="grid grid-cols-2 sm:grid-cols-[3fr_1fr_1fr_auto] gap-x-4 gap-y-2 items-center p-3 rounded-lg hover:bg-background-light dark:hover:bg-gray-800 transition-colors">' +
-        '<p class="col-span-2 sm:col-span-1 text-[#0e1b13] dark:text-white font-medium">' + api.escapeHtml(item.nombre) + '<br/><span class="text-xs text-gray-500 dark:text-gray-400 font-normal">' + precioTxt + '</span></p>' +
-        '<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">' + item.peso_kg + ' kg</p>' +
-        '<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right">' + item.descuento_pct + '%</p>' +
-        '<button class="flex justify-self-end text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors" data-remove="' + idx + '">' +
-        '<span class="material-symbols-outlined">delete</span></button>' +
+    var grupos = [];
+    var porMaterial = {};
+    cart.forEach(function (item, idx) {
+      var key = String(item.material_id);
+      if (!porMaterial[key]) {
+        porMaterial[key] = { nombre: item.nombre, items: [] };
+        grupos.push(porMaterial[key]);
+      }
+      porMaterial[key].items.push({ item: item, idx: idx });
+    });
+
+    itemsList.innerHTML = grupos.map(function (grupo) {
+      var pesoTotal = grupo.items.reduce(function (s, x) { return s + x.item.peso_kg; }, 0);
+      var bolsasTxt = grupo.items.length === 1 ? '1 bolsa' : grupo.items.length + ' bolsas';
+      var filas = grupo.items.map(function (x) {
+        var item = x.item;
+        var precioTxt = item.moneda === 'PYG'
+          ? api.moneyGs(item.precio_original) + '/kg (cambio ' + api.moneyGs(item.tipo_cambio) + ')'
+          : api.money(item.precio_original) + '/kg';
+        return '<div class="grid grid-cols-2 sm:grid-cols-[3fr_1fr_1fr_auto] gap-x-4 gap-y-1 items-center py-2 pl-4 border-t border-[#d1e6d9]/50 dark:border-gray-700/50">' +
+          '<p class="col-span-2 sm:col-span-1 text-xs text-gray-500 dark:text-gray-400">' + precioTxt + '</p>' +
+          '<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right text-sm">' + item.peso_kg.toFixed(2) + ' kg</p>' +
+          '<p class="text-gray-600 dark:text-gray-400 text-left sm:text-right text-sm">' + item.descuento_pct + '%</p>' +
+          '<button class="flex justify-self-end text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors" data-remove="' + x.idx + '">' +
+          '<span class="material-symbols-outlined text-xl">delete</span></button>' +
+          '</div>';
+      }).join('');
+      return '<div class="rounded-lg hover:bg-background-light dark:hover:bg-gray-800/50 transition-colors">' +
+        '<div class="grid grid-cols-2 sm:grid-cols-[3fr_1fr_1fr_auto] gap-x-4 items-center p-3">' +
+        '<p class="col-span-2 sm:col-span-1 text-[#0e1b13] dark:text-white font-medium">' + api.escapeHtml(grupo.nombre) + '<br/><span class="text-xs text-gray-500 dark:text-gray-400 font-normal">' + bolsasTxt + '</span></p>' +
+        '<p class="text-[#0e1b13] dark:text-white text-left sm:text-right font-semibold">' + pesoTotal.toFixed(2) + ' kg</p>' +
+        '<p></p><p></p>' +
+        '</div>' + filas +
         '</div>';
     }).join('');
     itemsList.querySelectorAll('[data-remove]').forEach(function (btn) {
@@ -318,10 +372,10 @@ if ('serviceWorker' in navigator) {
     });
   }
 
-  addBtn.addEventListener('click', function () {
+  function agregarBolsa() {
     clearError();
     var materialId = select.value;
-    var peso = parseFloat(pesoInput.value);
+    var peso = pesoNeto();
     var descuento = descuentoInput.value === '' ? 0 : parseFloat(descuentoInput.value);
     var moneda = monedaSelect.value === 'PYG' ? 'PYG' : 'USD';
     var precioIngresado = parseFloat(precioInput.value);
@@ -344,10 +398,22 @@ if ('serviceWorker' in navigator) {
       tipo_cambio: moneda === 'PYG' ? tipoCambio : null,
     });
     renderItems();
+    // A propósito NO se limpian material/moneda/precio: lo más común es que
+    // lleguen varias bolsas seguidas del mismo material al mismo precio, así
+    // que solo se limpia el peso/tara/descuento y se vuelve a enfocar el
+    // peso para poder seguir pesando bolsa tras bolsa sin tocar el mouse.
     pesoInput.value = '';
+    taraInput.value = '';
     descuentoInput.value = '';
-    select.value = '';
-    precioInput.value = '';
+    pesoNetoInfo.textContent = '';
+    pesoInput.focus();
+  }
+
+  addBtn.addEventListener('click', agregarBolsa);
+  [pesoInput, taraInput, descuentoInput].forEach(function (input) {
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); agregarBolsa(); }
+    });
   });
 
   siguienteBtn.addEventListener('click', function () {

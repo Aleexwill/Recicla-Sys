@@ -94,10 +94,17 @@ router.post('/', verificarPermiso('edit'), async (req, res) => {
 
     let subtotal = 0;
     const itemsConPrecio = [];
+    // Varias bolsas de la misma venta pueden repetir material_id — el stock
+    // real en la tabla recién se descuenta más abajo, así que acá hay que
+    // llevar la cuenta de lo ya reservado en este mismo pedido para no
+    // aprobar, por ejemplo, dos bolsas de 10kg cuando solo hay 15kg en stock.
+    const reservadoPorMaterial = {};
     for (const item of items) {
       const mat = await client.query('SELECT precio_venta, stock_actual FROM materiales WHERE id = $1 AND empresa_id = $2', [item.material_id, empresaId]);
       if (mat.rows.length === 0) throw new Error(`Material ${item.material_id} no existe`);
-      if (mat.rows[0].stock_actual < item.cantidad_kg) throw new Error(`Stock insuficiente para material ${item.material_id}`);
+      const reservado = reservadoPorMaterial[item.material_id] || 0;
+      if (mat.rows[0].stock_actual - reservado < item.cantidad_kg) throw new Error(`Stock insuficiente para material ${item.material_id}`);
+      reservadoPorMaterial[item.material_id] = reservado + Number(item.cantidad_kg);
       const precioEnviado = Number(item.precio_unitario);
       const precio   = precioEnviado > 0 ? precioEnviado : mat.rows[0].precio_venta;
       const sub      = item.cantidad_kg * precio;
