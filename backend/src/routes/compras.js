@@ -4,37 +4,44 @@ const express = require('express');
 const router  = express.Router();
 const db      = require('../config/database');
 const { verificarToken, verificarPermiso, verificarEmpresaAsignada } = require('../middleware/auth');
+const { wantsPagination, parsePagination, buildEnvelope } = require('../utils/pagination');
 
 router.use(verificarToken, verificarEmpresaAsignada);
 
-// GET /api/compras — Listar compras con filtro de fecha
+// GET /api/compras — Listar compras con filtro de fecha.
+// Sin ?page/?limit devuelve el array completo (como siempre, para el
+// dashboard y los reportes). Con ?page y/o ?limit (y opcionalmente ?q
+// para buscar por proveedor) devuelve { data, total, page, pageSize,
+// totalPages }.
 router.get('/', async (req, res) => {
-  const { fecha, estado, proveedor_id } = req.query;
-  let query = `
-    SELECT c.*, u.nombre_usuario AS operador
-    FROM compras c
-    LEFT JOIN usuarios u ON u.id = c.usuario_id
-    WHERE c.empresa_id = $1
-  `;
+  const { fecha, estado, proveedor_id, q } = req.query;
   const params = [req.usuario.empresa_id];
+  let where = 'c.empresa_id = $1';
 
-  if (fecha) {
-    params.push(fecha);
-    query += ` AND DATE(c.fecha) = $${params.length}`;
-  }
-  if (estado) {
-    params.push(estado);
-    query += ` AND c.estado = $${params.length}`;
-  }
-  if (proveedor_id) {
-    params.push(proveedor_id);
-    query += ` AND c.proveedor_id = $${params.length}`;
-  }
-  query += ' ORDER BY c.fecha DESC';
+  if (fecha) { params.push(fecha); where += ` AND DATE(c.fecha) = $${params.length}`; }
+  if (estado) { params.push(estado); where += ` AND c.estado = $${params.length}`; }
+  if (proveedor_id) { params.push(proveedor_id); where += ` AND c.proveedor_id = $${params.length}`; }
+  if (q) { params.push('%' + q + '%'); where += ` AND c.proveedor_nombre ILIKE $${params.length}`; }
+
+  const fromClause = `FROM compras c LEFT JOIN usuarios u ON u.id = c.usuario_id WHERE ${where}`;
 
   try {
-    const { rows } = await db.query(query, params);
-    res.json(rows);
+    if (!wantsPagination(req.query)) {
+      const { rows } = await db.query(
+        `SELECT c.*, u.nombre_usuario AS operador ${fromClause} ORDER BY c.fecha DESC`,
+        params
+      );
+      return res.json(rows);
+    }
+
+    const { page, pageSize, offset } = parsePagination(req.query);
+    const countResult = await db.query(`SELECT COUNT(*) ${fromClause}`, params);
+    const total = parseInt(countResult.rows[0].count, 10);
+    const { rows } = await db.query(
+      `SELECT c.*, u.nombre_usuario AS operador ${fromClause} ORDER BY c.fecha DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+      [...params, pageSize, offset]
+    );
+    res.json(buildEnvelope(rows, total, page, pageSize));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

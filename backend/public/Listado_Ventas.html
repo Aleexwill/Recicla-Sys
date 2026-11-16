@@ -201,10 +201,10 @@
 <div class="flex items-center justify-between border-t border-border-light p-4 dark:border-border-dark">
 <span class="text-sm text-text-light-secondary dark:text-text-dark-secondary" id="pagination-label">Mostrando 0 ventas</span>
 <div class="flex items-center gap-2">
-<button class="flex h-8 w-8 items-center justify-center rounded-lg glass-card text-text-light-secondary hover:bg-primary/10 dark:text-text-dark-secondary dark:hover:bg-primary/20" disabled="" aria-label="Página anterior">
+<button class="flex h-8 w-8 items-center justify-center rounded-lg glass-card text-text-light-secondary hover:bg-primary/10 dark:text-text-dark-secondary dark:hover:bg-primary/20 disabled:opacity-50 disabled:pointer-events-none" id="prev-btn" type="button" aria-label="Página anterior">
 <span class="material-symbols-outlined text-xl">chevron_left</span>
 </button>
-<button class="flex h-8 w-8 items-center justify-center rounded-lg glass-card text-text-light-secondary hover:bg-primary/10 dark:text-text-dark-secondary dark:hover:bg-primary/20" disabled="" aria-label="Página siguiente">
+<button class="flex h-8 w-8 items-center justify-center rounded-lg glass-card text-text-light-secondary hover:bg-primary/10 dark:text-text-dark-secondary dark:hover:bg-primary/20 disabled:opacity-50 disabled:pointer-events-none" id="next-btn" type="button" aria-label="Página siguiente">
 <span class="material-symbols-outlined text-xl">chevron_right</span>
 </button>
 </div>
@@ -234,7 +234,13 @@ if ('serviceWorker' in navigator) {
   var searchInput = document.getElementById('search-input');
   var estadoFilter = document.getElementById('estado-filter');
   var paginationLabel = document.getElementById('pagination-label');
-  var allVentas = [];
+  var prevBtn = document.getElementById('prev-btn');
+  var nextBtn = document.getElementById('next-btn');
+  var PAGE_SIZE = 20;
+  var page = 1;
+  var totalPages = 1;
+  var total = 0;
+  var searchTimer = null;
 
   var ESTADO_INFO = {
     pendiente: { cls: 'bg-neutral/10 text-neutral', dot: 'bg-neutral', label: 'Pendiente' },
@@ -248,17 +254,11 @@ if ('serviceWorker' in navigator) {
     return '<div class="flex items-center justify-start"><span class="flex items-center gap-2 rounded-full ' + info.cls + ' px-3 py-1 text-sm font-medium"><div class="h-2 w-2 rounded-full ' + info.dot + '"></div>' + info.label + '</span></div>';
   }
 
-  function render() {
-    var q = searchInput.value.trim().toLowerCase();
-    var filtered = allVentas.filter(function (v) {
-      if (q && !((v.cliente_nombre || '').toLowerCase().includes(q) || (v.vendedor || '').toLowerCase().includes(q))) return false;
-      return true;
-    });
-
-    if (filtered.length === 0) {
+  function render(ventas) {
+    if (ventas.length === 0) {
       tbody.innerHTML = '<tr><td class="h-[72px] px-4 py-2 text-text-light-secondary dark:text-text-dark-secondary" colspan="7">No se encontraron ventas.</td></tr>';
     } else {
-      tbody.innerHTML = filtered.map(function (v) {
+      tbody.innerHTML = ventas.map(function (v) {
         return '<tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">' +
           '<td class="h-[72px] px-4 py-2 text-sm font-medium text-primary">VEN-' + String(v.id).padStart(5, '0') + '</td>' +
           '<td class="h-[72px] px-4 py-2 text-sm font-normal text-text-light-primary dark:text-text-dark-primary">' + api.escapeHtml(v.cliente_nombre || '—') + '</td>' +
@@ -270,21 +270,35 @@ if ('serviceWorker' in navigator) {
           '</tr>';
       }).join('');
     }
-    paginationLabel.textContent = 'Mostrando ' + filtered.length + ' de ' + allVentas.length + ' ventas';
+    var desde = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+    var hasta = Math.min(page * PAGE_SIZE, total);
+    paginationLabel.textContent = total === 0 ? 'Mostrando 0 ventas' : 'Mostrando ' + desde + '-' + hasta + ' de ' + total + ' ventas';
+    prevBtn.disabled = page <= 1;
+    nextBtn.disabled = page >= totalPages;
   }
 
   function load() {
-    var qs = estadoFilter.value ? '?estado=' + encodeURIComponent(estadoFilter.value) : '';
+    var q = searchInput.value.trim();
+    var qs = '?page=' + page + '&limit=' + PAGE_SIZE;
+    if (estadoFilter.value) qs += '&estado=' + encodeURIComponent(estadoFilter.value);
+    if (q) qs += '&q=' + encodeURIComponent(q);
     api.apiFetch('/ventas' + qs).then(function (data) {
-      allVentas = data;
-      render();
+      total = data.total;
+      totalPages = data.totalPages;
+      page = data.page;
+      render(data.data);
     }).catch(function (err) {
       tbody.innerHTML = '<tr><td class="h-[72px] px-4 py-2 text-red-500" colspan="7">' + api.escapeHtml(err.message || 'Error al cargar ventas.') + '</td></tr>';
     });
   }
 
-  searchInput.addEventListener('input', render);
-  estadoFilter.addEventListener('change', load);
+  searchInput.addEventListener('input', function () {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(function () { page = 1; load(); }, 300);
+  });
+  estadoFilter.addEventListener('change', function () { page = 1; load(); });
+  prevBtn.addEventListener('click', function () { if (page > 1) { page -= 1; load(); } });
+  nextBtn.addEventListener('click', function () { if (page < totalPages) { page += 1; load(); } });
   load();
 })();
 </script>

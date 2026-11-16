@@ -4,24 +4,43 @@ const express = require('express');
 const router  = express.Router();
 const db      = require('../config/database');
 const { verificarToken, verificarPermiso, verificarEmpresaAsignada } = require('../middleware/auth');
+const { wantsPagination, parsePagination, buildEnvelope } = require('../utils/pagination');
 
 router.use(verificarToken, verificarEmpresaAsignada);
 
 // GET /api/ventas
+// Sin ?page/?limit devuelve el array completo (como siempre, para el
+// dashboard y los reportes). Con ?page y/o ?limit (y opcionalmente ?q
+// para buscar por cliente o vendedor) devuelve
+// { data, total, page, pageSize, totalPages }.
 router.get('/', async (req, res) => {
-  const { estado } = req.query;
-  let query = `
-    SELECT v.*, u.nombre_usuario AS vendedor
-    FROM ventas v
-    LEFT JOIN usuarios u ON u.id = v.usuario_id
-    WHERE v.empresa_id = $1
-  `;
+  const { estado, q } = req.query;
   const params = [req.usuario.empresa_id];
-  if (estado) { params.push(estado); query += ` AND v.estado = $${params.length}`; }
-  query += ' ORDER BY v.fecha DESC';
+  let where = 'v.empresa_id = $1';
+  if (estado) { params.push(estado); where += ` AND v.estado = $${params.length}`; }
+  if (q) {
+    params.push('%' + q + '%');
+    where += ` AND (v.cliente_nombre ILIKE $${params.length} OR u.nombre_usuario ILIKE $${params.length})`;
+  }
+  const fromClause = `FROM ventas v LEFT JOIN usuarios u ON u.id = v.usuario_id WHERE ${where}`;
+
   try {
-    const { rows } = await db.query(query, params);
-    res.json(rows);
+    if (!wantsPagination(req.query)) {
+      const { rows } = await db.query(
+        `SELECT v.*, u.nombre_usuario AS vendedor ${fromClause} ORDER BY v.fecha DESC`,
+        params
+      );
+      return res.json(rows);
+    }
+
+    const { page, pageSize, offset } = parsePagination(req.query);
+    const countResult = await db.query(`SELECT COUNT(*) ${fromClause}`, params);
+    const total = parseInt(countResult.rows[0].count, 10);
+    const { rows } = await db.query(
+      `SELECT v.*, u.nombre_usuario AS vendedor ${fromClause} ORDER BY v.fecha DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+      [...params, pageSize, offset]
+    );
+    res.json(buildEnvelope(rows, total, page, pageSize));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

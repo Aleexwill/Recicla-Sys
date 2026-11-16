@@ -91,6 +91,17 @@
 </tbody>
 </table>
 </div>
+<div class="hidden items-center justify-between border-t border-primary/20 p-4" id="pagination-bar">
+<span class="text-sm text-slate-500 dark:text-slate-400" id="pagination-label">Mostrando 0 compras</span>
+<div class="flex items-center gap-2">
+<button class="flex h-8 w-8 items-center justify-center rounded-lg glass-card text-slate-500 hover:bg-primary/10 dark:text-slate-400 dark:hover:bg-primary/20 disabled:opacity-50 disabled:pointer-events-none" id="prev-btn" type="button" aria-label="Página anterior">
+<span class="material-symbols-outlined text-xl">chevron_left</span>
+</button>
+<button class="flex h-8 w-8 items-center justify-center rounded-lg glass-card text-slate-500 hover:bg-primary/10 dark:text-slate-400 dark:hover:bg-primary/20 disabled:opacity-50 disabled:pointer-events-none" id="next-btn" type="button" aria-label="Página siguiente">
+<span class="material-symbols-outlined text-xl">chevron_right</span>
+</button>
+</div>
+</div>
 </div>
 </div>
 <div class="px-6 sm:px-8 mt-4 hidden" id="total-row">
@@ -256,7 +267,16 @@ if ('serviceWorker' in navigator) {
       tableBody.innerHTML = '';
     });
   } else {
-    // Modo historial: todas las compras registradas
+    // Modo historial: todas las compras registradas, paginado
+    var PAGE_SIZE = 20;
+    var page = 1;
+    var totalPages = 1;
+    var total = 0;
+    var paginationBar = document.getElementById('pagination-bar');
+    var paginationLabel = document.getElementById('pagination-label');
+    var prevBtn = document.getElementById('prev-btn');
+    var nextBtn = document.getElementById('next-btn');
+
     tableHead.innerHTML = '<tr class="bg-primary/10 dark:bg-primary/20">' +
       '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal">Fecha</th>' +
       '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal">Proveedor</th>' +
@@ -264,24 +284,40 @@ if ('serviceWorker' in navigator) {
       '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-center">Estado</th>' +
       '<th class="px-4 py-3 text-slate-700 dark:text-slate-200 text-sm font-semibold leading-normal text-center">Ver</th></tr>';
 
-    api.apiFetch('/compras').then(function (compras) {
-      if (compras.length === 0) {
-        tableBody.innerHTML = '<tr><td class="px-4 py-3.5 text-slate-500 dark:text-slate-400" colspan="5">Todavía no hay compras registradas.</td></tr>';
-        return;
-      }
-      tableBody.innerHTML = compras.map(function (c) {
-        return '<tr>' +
-          '<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">' + api.fmtDate(c.fecha) + '</td>' +
-          '<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">' + api.escapeHtml(c.proveedor_nombre || '—') + '</td>' +
-          '<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal text-right">' + api.money(c.total) + '</td>' +
-          '<td class="px-4 py-3.5 text-center">' + badge(c.estado) + '</td>' +
-          '<td class="px-4 py-3.5 text-center"><a class="text-primary hover:underline text-sm font-medium" href="Resumen_Compras.html?id=' + c.id + '">Ver</a></td>' +
-          '</tr>';
-      }).join('');
-    }).catch(function (err) {
-      showError(err.message || 'No se pudo cargar el historial.');
-      tableBody.innerHTML = '';
-    });
+    function loadHistorial() {
+      api.apiFetch('/compras?page=' + page + '&limit=' + PAGE_SIZE).then(function (data) {
+        total = data.total;
+        totalPages = data.totalPages;
+        page = data.page;
+        paginationBar.classList.remove('hidden');
+        paginationBar.classList.add('flex');
+        if (data.data.length === 0) {
+          tableBody.innerHTML = '<tr><td class="px-4 py-3.5 text-slate-500 dark:text-slate-400" colspan="5">Todavía no hay compras registradas.</td></tr>';
+        } else {
+          tableBody.innerHTML = data.data.map(function (c) {
+            return '<tr>' +
+              '<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">' + api.fmtDate(c.fecha) + '</td>' +
+              '<td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 text-sm font-normal leading-normal">' + api.escapeHtml(c.proveedor_nombre || '—') + '</td>' +
+              '<td class="px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal text-right">' + api.money(c.total) + '</td>' +
+              '<td class="px-4 py-3.5 text-center">' + badge(c.estado) + '</td>' +
+              '<td class="px-4 py-3.5 text-center"><a class="text-primary hover:underline text-sm font-medium" href="Resumen_Compras.html?id=' + c.id + '">Ver</a></td>' +
+              '</tr>';
+          }).join('');
+        }
+        var desde = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+        var hasta = Math.min(page * PAGE_SIZE, total);
+        paginationLabel.textContent = total === 0 ? 'Mostrando 0 compras' : 'Mostrando ' + desde + '-' + hasta + ' de ' + total + ' compras';
+        prevBtn.disabled = page <= 1;
+        nextBtn.disabled = page >= totalPages;
+      }).catch(function (err) {
+        showError(err.message || 'No se pudo cargar el historial.');
+        tableBody.innerHTML = '';
+      });
+    }
+
+    prevBtn.addEventListener('click', function () { if (page > 1) { page -= 1; loadHistorial(); } });
+    nextBtn.addEventListener('click', function () { if (page < totalPages) { page += 1; loadHistorial(); } });
+    loadHistorial();
   }
 })();
 </script>
