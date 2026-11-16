@@ -143,6 +143,9 @@ DB_PASSWORD=tu_contraseña
 JWT_SECRET=una_clave_secreta_larga_y_segura
 JWT_EXPIRES_IN=8h
 PORT=3000
+# Opcional: restringe qué orígenes pueden llamar a la API desde el navegador
+# (lista separada por comas). Sin esta variable, se acepta cualquier origen.
+ALLOWED_ORIGINS=https://tu-dominio.com
 ```
 
 ### 4. Instalar dependencias e iniciar el servidor
