@@ -4,17 +4,38 @@ const express = require('express');
 const router  = express.Router();
 const db      = require('../config/database');
 const { verificarToken, verificarPermiso, verificarEmpresaAsignada } = require('../middleware/auth');
+const { wantsPagination, parsePagination, buildEnvelope } = require('../utils/pagination');
 
 router.use(verificarToken, verificarEmpresaAsignada);
 
-// GET /api/proveedores — Listar todos
+// GET /api/proveedores — Listar todos.
+// Sin ?page/?limit devuelve el array completo (como siempre, para los
+// selects de Registro de Compra, etc). Con ?page y/o ?limit (y
+// opcionalmente ?q para buscar por nombre/email/teléfono) devuelve
+// { data, total, page, pageSize, totalPages }.
 router.get('/', async (req, res) => {
+  const { q } = req.query;
+  const params = [req.usuario.empresa_id];
+  let where = 'activo = TRUE AND empresa_id = $1';
+  if (q) {
+    params.push('%' + q + '%');
+    where += ` AND (nombre ILIKE $${params.length} OR email ILIKE $${params.length} OR telefono ILIKE $${params.length})`;
+  }
+
   try {
+    if (!wantsPagination(req.query)) {
+      const { rows } = await db.query(`SELECT * FROM proveedores WHERE ${where} ORDER BY nombre`, params);
+      return res.json(rows);
+    }
+
+    const { page, pageSize, offset } = parsePagination(req.query);
+    const countResult = await db.query(`SELECT COUNT(*) FROM proveedores WHERE ${where}`, params);
+    const total = parseInt(countResult.rows[0].count, 10);
     const { rows } = await db.query(
-      'SELECT * FROM proveedores WHERE activo = TRUE AND empresa_id = $1 ORDER BY nombre',
-      [req.usuario.empresa_id]
+      `SELECT * FROM proveedores WHERE ${where} ORDER BY nombre LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+      [...params, pageSize, offset]
     );
-    res.json(rows);
+    res.json(buildEnvelope(rows, total, page, pageSize));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

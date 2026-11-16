@@ -121,6 +121,45 @@ router.post('/roles', verificarPermiso('full'), async (req, res) => {
   }
 });
 
+// PUT /api/usuarios/roles/:id — Editar un puesto propio de la empresa.
+// Los 4 roles globales (empresa_id NULL) no se pueden tocar desde acá.
+router.put('/roles/:id', verificarPermiso('full'), async (req, res) => {
+  const { nombre, descripcion } = req.body;
+  if (!nombre) return res.status(400).json({ error: 'El nombre del puesto es requerido.' });
+  if (!req.usuario.empresa_id) {
+    return res.status(403).json({ error: 'El Super Admin no opera puestos de una empresa en particular.' });
+  }
+  try {
+    const { rows } = await db.query(
+      'UPDATE roles SET nombre = $1, descripcion = $2 WHERE id = $3 AND empresa_id = $4 RETURNING *',
+      [nombre, descripcion || null, req.params.id, req.usuario.empresa_id]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Puesto no encontrado.' });
+    res.json(rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE /api/usuarios/roles/:id — Eliminar un puesto propio de la empresa.
+// Los usuarios que lo tenían asignado quedan sin puesto (rol_id NULL, por
+// el ON DELETE SET NULL de la foreign key), no se borran ni se bloquean.
+router.delete('/roles/:id', verificarPermiso('full'), async (req, res) => {
+  if (!req.usuario.empresa_id) {
+    return res.status(403).json({ error: 'El Super Admin no opera puestos de una empresa en particular.' });
+  }
+  try {
+    const { rows } = await db.query(
+      'DELETE FROM roles WHERE id = $1 AND empresa_id = $2 RETURNING id',
+      [req.params.id, req.usuario.empresa_id]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Puesto no encontrado.' });
+    res.json({ mensaje: 'Puesto eliminado.' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/usuarios/:id — Ver un usuario (para el formulario de edición)
 router.get('/:id', verificarPermiso('full'), async (req, res) => {
   try {

@@ -123,6 +123,19 @@
 <p class="text-sm font-medium leading-normal">Ayuda</p>
 </a>
 </div>
+<div class="mt-4 border-t border-border-light dark:border-border-dark pt-4">
+<div class="flex gap-3">
+<a href="Configuracion_usuario.html" class="block" title="Mi cuenta"><div data-user-avatar></div></a>
+<div class="flex flex-col">
+<h1 class="text-text-light dark:text-text-dark text-base font-medium leading-normal" data-user-name>Usuario</h1>
+<p class="text-text-light/60 dark:text-text-dark/60 text-sm font-normal leading-normal" data-user-email></p>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-light/70 dark:text-text-dark/70 transition-colors hover:bg-red-500/10 hover:text-red-500" data-logout href="Login.html">
+<span class="material-symbols-outlined">logout</span>
+<p class="text-sm font-medium">Cerrar Sesión</p>
+</a>
+</div>
+</div>
+</div>
 </aside>
 <!-- Main Content -->
 <main class="flex-1 min-w-0 p-6 lg:p-10">
@@ -189,8 +202,12 @@
 </select>
 </label>
 <label class="flex flex-col flex-1 col-span-6 md:col-span-2">
-<p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Cantidad (Kg)</p>
+<p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Peso bruto (Kg)</p>
 <input class="glass-input form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border h-12 px-3 text-base font-normal" id="cantidad-input" placeholder="0.00" type="number"/>
+</label>
+<label class="flex flex-col flex-1 col-span-6 md:col-span-2">
+<p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Tara bolsa (Kg, opc.)</p>
+<input class="glass-input form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border h-12 px-3 text-base font-normal" id="tara-input" placeholder="0.00" step="0.1" type="number"/>
 </label>
 <label class="flex flex-col flex-1 col-span-6 md:col-span-2">
 <p class="text-text-light dark:text-text-dark text-xs font-medium pb-1">Moneda</p>
@@ -209,15 +226,17 @@
                       Añadir
                     </button>
 </div>
+<p class="col-span-12 text-xs text-text-light/60 dark:text-text-dark/60" id="peso-neto-info"></p>
 <p class="hidden col-span-12 text-xs text-amber-600 dark:text-amber-400" id="sin-tipo-cambio-msg">No hay un tipo de cambio cargado todavía — <a class="underline" href="Tipos_Cambio.html">cargá uno acá</a> para poder usar Guaraníes.</p>
 </div>
+<p class="text-xs text-text-light/60 dark:text-text-dark/60 -mt-4 mb-6">Tip: tras cargar una bolsa, el material y el precio quedan seleccionados — solo cargá el siguiente peso y presioná Enter.</p>
 <!-- Items Table -->
 <div class="overflow-x-auto">
 <table class="w-full text-sm text-left">
 <thead class="text-xs text-text-light/60 dark:text-text-dark/60 uppercase">
 <tr>
 <th class="px-6 py-3 rounded-l-lg" scope="col">Material</th>
-<th class="px-6 py-3 text-right" scope="col">Cantidad (Kg)</th>
+<th class="px-6 py-3 text-right" scope="col">Peso neto (Kg)</th>
 <th class="px-6 py-3 text-right" scope="col">Precio Unitario</th>
 <th class="px-6 py-3 text-right" scope="col">Subtotal</th>
 <th class="px-6 py-3 text-center rounded-r-lg" scope="col"></th>
@@ -280,6 +299,8 @@ if ('serviceWorker' in navigator) {
 
   var select = document.getElementById('material-select');
   var cantidadInput = document.getElementById('cantidad-input');
+  var taraInput = document.getElementById('tara-input');
+  var pesoNetoInfo = document.getElementById('peso-neto-info');
   var monedaSelect = document.getElementById('moneda-select');
   var precioInput = document.getElementById('precio-input');
   var sinTipoCambioMsg = document.getElementById('sin-tipo-cambio-msg');
@@ -370,6 +391,34 @@ if ('serviceWorker' in navigator) {
     actualizarPrecioSugerido();
   });
 
+  // Peso neto = peso bruto - tara de la bolsa (si se cargó tara). Se muestra
+  // como ayuda en vivo para que el operador vea qué peso se va a registrar.
+  function pesoNeto() {
+    var bruto = parseFloat(cantidadInput.value);
+    var tara = parseFloat(taraInput.value);
+    if (!bruto || bruto <= 0) return null;
+    if (!tara || tara <= 0) return bruto;
+    return Math.max(0, bruto - tara);
+  }
+  function actualizarPesoNetoInfo() {
+    var neto = pesoNeto();
+    var tara = parseFloat(taraInput.value);
+    if (neto !== null && tara > 0) {
+      pesoNetoInfo.textContent = 'Peso neto a registrar: ' + neto.toFixed(2) + ' kg (bruto ' + parseFloat(cantidadInput.value).toFixed(2) + ' kg − tara ' + tara.toFixed(2) + ' kg)';
+    } else {
+      pesoNetoInfo.textContent = '';
+    }
+  }
+  cantidadInput.addEventListener('input', actualizarPesoNetoInfo);
+  taraInput.addEventListener('input', actualizarPesoNetoInfo);
+
+  // Cuánto de este material ya está comprometido en el carrito actual
+  // (para avisar de sobreventa antes de llegar al servidor, sumando todas
+  // las bolsas ya cargadas del mismo material en esta misma venta).
+  function cantidadEnCarrito(materialId) {
+    return cart.reduce(function (s, i) { return String(i.material_id) === String(materialId) ? s + i.cantidad_kg : s; }, 0);
+  }
+
   function renderTotals() {
     var subtotal = cart.reduce(function (s, i) { return s + i.cantidad_kg * i.precio_unitario; }, 0);
     var impuesto = subtotal * (IMPUESTO_PCT / 100);
@@ -378,6 +427,8 @@ if ('serviceWorker' in navigator) {
     document.getElementById('resumen-total').innerHTML = api.moneyDual(subtotal + impuesto, tipoCambio, monedaPrincipal);
   }
 
+  // Agrupa visualmente las bolsas por material, mostrando cantidad de
+  // bolsas y peso neto total junto con el detalle (precio/subtotal) de cada una.
   function renderItems() {
     if (cart.length === 0) {
       tbody.innerHTML = '';
@@ -385,18 +436,42 @@ if ('serviceWorker' in navigator) {
       renderTotals();
       return;
     }
-    tbody.innerHTML = cart.map(function (item, idx) {
-      var subtotal = item.cantidad_kg * item.precio_unitario;
-      var precioTxt = item.moneda === 'PYG'
-        ? api.moneyGs(item.precio_original) + ' <span class="text-xs text-text-light/50 dark:text-text-dark/50">(cambio ' + api.moneyGs(item.tipo_cambio) + ')</span>'
-        : api.money(item.precio_original);
-      return '<tr class="border-b border-border-light/20 dark:border-border-dark/20">' +
-        '<td class="px-6 py-4 font-medium whitespace-nowrap">' + api.escapeHtml(item.nombre) + '</td>' +
-        '<td class="px-6 py-4 text-right">' + item.cantidad_kg.toFixed(2) + '</td>' +
-        '<td class="px-6 py-4 text-right">' + precioTxt + '</td>' +
-        '<td class="px-6 py-4 text-right font-semibold">' + api.money(subtotal) + '</td>' +
-        '<td class="px-6 py-4 text-center"><button class="text-danger/70 hover:text-danger" data-remove="' + idx + '">' +
-        '<span class="material-symbols-outlined" style="font-size: 20px;">delete</span></button></td></tr>';
+    var grupos = [];
+    var porMaterial = {};
+    cart.forEach(function (item, idx) {
+      var key = String(item.material_id);
+      if (!porMaterial[key]) {
+        porMaterial[key] = { nombre: item.nombre, items: [] };
+        grupos.push(porMaterial[key]);
+      }
+      porMaterial[key].items.push({ item: item, idx: idx });
+    });
+
+    tbody.innerHTML = grupos.map(function (grupo) {
+      var pesoTotal = grupo.items.reduce(function (s, x) { return s + x.item.cantidad_kg; }, 0);
+      var subtotalTotal = grupo.items.reduce(function (s, x) { return s + x.item.cantidad_kg * x.item.precio_unitario; }, 0);
+      var bolsasTxt = grupo.items.length === 1 ? '1 bolsa' : grupo.items.length + ' bolsas';
+      var headerRow = '<tr class="border-b border-border-light/20 dark:border-border-dark/20 bg-background-light/50 dark:bg-background-dark/50">' +
+        '<td class="px-6 py-3 font-medium whitespace-nowrap">' + api.escapeHtml(grupo.nombre) + '<br/><span class="text-xs text-text-light/50 dark:text-text-dark/50 font-normal">' + bolsasTxt + '</span></td>' +
+        '<td class="px-6 py-3 text-right font-semibold">' + pesoTotal.toFixed(2) + '</td>' +
+        '<td class="px-6 py-3"></td>' +
+        '<td class="px-6 py-3 text-right font-semibold">' + api.money(subtotalTotal) + '</td>' +
+        '<td class="px-6 py-3"></td></tr>';
+      var filas = grupo.items.map(function (x) {
+        var item = x.item;
+        var subtotal = item.cantidad_kg * item.precio_unitario;
+        var precioTxt = item.moneda === 'PYG'
+          ? api.moneyGs(item.precio_original) + ' <span class="text-xs text-text-light/50 dark:text-text-dark/50">(cambio ' + api.moneyGs(item.tipo_cambio) + ')</span>'
+          : api.money(item.precio_original);
+        return '<tr class="border-b border-border-light/20 dark:border-border-dark/20">' +
+          '<td class="px-6 py-2 pl-10 text-xs text-text-light/60 dark:text-text-dark/60">bolsa</td>' +
+          '<td class="px-6 py-2 text-right text-sm">' + item.cantidad_kg.toFixed(2) + '</td>' +
+          '<td class="px-6 py-2 text-right text-sm">' + precioTxt + '</td>' +
+          '<td class="px-6 py-2 text-right text-sm">' + api.money(subtotal) + '</td>' +
+          '<td class="px-6 py-2 text-center"><button class="text-danger/70 hover:text-danger" data-remove="' + x.idx + '">' +
+          '<span class="material-symbols-outlined" style="font-size: 18px;">delete</span></button></td></tr>';
+      }).join('');
+      return headerRow + filas;
     }).join('');
     tbody.querySelectorAll('[data-remove]').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -407,19 +482,23 @@ if ('serviceWorker' in navigator) {
     renderTotals();
   }
 
-  addBtn.addEventListener('click', function () {
+  function agregarBolsa() {
     clearError();
     var materialId = select.value;
-    var cantidad = parseFloat(cantidadInput.value);
+    var cantidad = pesoNeto();
     var moneda = monedaSelect.value === 'PYG' ? 'PYG' : 'USD';
     var precioIngresado = parseFloat(precioInput.value);
     if (!materialId) return showError('Elegí un material.');
-    if (!cantidad || cantidad <= 0) return showError('Ingresá una cantidad mayor a cero.');
+    if (!cantidad || cantidad <= 0) return showError('Ingresá un peso mayor a cero.');
     if (!precioIngresado || precioIngresado <= 0) return showError('Ingresá un precio unitario mayor a cero.');
     if (moneda === 'PYG' && !tipoCambio) return showError('No hay un tipo de cambio cargado para convertir Guaraníes.');
     var material = materiales.find(function (m) { return String(m.id) === String(materialId); });
-    if (material && cantidad > Number(material.stock_actual)) {
-      return showError('No hay suficiente stock (' + material.stock_actual + ' kg disponibles).');
+    if (material) {
+      var yaEnCarrito = cantidadEnCarrito(materialId);
+      if (yaEnCarrito + cantidad > Number(material.stock_actual)) {
+        var disponible = Math.max(0, Number(material.stock_actual) - yaEnCarrito);
+        return showError('No hay suficiente stock de ' + material.nombre + ' (quedan ' + disponible.toFixed(2) + ' kg disponibles, ya contando lo que agregaste).');
+      }
     }
     var precioUsd = moneda === 'PYG' ? api.gsToUsd(precioIngresado, tipoCambio) : precioIngresado;
     cart.push({
@@ -432,9 +511,21 @@ if ('serviceWorker' in navigator) {
       tipo_cambio: moneda === 'PYG' ? tipoCambio : null,
     });
     renderItems();
+    // A propósito NO se limpian material/moneda/precio: lo más común es que
+    // lleguen varias bolsas seguidas del mismo material al mismo precio, así
+    // que solo se limpia el peso/tara y se vuelve a enfocar el peso para
+    // poder seguir pesando bolsa tras bolsa sin tocar el mouse.
     cantidadInput.value = '';
-    select.value = '';
-    precioInput.value = '';
+    taraInput.value = '';
+    pesoNetoInfo.textContent = '';
+    cantidadInput.focus();
+  }
+
+  addBtn.addEventListener('click', agregarBolsa);
+  [cantidadInput, taraInput, precioInput].forEach(function (input) {
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); agregarBolsa(); }
+    });
   });
 
   confirmarBtn.addEventListener('click', function () {

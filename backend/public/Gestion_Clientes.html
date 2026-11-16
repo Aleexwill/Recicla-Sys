@@ -171,6 +171,14 @@
 <!-- Pagination -->
 <div class="flex items-center justify-between p-4">
 <span class="text-sm text-text-light-secondary dark:text-text-dark-secondary" id="pagination-label">Mostrando 0 clientes</span>
+<div class="flex items-center gap-2">
+<button class="flex h-8 w-8 items-center justify-center rounded-lg glass-card text-text-light-secondary hover:bg-primary/10 dark:text-text-dark-secondary dark:hover:bg-primary/20 disabled:opacity-50 disabled:pointer-events-none" id="prev-btn" type="button" aria-label="Página anterior">
+<span class="material-symbols-outlined text-xl">chevron_left</span>
+</button>
+<button class="flex h-8 w-8 items-center justify-center rounded-lg glass-card text-text-light-secondary hover:bg-primary/10 dark:text-text-dark-secondary dark:hover:bg-primary/20 disabled:opacity-50 disabled:pointer-events-none" id="next-btn" type="button" aria-label="Página siguiente">
+<span class="material-symbols-outlined text-xl">chevron_right</span>
+</button>
+</div>
 </div>
 </div>
 </div>
@@ -197,23 +205,22 @@ if ('serviceWorker' in navigator) {
   var tbody = document.getElementById('clientes-tbody');
   var searchInput = document.getElementById('search-input');
   var paginationLabel = document.getElementById('pagination-label');
+  var prevBtn = document.getElementById('prev-btn');
+  var nextBtn = document.getElementById('next-btn');
   var errorBox = document.getElementById('page-error');
-  var clientes = [];
+  var PAGE_SIZE = 20;
+  var page = 1;
+  var totalPages = 1;
+  var total = 0;
+  var searchTimer = null;
 
   function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
 
-  function render() {
-    var q = searchInput.value.trim().toLowerCase();
-    var filtered = clientes.filter(function (c) {
-      return c.nombre.toLowerCase().includes(q) ||
-        (c.email || '').toLowerCase().includes(q) ||
-        (c.telefono || '').toLowerCase().includes(q);
-    });
-
-    if (filtered.length === 0) {
+  function render(clientes) {
+    if (clientes.length === 0) {
       tbody.innerHTML = '<tr><td class="p-4 text-text-light-secondary dark:text-text-dark-secondary" colspan="5">No se encontraron clientes.</td></tr>';
     } else {
-      tbody.innerHTML = filtered.map(function (c) {
+      tbody.innerHTML = clientes.map(function (c) {
         return '<tr class="border-b border-border-light dark:border-border-dark last:border-b-0">' +
           '<td class="p-4 font-medium">' + api.escapeHtml(c.nombre) + '</td>' +
           '<td class="p-4 text-text-light-secondary dark:text-text-dark-secondary">' + api.escapeHtml(c.email || '—') + '</td>' +
@@ -237,20 +244,33 @@ if ('serviceWorker' in navigator) {
         });
       });
     }
-    paginationLabel.textContent = 'Mostrando ' + filtered.length + ' de ' + clientes.length + ' clientes';
+    var desde = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+    var hasta = Math.min(page * PAGE_SIZE, total);
+    paginationLabel.textContent = total === 0 ? 'Mostrando 0 clientes' : 'Mostrando ' + desde + '-' + hasta + ' de ' + total + ' clientes';
+    prevBtn.disabled = page <= 1;
+    nextBtn.disabled = page >= totalPages;
   }
 
   function load() {
-    api.apiFetch('/clientes').then(function (data) {
-      clientes = data;
-      render();
+    var q = searchInput.value.trim();
+    var qs = '?page=' + page + '&limit=' + PAGE_SIZE + (q ? '&q=' + encodeURIComponent(q) : '');
+    api.apiFetch('/clientes' + qs).then(function (data) {
+      total = data.total;
+      totalPages = data.totalPages;
+      page = data.page;
+      render(data.data);
     }).catch(function (err) {
       showError(err.message || 'No se pudieron cargar los clientes.');
       tbody.innerHTML = '';
     });
   }
 
-  searchInput.addEventListener('input', render);
+  searchInput.addEventListener('input', function () {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(function () { page = 1; load(); }, 300);
+  });
+  prevBtn.addEventListener('click', function () { if (page > 1) { page -= 1; load(); } });
+  nextBtn.addEventListener('click', function () { if (page < totalPages) { page += 1; load(); } });
   load();
 })();
 </script>
