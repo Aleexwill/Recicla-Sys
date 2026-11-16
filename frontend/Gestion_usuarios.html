@@ -147,6 +147,10 @@
 </label>
 </div>
 <div class="flex items-center justify-end gap-4">
+<button class="hidden h-12 cursor-pointer items-center justify-center overflow-hidden rounded-lg glass-card hover:bg-primary/10 gap-2 text-sm font-bold min-w-0 px-6" id="gestionar-puestos-btn" type="button">
+<span class="material-symbols-outlined">badge</span>
+<span class="truncate">Gestionar Puestos</span>
+</button>
 <a href="Creacion_usuario.html"><button class="flex h-12 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary text-white hover:bg-primary/90 gap-2 text-sm font-bold min-w-0 px-6 shadow-sm">
 <span class="material-symbols-outlined">add</span>
 <span class="truncate">Crear Nuevo Usuario</span>
@@ -154,6 +158,20 @@
 </div>
 </div>
 <p class="hidden rounded-lg bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400" id="page-error"></p>
+</div>
+<!-- Gestión de Puestos (roles propios de la empresa) -->
+<div class="hidden flex-col gap-3 rounded-lg glass-card p-4" id="puestos-panel">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-bold text-text-light-primary dark:text-text-dark-primary">Puestos de la empresa</h3>
+<button class="text-text-light-secondary dark:text-text-dark-secondary hover:text-red-500" id="cerrar-puestos-btn" type="button" aria-label="Cerrar"><span class="material-symbols-outlined">close</span></button>
+</div>
+<p class="text-xs text-text-light-secondary dark:text-text-dark-secondary">Los 4 puestos predeterminados (Administrador, Operador de Báscula, Vendedor, Contador) son fijos. Los puestos propios de tu empresa se pueden renombrar o eliminar — si un usuario tenía ese puesto, queda sin puesto asignado.</p>
+<div class="flex flex-col gap-2" id="puestos-list"></div>
+<div class="flex flex-col sm:flex-row gap-2 pt-2 border-t border-border-light dark:border-border-dark">
+<input class="glass-input form-input flex-1 min-w-0 rounded-lg h-11 px-3 text-sm" id="puesto-nuevo-nombre" placeholder="Nombre del puesto nuevo" type="text"/>
+<button class="flex items-center justify-center h-11 px-4 rounded-lg bg-primary text-white text-sm font-bold" id="puesto-nuevo-agregar" type="button">Agregar puesto</button>
+</div>
+<p class="hidden text-xs font-medium text-red-600 dark:text-red-400" id="puestos-error"></p>
 </div>
 <!-- Solicitudes de reset de contraseña -->
 <div class="hidden rounded-lg border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-4" id="solicitudes-reset-panel">
@@ -213,6 +231,10 @@ if ('serviceWorker' in navigator) {
     var navEmpresasLink = document.getElementById('nav-empresas-link');
     navEmpresasLink.classList.remove('hidden');
     navEmpresasLink.classList.add('flex');
+  } else {
+    var gestionarPuestosBtn = document.getElementById('gestionar-puestos-btn');
+    gestionarPuestosBtn.classList.remove('hidden');
+    gestionarPuestosBtn.classList.add('flex');
   }
 
   var PERMISO_INFO = {
@@ -301,6 +323,88 @@ if ('serviceWorker' in navigator) {
       solicitudesPanel.classList.add('hidden');
     });
   }
+
+  // --- Gestión de Puestos (roles propios de la empresa) ---
+  var puestosPanel = document.getElementById('puestos-panel');
+  var puestosList = document.getElementById('puestos-list');
+  var puestosErrorBox = document.getElementById('puestos-error');
+  var puestoNuevoNombre = document.getElementById('puesto-nuevo-nombre');
+  var puestoNuevoAgregar = document.getElementById('puesto-nuevo-agregar');
+
+  function showPuestosError(msg) { puestosErrorBox.textContent = msg; puestosErrorBox.classList.remove('hidden'); }
+  function clearPuestosError() { puestosErrorBox.classList.add('hidden'); }
+
+  function renderPuestos(roles) {
+    if (roles.length === 0) {
+      puestosList.innerHTML = '<p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">Todavía no hay puestos propios creados.</p>';
+      return;
+    }
+    puestosList.innerHTML = roles.map(function (r) {
+      var esPropio = r.empresa_id != null;
+      if (!esPropio) {
+        return '<div class="flex items-center justify-between gap-2 rounded-lg px-3 py-2 bg-background-light dark:bg-background-dark/40">' +
+          '<span class="text-sm text-text-light-primary dark:text-text-dark-primary">' + api.escapeHtml(r.nombre) + '</span>' +
+          '<span class="text-xs text-text-light-secondary dark:text-text-dark-secondary">Predeterminado</span>' +
+          '</div>';
+      }
+      return '<div class="flex items-center gap-2 rounded-lg px-3 py-2 bg-background-light dark:bg-background-dark/40" data-rol-row="' + r.id + '">' +
+        '<input class="glass-input form-input flex-1 min-w-0 rounded-lg h-9 px-2 text-sm" data-rol-nombre value="' + api.escapeHtml(r.nombre) + '"/>' +
+        '<button class="p-1.5 rounded hover:bg-primary/20" data-rol-guardar="' + r.id + '" title="Guardar" aria-label="Guardar"><span class="material-symbols-outlined text-xl">save</span></button>' +
+        '<button class="p-1.5 rounded hover:bg-red-500/20 text-red-500" data-rol-eliminar="' + r.id + '" title="Eliminar" aria-label="Eliminar"><span class="material-symbols-outlined text-xl">delete</span></button>' +
+        '</div>';
+    }).join('');
+
+    puestosList.querySelectorAll('[data-rol-guardar]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        clearPuestosError();
+        var id = btn.getAttribute('data-rol-guardar');
+        var row = puestosList.querySelector('[data-rol-row="' + id + '"]');
+        var nombre = row.querySelector('[data-rol-nombre]').value.trim();
+        if (!nombre) return showPuestosError('El nombre del puesto no puede estar vacío.');
+        api.apiFetch('/usuarios/roles/' + id, { method: 'PUT', body: JSON.stringify({ nombre: nombre }) })
+          .then(function () { loadPuestos(); load(); })
+          .catch(function (err) { showPuestosError(err.message || 'No se pudo guardar el puesto.'); });
+      });
+    });
+    puestosList.querySelectorAll('[data-rol-eliminar]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        clearPuestosError();
+        var id = btn.getAttribute('data-rol-eliminar');
+        var rol = roles.find(function (r) { return String(r.id) === id; });
+        if (!confirm('¿Eliminar el puesto "' + (rol ? rol.nombre : 'seleccionado') + '"? Los usuarios que lo tenían quedan sin puesto asignado.')) return;
+        api.apiFetch('/usuarios/roles/' + id, { method: 'DELETE' })
+          .then(function () { loadPuestos(); load(); })
+          .catch(function (err) { showPuestosError(err.message || 'No se pudo eliminar el puesto.'); });
+      });
+    });
+  }
+
+  function loadPuestos() {
+    api.apiFetch('/usuarios/roles').then(renderPuestos).catch(function (err) {
+      showPuestosError(err.message || 'No se pudieron cargar los puestos.');
+    });
+  }
+
+  puestoNuevoAgregar.addEventListener('click', function () {
+    clearPuestosError();
+    var nombre = puestoNuevoNombre.value.trim();
+    if (!nombre) return showPuestosError('Ingresá un nombre para el puesto nuevo.');
+    api.apiFetch('/usuarios/roles', { method: 'POST', body: JSON.stringify({ nombre: nombre }) })
+      .then(function () { puestoNuevoNombre.value = ''; loadPuestos(); })
+      .catch(function (err) { showPuestosError(err.message || 'No se pudo crear el puesto.'); });
+  });
+
+  var gestionarPuestosBtnEl = document.getElementById('gestionar-puestos-btn');
+  var cerrarPuestosBtn = document.getElementById('cerrar-puestos-btn');
+  gestionarPuestosBtnEl.addEventListener('click', function () {
+    puestosPanel.classList.remove('hidden');
+    puestosPanel.classList.add('flex');
+    loadPuestos();
+  });
+  cerrarPuestosBtn.addEventListener('click', function () {
+    puestosPanel.classList.add('hidden');
+    puestosPanel.classList.remove('flex');
+  });
 
   searchInput.addEventListener('input', render);
   loadSolicitudesReset();
